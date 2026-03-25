@@ -1,5 +1,3 @@
-import { data } from "./data.js";
-
 "use strict";
 
 (function () {

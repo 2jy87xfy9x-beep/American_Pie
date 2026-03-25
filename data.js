@@ -1,4 +1,4 @@
-export const data = {
+var data = {
   articles: {
     "401k-matching": `---
 title: Employer 401(k) Match

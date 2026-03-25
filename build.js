@@ -79,7 +79,7 @@ function main() {
   const sources = readFlatMarkdownMap(path.join(ROOT, "sources"));
 
   const lines = [];
-  lines.push("export const data = {");
+  lines.push("var data = {");
   lines.push("  articles: {");
   emitObjectBlock(lines, "    ", articles, (v) => "`" + v + "`");
   lines.push("  },");
