@@ -16,13 +16,103 @@
       },
       {
         "date": "March 2008",
-        "cash": 7000,
+        "cash": 7420,
         "monthly_burn": 2100,
-        "coverage_days": 100,
+        "coverage_days": 106,
         "credit_card_debt": 0,
-        "net_worth": 7120,
+        "net_worth": 7420,
         "action": "Calculated monthly burn rate for the first time. Result: $2,100/month.",
         "thinking": "I need to know exactly where I stand."
+      },
+      {
+        "date": "September 2008",
+        "cash": 11200,
+        "monthly_burn": 2100,
+        "coverage_days": 160,
+        "credit_card_debt": 0,
+        "net_worth": 11200,
+        "action": "Still employed. Kept 5-month emergency fund intact. Did not touch investments.",
+        "thinking": "This is exactly what the emergency fund is for. I'm watching, not panicking."
+      },
+      {
+        "date": "December 2008",
+        "cash": 11800,
+        "monthly_burn": 2100,
+        "coverage_days": 169,
+        "credit_card_debt": 0,
+        "net_worth": 9800,
+        "action": "Markets down 40%. Started setting aside $200/month for index funds at these prices.",
+        "thinking": "This is the sale. Every dollar I put in now is buying more shares than it would have last year."
+      },
+      {
+        "date": "March 2009",
+        "cash": 10500,
+        "monthly_burn": 2100,
+        "coverage_days": 150,
+        "credit_card_debt": 0,
+        "net_worth": 11400,
+        "action": "Markets hit bottom March 9. Increased index fund contributions to $400/month.",
+        "thinking": "I don't know if this is the bottom but I'm buying anyway. DCA removes that burden."
+      },
+      {
+        "date": "2011",
+        "cash": 15000,
+        "monthly_burn": 2200,
+        "coverage_days": 205,
+        "credit_card_debt": 0,
+        "net_worth": 38000,
+        "action": "Roth IRA maxed for the second year. 401(k) up to match threshold.",
+        "thinking": "The math on compound interest is starting to show. Three years of consistent investing."
+      },
+      {
+        "date": "2014",
+        "cash": 22000,
+        "monthly_burn": 2400,
+        "coverage_days": 275,
+        "credit_card_debt": 0,
+        "net_worth": 92000,
+        "action": "Net worth crossed $90k. Increased 401(k) contribution above match for first time.",
+        "thinking": "The portfolio is doing most of the work now. My job is not to interfere."
+      },
+      {
+        "date": "2019",
+        "cash": 32000,
+        "monthly_burn": 2800,
+        "coverage_days": 343,
+        "credit_card_debt": 0,
+        "net_worth": 218000,
+        "action": "Longest bull market in history. Did not liquidate. Did not change strategy.",
+        "thinking": "Everyone is asking me about crypto. I said no. My boring index funds are up 400% since 2009."
+      },
+      {
+        "date": "February 2020",
+        "cash": 35000,
+        "monthly_burn": 3000,
+        "coverage_days": 350,
+        "credit_card_debt": 0,
+        "net_worth": 268000,
+        "action": "COVID crash begins. Did not sell. Added $1,000 lump sum at the low.",
+        "thinking": "I've been through 2008. I know what this looks like. I'm buying, not selling."
+      },
+      {
+        "date": "2022",
+        "cash": 42000,
+        "monthly_burn": 3400,
+        "coverage_days": 371,
+        "credit_card_debt": 0,
+        "net_worth": 295000,
+        "action": "Inflation at 8%. Moved idle cash to I-bonds and HYSA at 4%+. Still investing monthly.",
+        "thinking": "High rates finally make saving cash worthwhile again. Still not changing the portfolio."
+      },
+      {
+        "date": "2026",
+        "cash": 48000,
+        "monthly_burn": 3600,
+        "coverage_days": 400,
+        "credit_card_debt": 0,
+        "net_worth": 341000,
+        "action": "18 years of boring decisions. Never touched the emergency fund except once.",
+        "thinking": "The simulation is over. The real portfolio is not."
       }
     ]
   },
@@ -33,13 +123,113 @@
     "log": [
       {
         "date": "January 2008",
+        "cash": 7000,
+        "monthly_burn": 2100,
+        "coverage_days": 100,
+        "credit_card_debt": 0,
+        "net_worth": 7000,
         "action": "Saw the Fed cuts. Did not change where cash sat.",
         "thinking": "Headlines are noisy."
       },
       {
         "date": "March 2008",
+        "cash": 6400,
+        "monthly_burn": 2100,
+        "coverage_days": 91,
+        "credit_card_debt": 0,
+        "net_worth": 6400,
         "action": "Tracked account balances weekly but avoided big moves.",
         "thinking": "Steady as it goes."
+      },
+      {
+        "date": "September 2008",
+        "cash": 5200,
+        "monthly_burn": 2100,
+        "coverage_days": 74,
+        "credit_card_debt": 0,
+        "net_worth": 5200,
+        "action": "Still employed. Pulled back on spending slightly. Did not invest the difference.",
+        "thinking": "Better to hold cash until this settles down."
+      },
+      {
+        "date": "December 2008",
+        "cash": 5800,
+        "monthly_burn": 2100,
+        "coverage_days": 83,
+        "credit_card_debt": 0,
+        "net_worth": 5800,
+        "action": "Missed the opportunity to invest at market lows. Was waiting for clarity.",
+        "thinking": "It still feels too uncertain. I'll wait until things look more stable."
+      },
+      {
+        "date": "March 2009",
+        "cash": 6200,
+        "monthly_burn": 2100,
+        "coverage_days": 89,
+        "credit_card_debt": 0,
+        "net_worth": 6200,
+        "action": "Missed the market bottom entirely. Started a small savings account.",
+        "thinking": "At least I didn't lose anything."
+      },
+      {
+        "date": "2011",
+        "cash": 9000,
+        "monthly_burn": 2200,
+        "coverage_days": 123,
+        "credit_card_debt": 0,
+        "net_worth": 16000,
+        "action": "Contributing 3% to 401(k) — just enough to get partial match.",
+        "thinking": "I keep meaning to increase it."
+      },
+      {
+        "date": "2014",
+        "cash": 13000,
+        "monthly_burn": 2400,
+        "coverage_days": 163,
+        "credit_card_debt": 0,
+        "net_worth": 38000,
+        "action": "Bull market running. Portfolio growing, mostly from employer contributions.",
+        "thinking": "This is going well enough."
+      },
+      {
+        "date": "2019",
+        "cash": 17000,
+        "monthly_burn": 2700,
+        "coverage_days": 189,
+        "credit_card_debt": 200,
+        "net_worth": 68000,
+        "action": "Never increased contributions above 3%. Lifestyle crept up with raises.",
+        "thinking": "The money always goes somewhere."
+      },
+      {
+        "date": "February 2020",
+        "cash": 18000,
+        "monthly_burn": 2900,
+        "coverage_days": 186,
+        "credit_card_debt": 400,
+        "net_worth": 71000,
+        "action": "Sold 15% of 401(k) during the crash. Bought back in 4 months later at higher prices.",
+        "thinking": "I couldn't watch it fall any further."
+      },
+      {
+        "date": "2022",
+        "cash": 21000,
+        "monthly_burn": 3200,
+        "coverage_days": 197,
+        "credit_card_debt": 1200,
+        "net_worth": 74000,
+        "action": "Inflation squeezed the budget. Put some expenses on credit card for the first time.",
+        "thinking": "Rates are up, prices are up. Something had to give."
+      },
+      {
+        "date": "2026",
+        "cash": 22000,
+        "monthly_burn": 3400,
+        "coverage_days": 194,
+        "credit_card_debt": 800,
+        "net_worth": 84000,
+        "action": "Stable. Never in crisis. Never compounding strongly.",
+        "thinking": "Not bad. Could have been worse. Could have been much better."
       }
     ]
   },
@@ -50,13 +240,113 @@
     "log": [
       {
         "date": "January 2008",
+        "cash": 7000,
+        "monthly_burn": 2100,
+        "coverage_days": 100,
+        "credit_card_debt": 0,
+        "net_worth": 7000,
         "action": "Did not see the news about rates.",
         "thinking": "Things feel normal."
       },
       {
         "date": "March 2008",
-        "action": "Paid rent from checking; did not compute runway.",
+        "cash": 5800,
+        "monthly_burn": 2100,
+        "coverage_days": 83,
+        "credit_card_debt": 0,
+        "net_worth": 5800,
+        "action": "Paid rent from checking. Did not compute runway.",
         "thinking": "Things will pick up soon."
+      },
+      {
+        "date": "September 2008",
+        "cash": 2200,
+        "monthly_burn": 2100,
+        "coverage_days": 31,
+        "credit_card_debt": 1800,
+        "net_worth": 400,
+        "action": "Laid off in October. No emergency fund. First credit card charge to cover rent.",
+        "thinking": "I'll find something in a few weeks."
+      },
+      {
+        "date": "December 2008",
+        "cash": 800,
+        "monthly_burn": 2100,
+        "coverage_days": 11,
+        "credit_card_debt": 5200,
+        "net_worth": -4400,
+        "action": "Two months without income. Living on credit. UI benefits finally started.",
+        "thinking": "I had no idea it would take this long."
+      },
+      {
+        "date": "March 2009",
+        "cash": 1400,
+        "monthly_burn": 1800,
+        "coverage_days": 23,
+        "credit_card_debt": 6800,
+        "net_worth": -5400,
+        "action": "Found part-time work. Minimum payments on credit card. Not investing.",
+        "thinking": "Just trying to get back to zero."
+      },
+      {
+        "date": "2011",
+        "cash": 3800,
+        "monthly_burn": 2000,
+        "coverage_days": 57,
+        "credit_card_debt": 4200,
+        "net_worth": -400,
+        "action": "Slowly paying down credit card. No retirement savings. Still rebuilding.",
+        "thinking": "Almost back to zero. Took three years."
+      },
+      {
+        "date": "2014",
+        "cash": 6200,
+        "monthly_burn": 2200,
+        "coverage_days": 85,
+        "credit_card_debt": 1400,
+        "net_worth": 4800,
+        "action": "Credit card almost paid. Started 401(k) at 1% — no employer match captured.",
+        "thinking": "I should have started this years ago."
+      },
+      {
+        "date": "2019",
+        "cash": 8400,
+        "monthly_burn": 2500,
+        "coverage_days": 101,
+        "credit_card_debt": 2200,
+        "net_worth": 9100,
+        "action": "Credit card debt crept back up. Only saving 1% to 401(k).",
+        "thinking": "The rules feel designed for people who already have money."
+      },
+      {
+        "date": "February 2020",
+        "cash": 7200,
+        "monthly_burn": 2600,
+        "coverage_days": 83,
+        "credit_card_debt": 2900,
+        "net_worth": 7800,
+        "action": "Panic-sold 401(k) at the COVID bottom. Lost 18% permanently to taxes and penalties.",
+        "thinking": "I couldn't afford to lose any more. I needed the cash."
+      },
+      {
+        "date": "2022",
+        "cash": 8800,
+        "monthly_burn": 2900,
+        "coverage_days": 91,
+        "credit_card_debt": 3400,
+        "net_worth": 9800,
+        "action": "Inflation hit hard. Minimum wage lagged. Debt growing again.",
+        "thinking": "I don't understand why everything got so expensive."
+      },
+      {
+        "date": "2026",
+        "cash": 10200,
+        "monthly_burn": 3100,
+        "coverage_days": 99,
+        "credit_card_debt": 2800,
+        "net_worth": 12100,
+        "action": "18 years from the same start. Not in crisis. Not compounding.",
+        "thinking": "Nobody taught me any of this."
       }
     ]
   },
@@ -67,30 +357,230 @@
     "log": [
       {
         "date": "January 2008",
+        "cash": 7000,
+        "monthly_burn": 2100,
+        "coverage_days": 100,
+        "credit_card_debt": 0,
+        "net_worth": 7000,
         "action": "Increased short exposure to financials.",
         "thinking": "The stress is tradable."
       },
       {
         "date": "March 2008",
-        "action": "Shorted Lehman. Position up 40% (then variance hits later).",
-        "thinking": "Volatility is the product."
+        "cash": 12000,
+        "monthly_burn": 2100,
+        "coverage_days": 171,
+        "credit_card_debt": 0,
+        "net_worth": 12000,
+        "action": "Bear Stearns short paid. Up 70% on the position. Rolled profits into new shorts.",
+        "thinking": "Volatility is the product. I see what others don't."
+      },
+      {
+        "date": "September 2008",
+        "cash": 18500,
+        "monthly_burn": 2100,
+        "coverage_days": 264,
+        "credit_card_debt": 0,
+        "net_worth": 18500,
+        "action": "Covered shorts at Lehman collapse — but too early. Left $8k on the table.",
+        "thinking": "I knew it would fall. I just didn't hold long enough."
+      },
+      {
+        "date": "December 2008",
+        "cash": 11200,
+        "monthly_burn": 2100,
+        "coverage_days": 160,
+        "credit_card_debt": 0,
+        "net_worth": 11200,
+        "action": "Went long financials at what I thought was the bottom. Down 30% in three weeks.",
+        "thinking": "This was supposed to be the recovery trade."
+      },
+      {
+        "date": "March 2009",
+        "cash": 5800,
+        "monthly_burn": 2100,
+        "coverage_days": 83,
+        "credit_card_debt": 2200,
+        "net_worth": 3600,
+        "action": "Averaging down on a bad position. Using credit card to avoid liquidating.",
+        "thinking": "It has to recover eventually."
+      },
+      {
+        "date": "2011",
+        "cash": 8200,
+        "monthly_burn": 2200,
+        "coverage_days": 112,
+        "credit_card_debt": 5800,
+        "net_worth": 2400,
+        "action": "Position eventually recovered. Paid off some debt. Now in gold. Waiting for 'the crash'.",
+        "thinking": "Fiat can't last. I just need to be early enough."
+      },
+      {
+        "date": "2014",
+        "cash": 14500,
+        "monthly_burn": 2500,
+        "coverage_days": 174,
+        "credit_card_debt": 3200,
+        "net_worth": 11300,
+        "action": "Gold thesis failed. Sold at a loss after 2 years. Back in cash, looking for the next trade.",
+        "thinking": "The trade was right. The timing was wrong."
+      },
+      {
+        "date": "2019",
+        "cash": 18000,
+        "monthly_burn": 2800,
+        "coverage_days": 193,
+        "credit_card_debt": 8400,
+        "net_worth": 9600,
+        "action": "Bought bitcoin near $18k in 2017. Held through 80% decline. Still holding.",
+        "thinking": "I was early once. I can be early again."
+      },
+      {
+        "date": "February 2020",
+        "cash": 9200,
+        "monthly_burn": 3000,
+        "coverage_days": 92,
+        "credit_card_debt": 14000,
+        "net_worth": -4800,
+        "action": "Used margin to buy equities before COVID crash. Margin call wiped the account.",
+        "thinking": "I did not expect a pandemic."
+      },
+      {
+        "date": "2022",
+        "cash": 6200,
+        "monthly_burn": 3200,
+        "coverage_days": 58,
+        "credit_card_debt": 22000,
+        "net_worth": -15800,
+        "action": "Borrowed to buy crypto in 2021 bull run. FTX collapse took 60% of what remained.",
+        "thinking": "The thesis was right. The counterparty risk was not on my radar."
+      },
+      {
+        "date": "2026",
+        "cash": 6400,
+        "monthly_burn": 3400,
+        "coverage_days": 57,
+        "credit_card_debt": 28000,
+        "net_worth": -41200,
+        "action": "18 years of making the right call at the wrong time.",
+        "thinking": "I understood every concept. I mismanaged every position."
       }
     ]
   },
   "gambler_won": {
     "color": "#6A994E",
     "label": "The Gambler Who Won",
-    "philosophy": "Same knowledge. Better timing.",
+    "philosophy": "Same knowledge as the loser. Better luck.",
     "log": [
       {
         "date": "January 2008",
+        "cash": 7000,
+        "monthly_burn": 2100,
+        "coverage_days": 100,
+        "credit_card_debt": 0,
+        "net_worth": 7000,
         "action": "Increased short exposure to financials.",
         "thinking": "The stress is tradable."
       },
       {
         "date": "March 2008",
-        "action": "Shorted Lehman. Position up 40%.",
-        "thinking": "Same trade — for now identical to the other track."
+        "cash": 12000,
+        "monthly_burn": 2100,
+        "coverage_days": 171,
+        "credit_card_debt": 0,
+        "net_worth": 12000,
+        "action": "Bear Stearns short paid. Up 70% on the position.",
+        "thinking": "Volatility is the product. Staying in."
+      },
+      {
+        "date": "September 2008",
+        "cash": 41000,
+        "monthly_burn": 2100,
+        "coverage_days": 586,
+        "credit_card_debt": 0,
+        "net_worth": 41000,
+        "action": "Held Lehman short through the full collapse. Closed at the bottom.",
+        "thinking": "Held the same trade as before, but longer this time."
+      },
+      {
+        "date": "December 2008",
+        "cash": 46000,
+        "monthly_burn": 2100,
+        "coverage_days": 657,
+        "credit_card_debt": 0,
+        "net_worth": 46000,
+        "action": "Bought SPY and individual bank stocks at the lows. Staying liquid otherwise.",
+        "thinking": "Every crash ends. This one is historic."
+      },
+      {
+        "date": "March 2009",
+        "cash": 44000,
+        "monthly_burn": 2100,
+        "coverage_days": 629,
+        "credit_card_debt": 0,
+        "net_worth": 52000,
+        "action": "Bought more at the exact March 9 bottom — pure luck of timing.",
+        "thinking": "I thought it was the bottom. For once, it actually was."
+      },
+      {
+        "date": "2011",
+        "cash": 62000,
+        "monthly_burn": 2300,
+        "coverage_days": 810,
+        "credit_card_debt": 0,
+        "net_worth": 128000,
+        "action": "Held equity positions through the recovery. Maxed Roth IRA. Portfolio compounding.",
+        "thinking": "The short bets gave me the capital. The index funds are doing the rest."
+      },
+      {
+        "date": "2014",
+        "cash": 82000,
+        "monthly_burn": 2500,
+        "coverage_days": 984,
+        "credit_card_debt": 0,
+        "net_worth": 295000,
+        "action": "Sold half the individual stocks. Moved to index funds. Kept one concentrated bet.",
+        "thinking": "I was lucky. Luck doesn't repeat. Index funds do."
+      },
+      {
+        "date": "2019",
+        "cash": 104000,
+        "monthly_burn": 2800,
+        "coverage_days": 1114,
+        "credit_card_debt": 0,
+        "net_worth": 568000,
+        "action": "Bought bitcoin at $600 in 2015. Sold 70% near $18k in 2017.",
+        "thinking": "Same trade, different exit than the loser."
+      },
+      {
+        "date": "February 2020",
+        "cash": 128000,
+        "monthly_burn": 3100,
+        "coverage_days": 1239,
+        "credit_card_debt": 0,
+        "net_worth": 694000,
+        "action": "COVID crash. Did not sell. Added lump sum at the bottom.",
+        "thinking": "Portfolio is large enough that volatility no longer feels personal."
+      },
+      {
+        "date": "2022",
+        "cash": 160000,
+        "monthly_burn": 3500,
+        "coverage_days": 1371,
+        "credit_card_debt": 0,
+        "net_worth": 918000,
+        "action": "Inflation year. Moved idle cash to I-bonds and HYSA. Continued investing monthly.",
+        "thinking": "High rates are the first time cash has actually competed with equities."
+      },
+      {
+        "date": "2026",
+        "cash": 198000,
+        "monthly_burn": 3700,
+        "coverage_days": 1608,
+        "credit_card_debt": 0,
+        "net_worth": 1194000,
+        "action": "18 years from the same $7,000 starting point.",
+        "thinking": "The knowledge was the same as the other gambler. The luck was different. That's the whole lesson."
       }
     ]
   }

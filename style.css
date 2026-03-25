@@ -169,7 +169,7 @@ body.nav-visible .nav-shell {
   margin: 0 auto;
   padding:
 
- 16px 20px 32px;
+ 16px 20px 80px;
 
   width: 100%;
 
@@ -1147,6 +1147,30 @@ body.theme-newspaper .margin-toc li {
 
 
 
+.ghost-entry-body {
+  line-height: 1.5;
+}
+
+.ghost-entry-thinking {
+  font-style: italic;
+  opacity: 0.75;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.ghost-entry-stats {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.7;
+  letter-spacing: 0.01em;
+}
+
+.concept-link-para {
+  border-left: 2px solid var(--border);
+  padding-left: 10px;
+  margin: 6px 0;
+}
+
 /* Clarity */
 
 .clarity-lede {
@@ -1191,6 +1215,16 @@ body.theme-newspaper .margin-toc li {
 
     grid-template-columns: 1fr;
 
+  }
+
+  /* Compact theme-switch: hide label, reduce gap */
+  .theme-switch > span:first-child {
+    display: none;
+  }
+
+  .theme-switch {
+    gap: 4px;
+    padding: 5px 8px;
   }
 
 }
@@ -1477,6 +1511,92 @@ body.theme-newspaper .theme-link {
 
 }
 
+.audio-cluster {
+
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+}
+
+.audio-toggle {
+
+  font-family: inherit;
+
+  font-size: inherit;
+
+  color: inherit;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  opacity: 1;
+
+}
+
+.audio-toggle.off {
+
+  opacity: 0.35;
+
+}
+
+.audio-config-panel {
+
+  position: absolute;
+
+  right: 0;
+
+  bottom: 100%;
+
+  margin-bottom: 6px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  background: var(--bg);
+
+  border: 1px solid var(--border);
+
+  padding: 5px 8px;
+
+  font-family: var(--font-mono);
+
+  font-size: 11px;
+
+  z-index: 250;
+
+  white-space: nowrap;
+
+}
+
+.audio-config-label {
+
+  opacity: 0.6;
+
+}
+
+.audio-config-slider {
+
+  width: 80px;
+
+  accent-color: var(--link);
+
+}
+
+.audio-config-val {
+
+  opacity: 0.7;
+
+  min-width: 2em;
+
+}
+
 
 
 /* Overlay */
@@ -1679,61 +1799,7 @@ body.nav-visible .nav-shell {
 
 
 
-  body.nav-visible .nav-shell.show-mobile {
-
-    display: flex !important;
-
-    position: fixed;
-
-    bottom: 32px;
-
-    left: 0;
-
-    right: 0;
-
-    width: 100%;
-
-    height: auto;
-
-    border-right: none;
-
-    border-top: 2px solid var(--border);
-
-    z-index: 95;
-
-  }
-
-
-
-  body.nav-visible .nav-shell.show-mobile .nav-rail {
-
-    flex-direction: row;
-
-    width: 100%;
-
-    justify-content: space-around;
-
-  }
-
-
-
-  body.nav-visible .nav-shell.show-mobile .nav-item {
-
-    flex: 1;
-
-    border-bottom: none;
-
-    border-right: 1px solid var(--border);
-
-  }
-
-
-
-  body.nav-visible .nav-shell.show-mobile .nav-label {
-
-    display: block;
-
-  }
+  /* show-mobile bottom bar removed — nav rail desktop-only */
 
 
 
@@ -1747,11 +1813,9 @@ body.nav-visible .nav-shell {
 
   .theme-switch {
 
-    bottom: 88px;
+    bottom: 36px;
 
-    left: 8px;
-
-    right: auto;
+    right: 8px;
 
   }
 

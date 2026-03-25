@@ -27,7 +27,7 @@ Monthly gap = **{{your_monthly_expenses}}** − (0.9 × **{{your_monthly_income}
 
 Annualized **{{your_cash}}** burn from that gap equals twelve times the gap until you adjust lifestyle or income — far faster than “the economy feels fine” narratives update.
 
-Coverage without income stays **{{coverage_days}} days** until you cut burn or add cash.
+Coverage without income stays **{{coverage_days}}** until you cut burn or add cash.
 
 ## What People Did
 

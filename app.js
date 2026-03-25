@@ -29,6 +29,46 @@ import { data } from "./data.js";
     folderHandle: null,
     simulationEnded: false,
     skipGaugeTransition: false,
+    audio: {
+      unlocked: false,
+      enabled: true,
+      context: null,
+      buffer: null,
+      sourceA: null,
+      sourceB: null,
+      crossfadeGainA: null,
+      crossfadeGainB: null,
+      gainNode: null,
+      distortionNode: null,
+      filterNode: null,
+      reverbDryGain: null,
+      reverbWetGain: null,
+      convolver: null,
+      masterGainNode: null,
+      lastInteraction: Date.now(),
+      config: {
+        volume: 100,
+        effects: "full",
+        momentumFade: true,
+        fadeDelay: 60,
+      },
+      activeCrossfadeSlot: 0,
+      pendingDecode: null,
+      bootstrapScheduled: false,
+      graphReady: false,
+      suspendedByVisibility: false,
+      lastPositionSave: 0,
+      gestureBound: false,
+      momentumTimer: null,
+      positionTimer: null,
+      audioParamBaseline: null,
+      lastEraStressForEvent: null,
+      stressInterpActive: false,
+      configOpen: false,
+      distortionRampTimer: null,
+      crossfadeSchedule: null,
+      _xfTimer: null,
+    },
   };
 
   var LS_VARS = "american_pie_variables";
@@ -46,6 +86,28 @@ import { data } from "./data.js";
   var LS_ARTICLES_DONE = "american_pie_articles_done";
   var LS_SAW_TICKER_ILLU = "american_pie_saw_ticker_illustration";
   var LS_SAW_GAUGE_ILLU = "american_pie_saw_gauge_illustration";
+  var LS_AUDIO_UNLOCKED = "audio_unlocked";
+  var LS_AUDIO_ENABLED = "audio_enabled";
+  var LS_AUDIO_CONFIG = "audio_config";
+  var LS_AUDIO_ERA = "audio_current_era";
+  var LS_AUDIO_POS = "audio_last_position";
+  var LS_AUDIO_FIRST_PLAY = "audio_first_play_done";
+
+  var ERA_AUDIO_ROWS = [
+    { era: 1, stress: 12, rate: 0.88, gain: 0.4, distortion: 0, filter: 18000, reverb: 0.0 },
+    { era: 2, stress: 38, rate: 0.95, gain: 0.58, distortion: 80, filter: 16000, reverb: 0.1 },
+    { era: 3, stress: 87, rate: 1.05, gain: 0.82, distortion: 280, filter: 12000, reverb: 0.3 },
+    { era: 4, stress: 71, rate: 1.0, gain: 0.75, distortion: 220, filter: 13500, reverb: 0.4 },
+    { era: 5, stress: 34, rate: 0.93, gain: 0.55, distortion: 40, filter: 17000, reverb: 0.1 },
+    { era: 6, stress: 18, rate: 0.9, gain: 0.45, distortion: 0, filter: 19000, reverb: 0.0 },
+    { era: 7, stress: 82, rate: 1.08, gain: 0.8, distortion: 260, filter: 11000, reverb: 0.2 },
+    { era: 8, stress: 61, rate: 1.02, gain: 0.68, distortion: 160, filter: 14000, reverb: 0.2 },
+    { era: 9, stress: 28, rate: 0.91, gain: 0.48, distortion: 20, filter: 17500, reverb: 0.05 },
+  ];
+
+  var CROSSFADE_SEC = 10;
+  var LOOP_TRIGGER_SEC = 502;
+  var BUFFER_DURATION_SEC = 512;
 
   var MANIFEST_SLUGS = {
     "emergency-fund": 1,
@@ -120,6 +182,696 @@ import { data } from "./data.js";
 
   function $(id) {
     return document.getElementById(id);
+  }
+
+  function hydrateAudioFromStorage() {
+    var au = state.audio;
+    try {
+      au.unlocked = localStorage.getItem(LS_AUDIO_UNLOCKED) === "1";
+      var en = localStorage.getItem(LS_AUDIO_ENABLED);
+      au.enabled = en === null || en === "1";
+      var raw = localStorage.getItem(LS_AUDIO_CONFIG);
+      if (raw) {
+        var c = JSON.parse(raw);
+        if (typeof c.volume === "number") au.config.volume = Math.max(0, Math.min(100, Math.round(c.volume)));
+        if (c.effects === "full" || c.effects === "subtle" || c.effects === "off") au.config.effects = c.effects;
+        if (typeof c.momentumFade === "boolean") au.config.momentumFade = c.momentumFade;
+        if (typeof c.fadeDelay === "number") au.config.fadeDelay = Math.max(15, Math.min(300, Math.round(c.fadeDelay)));
+      }
+      var er = parseInt(localStorage.getItem(LS_AUDIO_ERA) || "0", 10);
+      if (er >= 1 && er <= 9) au.audioParamBaseline = { era: er };
+      localStorage.getItem(LS_AUDIO_POS);
+    } catch (e) {}
+    au.lastInteraction = Date.now();
+  }
+
+  function persistAudioUnlock() {
+    try {
+      localStorage.setItem(LS_AUDIO_UNLOCKED, state.audio.unlocked ? "1" : "0");
+    } catch (e) {}
+  }
+
+  function persistAudioEnabled() {
+    try {
+      localStorage.setItem(LS_AUDIO_ENABLED, state.audio.enabled ? "1" : "0");
+    } catch (e) {}
+  }
+
+  function persistAudioConfig() {
+    try {
+      localStorage.setItem(LS_AUDIO_CONFIG, JSON.stringify(state.audio.config));
+    } catch (e) {}
+  }
+
+  function persistAudioEraForAudio() {
+    try {
+      localStorage.setItem(LS_AUDIO_ERA, String(state.audio.audioParamBaseline && state.audio.audioParamBaseline.era ? state.audio.audioParamBaseline.era : state.currentEra));
+    } catch (e) {}
+  }
+
+  function persistAudioPosition(sec) {
+    try {
+      localStorage.setItem(LS_AUDIO_POS, String(sec));
+    } catch (e) {}
+  }
+
+  function eraRowByNum(era) {
+    var e = Math.max(1, Math.min(9, era));
+    return ERA_AUDIO_ROWS[e - 1];
+  }
+
+  function sortEraRowsByStress() {
+    return ERA_AUDIO_ROWS.slice().sort(function (a, b) {
+      return a.stress - b.stress;
+    });
+  }
+
+  function interpolateParamsForStress(stress) {
+    var sorted = sortEraRowsByStress();
+    var s = Math.max(0, Math.min(100, Number(stress) || 0));
+    var lo = sorted[0];
+    var hi = sorted[sorted.length - 1];
+    if (s <= lo.stress) return Object.assign({}, lo);
+    if (s >= hi.stress) return Object.assign({}, hi);
+    var found = false;
+    for (var i = 0; i < sorted.length - 1; i++) {
+      if (s >= sorted[i].stress && s <= sorted[i + 1].stress) {
+        lo = sorted[i];
+        hi = sorted[i + 1];
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      lo = sorted[0];
+      hi = sorted[sorted.length - 1];
+    }
+    var t = hi.stress === lo.stress ? 0 : (s - lo.stress) / (hi.stress - lo.stress);
+    return {
+      era: state.currentEra,
+      stress: s,
+      rate: lo.rate + t * (hi.rate - lo.rate),
+      gain: lo.gain + t * (hi.gain - lo.gain),
+      distortion: lo.distortion + t * (hi.distortion - lo.distortion),
+      filter: lo.filter + t * (hi.filter - lo.filter),
+      reverb: lo.reverb + t * (hi.reverb - lo.reverb),
+    };
+  }
+
+  function applyEffectsModeToRow(row) {
+    var m = state.audio.config.effects;
+    var out = Object.assign({}, row);
+    if (m === "subtle") {
+      out.distortion = out.distortion * 0.5;
+      out.filter = Math.min(20000, out.filter + 2000);
+      out.reverb = out.reverb * 0.5;
+    } else if (m === "off") {
+      out.distortion = 0;
+      out.filter = 20000;
+      out.reverb = 0;
+    }
+    return out;
+  }
+
+  function makeDistortionCurve(amount) {
+    var n = 2048;
+    var curve = new Float32Array(n);
+    var a = Math.max(0, Math.min(400, Number(amount) || 0));
+    if (a < 0.01) {
+      for (var i = 0; i < n; i++) {
+        var x = (i * 2) / n - 1;
+        curve[i] = x;
+      }
+      return curve;
+    }
+    var k = 1 + a * 0.035;
+    for (var j = 0; j < n; j++) {
+      var x1 = (j * 2) / n - 1;
+      curve[j] = Math.tanh(k * x1) / Math.tanh(k);
+    }
+    return curve;
+  }
+
+  function createSyntheticReverbBuffer(ctx) {
+    var rate = ctx.sampleRate;
+    var len = Math.floor(2 * rate);
+    var buf = ctx.createBuffer(2, len, rate);
+    for (var c = 0; c < buf.numberOfChannels; c++) {
+      var d = buf.getChannelData(c);
+      for (var i = 0; i < len; i++) {
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 1.8);
+      }
+    }
+    return buf;
+  }
+
+  function volumeMultiplier() {
+    return Math.max(0, Math.min(100, state.audio.config.volume)) / 100;
+  }
+
+  function getPresentStressValue() {
+    var v = getRawValue("stress_level", state.variables);
+    if (v == null || isNaN(Number(v))) return eraRowByNum(9).stress;
+    return Number(v);
+  }
+
+  function mergePresentRow() {
+    var baseNine = eraRowByNum(9);
+    var row = Object.assign({}, baseNine);
+    var s = getPresentStressValue();
+    var ip = interpolateParamsForStress(s);
+    row.gain = ip.gain;
+    row.rate = baseNine.rate;
+    row.distortion = baseNine.distortion;
+    row.filter = baseNine.filter;
+    row.reverb = baseNine.reverb;
+    return row;
+  }
+
+  function rampAudioRowTo(row, transitionMs) {
+    var auPtr = state.audio;
+    var ctx = auPtr.context;
+    if (!ctx || !auPtr.graphReady) return;
+    var now = ctx.currentTime;
+    var end = now + transitionMs / 1000;
+    var r = applyEffectsModeToRow(row);
+    if (auPtr.config.effects === "off") {
+      r.distortion = 0;
+      r.filter = 20000;
+      r.reverb = 0;
+    }
+
+    if (auPtr.sourceA && auPtr.sourceA.playbackRate)
+      auPtr.sourceA.playbackRate.linearRampToValueAtTime(r.rate, end);
+    if (auPtr.sourceB && auPtr.sourceB.playbackRate)
+      auPtr.sourceB.playbackRate.linearRampToValueAtTime(r.rate, end);
+
+    var targetGn = r.gain * volumeMultiplier();
+    auPtr.gainNode.gain.cancelScheduledValues(now);
+    auPtr.gainNode.gain.setValueAtTime(auPtr.gainNode.gain.value, now);
+    auPtr.gainNode.gain.linearRampToValueAtTime(targetGn, end);
+
+    auPtr.filterNode.frequency.cancelScheduledValues(now);
+    auPtr.filterNode.frequency.setValueAtTime(auPtr.filterNode.frequency.value, now);
+    auPtr.filterNode.frequency.linearRampToValueAtTime(Math.min(r.filter, 20000), end);
+
+    var dry = 1 - r.reverb;
+    var wet = r.reverb;
+    auPtr.reverbDryGain.gain.cancelScheduledValues(now);
+    auPtr.reverbDryGain.gain.setValueAtTime(auPtr.reverbDryGain.gain.value, now);
+    auPtr.reverbDryGain.gain.linearRampToValueAtTime(dry, end);
+    auPtr.reverbWetGain.gain.cancelScheduledValues(now);
+    auPtr.reverbWetGain.gain.setValueAtTime(auPtr.reverbWetGain.gain.value, now);
+    auPtr.reverbWetGain.gain.linearRampToValueAtTime(wet, end);
+
+    if (auPtr.distortionRampTimer) clearInterval(auPtr.distortionRampTimer);
+    var steps = Math.max(1, Math.floor(transitionMs / 120));
+    var curAmt = auPtr._distortionAmt || 0;
+    var step = 0;
+    auPtr.distortionRampTimer = setInterval(function () {
+      step++;
+      var t = Math.min(1, step / steps);
+      var amt = curAmt + t * (r.distortion - curAmt);
+      auPtr.distortionNode.curve = makeDistortionCurve(amt);
+      auPtr._distortionAmt = amt;
+      if (step >= steps) {
+        clearInterval(auPtr.distortionRampTimer);
+        auPtr.distortionRampTimer = null;
+        auPtr.distortionNode.curve = makeDistortionCurve(r.distortion);
+        auPtr._distortionAmt = r.distortion;
+      }
+    }, Math.max(30, transitionMs / steps));
+  }
+
+  function applyEraAudio(era, transitionMs) {
+    state.audio.audioParamBaseline = { era: era, kind: "era" };
+    persistAudioEraForAudio();
+    var base = eraRowByNum(era);
+    state.audio.stressInterpActive = false;
+    state.audio.lastEraStressForEvent = base.stress;
+    if (state.mode === "present") {
+      state.audio.audioParamBaseline = { era: 9, kind: "present" };
+      persistAudioEraForAudio();
+      state.audio.stressInterpActive = false;
+      rampAudioRowTo(mergePresentRow(), transitionMs);
+      return;
+    }
+    rampAudioRowTo(Object.assign({}, base), transitionMs);
+  }
+
+  function applyPresentBaselineAudio(transitionMs) {
+    var row = mergePresentRow();
+    state.audio.audioParamBaseline = { era: 9, kind: "present" };
+    persistAudioEraForAudio();
+    state.audio.stressInterpActive = false;
+    rampAudioRowTo(row, transitionMs);
+  }
+
+  function maybeApplyEventStressAudio() {
+    if (state.mode !== "2008" || !state.audio.graphReady) return;
+    var ev = currentContextEvent();
+    if (!ev || ev.stress_level == null) return;
+    var base = eraRowByNum(state.currentEra);
+    var diff = Math.abs(Number(ev.stress_level) - base.stress);
+    if (diff <= 5) return;
+    state.audio.stressInterpActive = true;
+    var row = interpolateParamsForStress(ev.stress_level);
+    rampAudioRowTo(row, 3000);
+  }
+
+  function touchAudioLastInteraction() {
+    state.audio.lastInteraction = Date.now();
+    if (!state.audio.graphReady || !state.audio.context) return;
+    if (!state.audio.config.momentumFade) return;
+    var ctx = state.audio.context;
+    if (state.audio.enabled === false) return;
+    var now = ctx.currentTime;
+    var baseRow = state.mode === "present" ? mergePresentRow() : Object.assign({}, eraRowByNum(state.currentEra));
+    var rEff = applyEffectsModeToRow(baseRow);
+    var target = rEff.gain * volumeMultiplier();
+    state.audio.gainNode.gain.cancelScheduledValues(now);
+    state.audio.gainNode.gain.setValueAtTime(state.audio.gainNode.gain.value, now);
+    state.audio.gainNode.gain.linearRampToValueAtTime(target, now + 2);
+    state.audio._momentumFactor = 1;
+  }
+
+  function runMomentumFadeCheck() {
+    var auPtr = state.audio;
+    if (!auPtr.graphReady || !auPtr.context) return;
+    if (!auPtr.config.momentumFade) return;
+    if (Date.now() - auPtr.lastInteraction < auPtr.config.fadeDelay * 1000) return;
+    if (!auPtr.gainNode) return;
+    var ctx = auPtr.context;
+    var now = ctx.currentTime;
+    var baseRow = state.mode === "present" ? mergePresentRow() : Object.assign({}, eraRowByNum(state.currentEra));
+    var rEff = applyEffectsModeToRow(baseRow);
+    var low = rEff.gain * volumeMultiplier() * 0.2;
+    auPtr.gainNode.gain.cancelScheduledValues(now);
+    auPtr.gainNode.gain.setValueAtTime(auPtr.gainNode.gain.value, now);
+    auPtr.gainNode.gain.linearRampToValueAtTime(low, now + 4);
+    auPtr._momentumFactor = 0.2;
+  }
+
+  function tryLoadPieBuffer() {
+    if (state.audio.buffer) return Promise.resolve();
+    function decodeAb(ab) {
+      var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+      if (!OAC) return Promise.resolve();
+      var tmp = new OAC(1, 2, 44100);
+      return tmp.decodeAudioData(ab.slice(0)).then(function (buf) {
+        state.audio.buffer = buf;
+      });
+    }
+    if (state.folderHandle) {
+      return state.folderHandle
+        .getDirectoryHandle("audio", { create: false })
+        .then(function (dh) { return dh.getFileHandle("Pie.m4a", { create: false }); })
+        .then(function (fh) { return fh.getFile(); })
+        .then(function (file) { return file.arrayBuffer(); })
+        .then(decodeAb)
+        .catch(function () { return fetch("audio/Pie.m4a").then(function (r) { return r.arrayBuffer(); }).then(decodeAb).catch(function () {}); });
+    }
+    return fetch("audio/Pie.m4a")
+      .then(function (r) { return r.arrayBuffer(); })
+      .then(decodeAb)
+      .catch(function () {});
+  }
+
+  function setMasterGainTarget(vol, ms) {
+    var auPtr = state.audio;
+    if (!auPtr.context || !auPtr.masterGainNode) return;
+    var ctx = auPtr.context;
+    var now = ctx.currentTime;
+    var end = now + ms / 1000;
+    auPtr.masterGainNode.gain.cancelScheduledValues(now);
+    auPtr.masterGainNode.gain.setValueAtTime(auPtr.masterGainNode.gain.value, now);
+    auPtr.masterGainNode.gain.linearRampToValueAtTime(vol, end);
+  }
+
+  function audioReEntryRampGain() {
+    var auPtr = state.audio;
+    if (!auPtr.graphReady || !auPtr.gainNode) return;
+    if (auPtr.enabled === false) return;
+    var ctx = auPtr.context;
+    var now = ctx.currentTime;
+    var baseRow = state.mode === "present" ? mergePresentRow() : Object.assign({}, eraRowByNum(state.currentEra));
+    var rEff = applyEffectsModeToRow(baseRow);
+    var mult = auPtr._momentumFactor != null && auPtr._momentumFactor < 1 ? auPtr._momentumFactor : 1;
+    var target = rEff.gain * volumeMultiplier() * mult;
+    auPtr.gainNode.gain.cancelScheduledValues(now);
+    auPtr.gainNode.gain.setValueAtTime(auPtr.gainNode.gain.value, now);
+    auPtr.gainNode.gain.linearRampToValueAtTime(target, now + 1.5);
+  }
+
+  function playbackRowForSources() {
+    var row = state.mode === "present" ? mergePresentRow() : Object.assign({}, eraRowByNum(state.currentEra));
+    return applyEffectsModeToRow(row);
+  }
+
+  function scheduleCrossfadeFromSegmentStart(segmentZeroCtxTime) {
+    var auPtr = state.audio;
+    var ctx = auPtr.context;
+    if (!ctx || !auPtr.buffer) return;
+    if (auPtr._xfTimer) {
+      clearTimeout(auPtr._xfTimer);
+      auPtr._xfTimer = null;
+    }
+    var fadeStart = segmentZeroCtxTime + LOOP_TRIGGER_SEC;
+    if (fadeStart < ctx.currentTime + 0.05) fadeStart = ctx.currentTime + 0.05;
+    var fadeEnd = fadeStart + CROSSFADE_SEC;
+    var oldIsA = auPtr.activeCrossfadeSlot === 0;
+    var oldGain = oldIsA ? auPtr.crossfadeGainA : auPtr.crossfadeGainB;
+    var newGain = oldIsA ? auPtr.crossfadeGainB : auPtr.crossfadeGainA;
+    var oldSrc = oldIsA ? auPtr.sourceA : auPtr.sourceB;
+    var row = playbackRowForSources();
+    var newSrc = ctx.createBufferSource();
+    newSrc.buffer = auPtr.buffer;
+    newSrc.loop = false;
+    newSrc.playbackRate.value = row.rate;
+    if (oldSrc) oldSrc.playbackRate.value = row.rate;
+    newSrc.connect(newGain);
+    newSrc.start(fadeStart, 0);
+    if (oldIsA) auPtr.sourceB = newSrc;
+    else auPtr.sourceA = newSrc;
+    var now = ctx.currentTime;
+    oldGain.gain.cancelScheduledValues(now);
+    newGain.gain.cancelScheduledValues(now);
+    oldGain.gain.setValueAtTime(1, fadeStart);
+    oldGain.gain.linearRampToValueAtTime(0, fadeEnd);
+    newGain.gain.setValueAtTime(0, fadeStart);
+    newGain.gain.linearRampToValueAtTime(1, fadeEnd);
+    if (oldSrc) {
+      try {
+        oldSrc.stop(fadeEnd + 0.05);
+      } catch (e) {}
+    }
+    auPtr.activeCrossfadeSlot = oldIsA ? 1 : 0;
+    var nextSegZero = fadeStart;
+    var delayMs = (nextSegZero + LOOP_TRIGGER_SEC - ctx.currentTime) * 1000;
+    auPtr._xfTimer = window.setTimeout(function () {
+      auPtr._xfTimer = null;
+      if (state.audio.context !== ctx) return;
+      scheduleCrossfadeFromSegmentStart(nextSegZero);
+    }, Math.max(50, delayMs));
+  }
+
+  function initAudioGraphAndStart() {
+    var auPtr = state.audio;
+    if (auPtr.graphReady || !auPtr.buffer) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    var ctx = new AC();
+    auPtr.context = ctx;
+    auPtr.suspendedByVisibility = false;
+
+    auPtr.crossfadeGainA = ctx.createGain();
+    auPtr.crossfadeGainB = ctx.createGain();
+    auPtr.gainNode = ctx.createGain();
+    auPtr.distortionNode = ctx.createWaveShaper();
+    auPtr.distortionNode.oversample = "2x";
+    auPtr.filterNode = ctx.createBiquadFilter();
+    auPtr.filterNode.type = "lowpass";
+    auPtr.filterNode.frequency.value = 20000;
+    auPtr.reverbDryGain = ctx.createGain();
+    auPtr.convolver = ctx.createConvolver();
+    auPtr.reverbWetGain = ctx.createGain();
+    auPtr.masterGainNode = ctx.createGain();
+
+    auPtr.convolver.buffer = createSyntheticReverbBuffer(ctx);
+
+    auPtr.crossfadeGainA.connect(auPtr.gainNode);
+    auPtr.crossfadeGainB.connect(auPtr.gainNode);
+    auPtr.gainNode.connect(auPtr.distortionNode);
+    auPtr.distortionNode.connect(auPtr.filterNode);
+    auPtr.filterNode.connect(auPtr.reverbDryGain);
+    auPtr.filterNode.connect(auPtr.convolver);
+    auPtr.convolver.connect(auPtr.reverbWetGain);
+    auPtr.reverbDryGain.connect(auPtr.masterGainNode);
+    auPtr.reverbWetGain.connect(auPtr.masterGainNode);
+    auPtr.masterGainNode.connect(ctx.destination);
+
+    var firstPlayDone = false;
+    try {
+      firstPlayDone = localStorage.getItem(LS_AUDIO_FIRST_PLAY) === "1";
+    } catch (e) {}
+    var rowInit = firstPlayDone
+      ? state.mode === "present"
+        ? mergePresentRow()
+        : Object.assign({}, eraRowByNum(state.currentEra))
+      : Object.assign({}, eraRowByNum(1));
+    var r0 = applyEffectsModeToRow(rowInit);
+    auPtr.distortionNode.curve = makeDistortionCurve(r0.distortion);
+    auPtr._distortionAmt = r0.distortion;
+    auPtr.filterNode.frequency.value = r0.filter;
+    auPtr.reverbDryGain.gain.value = 1 - r0.reverb;
+    auPtr.reverbWetGain.gain.value = r0.reverb;
+    auPtr.gainNode.gain.value = 0;
+    auPtr.masterGainNode.gain.value = auPtr.enabled ? 1 : 0.02;
+
+    var resumeOffset = 0;
+    try {
+      var saved = parseFloat(localStorage.getItem(LS_AUDIO_POS) || "0");
+      if (!isNaN(saved) && saved > 0 && saved < BUFFER_DURATION_SEC - 1) resumeOffset = saved;
+    } catch (e) {}
+    if (resumeOffset >= LOOP_TRIGGER_SEC) resumeOffset = 0;
+
+    var t0 = ctx.currentTime;
+    var src = ctx.createBufferSource();
+    src.buffer = auPtr.buffer;
+    src.loop = false;
+    src.playbackRate.value = r0.rate;
+    src.connect(auPtr.crossfadeGainA);
+    auPtr.sourceA = src;
+    auPtr.crossfadeGainA.gain.value = 1;
+    auPtr.crossfadeGainB.gain.value = 0;
+    auPtr.activeCrossfadeSlot = 0;
+    src.start(t0, resumeOffset);
+    var segmentZeroCtx = t0 - resumeOffset;
+    scheduleCrossfadeFromSegmentStart(segmentZeroCtx);
+
+    auPtr.graphReady = true;
+    auPtr._momentumFactor = 1;
+    ctx.onstatechange = function () {
+      if (!state.audio.context || state.audio.context !== ctx) return;
+      if (ctx.state === "suspended" && !state.audio.suspendedByVisibility) {
+        window.setTimeout(function () {
+          if (state.audio.context === ctx) ctx.resume().catch(function () {});
+        }, 500);
+      }
+      if (ctx.state === "interrupted") {
+        window.setTimeout(function () {
+          if (state.audio.context === ctx) ctx.resume().catch(function () {});
+        }, 500);
+      }
+    };
+    document.addEventListener("visibilitychange", onAudioVisibilityChange);
+
+    if (!firstPlayDone) {
+      var now2 = ctx.currentTime;
+      auPtr.gainNode.gain.cancelScheduledValues(now2);
+      auPtr.gainNode.gain.setValueAtTime(0, now2);
+      var rowTarget = applyEffectsModeToRow(Object.assign({}, eraRowByNum(1)));
+      auPtr.gainNode.gain.linearRampToValueAtTime(rowTarget.gain * volumeMultiplier(), now2 + 3);
+      try {
+        localStorage.setItem(LS_AUDIO_FIRST_PLAY, "1");
+      } catch (e2) {}
+    } else {
+      if (state.mode === "present") applyPresentBaselineAudio(500);
+      else applyEraAudio(state.currentEra, 500);
+    }
+
+    if (!auPtr.momentumTimer)
+      auPtr.momentumTimer = window.setInterval(runMomentumFadeCheck, 5000);
+    if (!auPtr.positionTimer)
+      auPtr.positionTimer = window.setInterval(function () {
+        if (!state.audio.context || !state.audio.graphReady) return;
+        try {
+          var rel = state.audio.context.currentTime % BUFFER_DURATION_SEC;
+          persistAudioPosition(rel);
+        } catch (e) {}
+      }, 10000);
+  }
+
+  function onAudioVisibilityChange() {
+    var auPtr = state.audio;
+    if (!auPtr.context) return;
+    if (document.hidden) {
+      auPtr.suspendedByVisibility = true;
+      auPtr.context.suspend().catch(function () {});
+    } else {
+      auPtr.suspendedByVisibility = false;
+      auPtr.context.resume().then(function () {
+        audioReEntryRampGain();
+      }).catch(function () {});
+    }
+  }
+
+  function unlockAudioAndPrepare() {
+    state.audio.unlocked = true;
+    persistAudioUnlock();
+    updateAudioToggleDom();
+    tryLoadPieBuffer().then(function () {
+      bindFirstUserGestureForAudio();
+    });
+  }
+
+  function bindFirstUserGestureForAudio() {
+    if (state.audio.gestureBound) return;
+    state.audio.gestureBound = true;
+    var handler = function () {
+      if (!state.audio.unlocked) return;
+      if (!state.audio.buffer) {
+        tryLoadPieBuffer().then(function () {
+          if (state.audio.buffer) tryStartAudioAfterGesture();
+        });
+        return;
+      }
+      tryStartAudioAfterGesture();
+    };
+    document.addEventListener(
+      "pointerdown",
+      function () {
+        handler();
+      },
+      { capture: true, passive: true }
+    );
+  }
+
+  function tryStartAudioAfterGesture() {
+    var auPtr = state.audio;
+    if (!auPtr.unlocked) return;
+    if (!auPtr.enabled) return;
+    if (auPtr.graphReady) {
+      if (auPtr.context && auPtr.context.state === "suspended") auPtr.context.resume().catch(function () {});
+      return;
+    }
+    if (!auPtr.buffer) return;
+    initAudioGraphAndStart();
+  }
+
+  function updateAudioToggleDom() {
+    var wrap = $("audio-toggle-wrap");
+    var span = $("audio-toggle");
+    if (!wrap || !span) return;
+    if (!state.audio.unlocked) {
+      wrap.hidden = true;
+      return;
+    }
+    wrap.hidden = false;
+    span.classList.toggle("off", !state.audio.enabled);
+    var ph = $("audio-config-panel-holder");
+    if (ph && !state.audio.configOpen) ph.innerHTML = "";
+  }
+
+  function closeAudioConfigPanel() {
+    state.audio.configOpen = false;
+    var ph = $("audio-config-panel-holder");
+    if (ph) ph.innerHTML = "";
+    document.removeEventListener("pointerdown", onDocPointerCloseAudioPanel, true);
+  }
+
+  function onDocPointerCloseAudioPanel(ev) {
+    var panel = $("audio-config-panel");
+    var toggle = $("audio-toggle");
+    if (panel && panel.contains(ev.target)) return;
+    if (toggle && toggle.contains(ev.target)) return;
+    closeAudioConfigPanel();
+  }
+
+  function renderAudioConfigPanel() {
+    var ph = $("audio-config-panel-holder");
+    if (!ph) return;
+    var c = state.audio.config;
+    ph.innerHTML =
+      '<div class="audio-config-panel" id="audio-config-panel" tabindex="-1">' +
+      '<span class="audio-config-label">Vol</span>' +
+      '<input type="range" min="0" max="100" class="audio-config-slider" id="ac-vol-inp" value="' +
+      c.volume +
+      '" />' +
+      '<span class="audio-config-val mono" id="ac-vol-val">' + c.volume + '</span>' +
+      "</div>";
+    wireAudioConfigPanel();
+  }
+
+  function wireAudioConfigPanel() {
+    var panel = $("audio-config-panel");
+    if (!panel) return;
+    panel.addEventListener("click", function (e) { e.stopPropagation(); });
+    var volInp = $("ac-vol-inp");
+    if (volInp) {
+      volInp.addEventListener("input", function () {
+        var v = parseInt(String(volInp.value), 10);
+        if (isNaN(v)) return;
+        state.audio.config.volume = Math.max(0, Math.min(100, v));
+        var valEl = $("ac-vol-val");
+        if (valEl) valEl.textContent = state.audio.config.volume;
+        persistAudioConfig();
+        refreshAudioFromConfig();
+      });
+    }
+  }
+
+  function refreshAudioFromConfig() {
+    if (!state.audio.graphReady) return;
+    var ms = 50;
+    if (state.mode === "present") applyPresentBaselineAudio(ms);
+    else applyEraAudio(state.currentEra, ms);
+  }
+
+  var audioLongPressTimer = null;
+  var audioLongPressArmed = false;
+
+  function wireAudioToggleChrome() {
+    var span = $("audio-toggle");
+    if (!span) return;
+    var startPress = function () {
+      audioLongPressArmed = false;
+      audioLongPressTimer = window.setTimeout(function () {
+        audioLongPressArmed = true;
+        audioLongPressTimer = null;
+        state.audio.configOpen = true;
+        renderAudioConfigPanel();
+        document.addEventListener("pointerdown", onDocPointerCloseAudioPanel, true);
+      }, 500);
+    };
+    var endPress = function () {
+      if (audioLongPressTimer) {
+        clearTimeout(audioLongPressTimer);
+        audioLongPressTimer = null;
+      }
+    };
+    span.addEventListener("mousedown", startPress);
+    span.addEventListener("mouseup", endPress);
+    span.addEventListener("mouseleave", endPress);
+    span.addEventListener("touchstart", startPress, { passive: true });
+    span.addEventListener("touchend", endPress);
+    span.addEventListener("click", function (e) {
+      if (audioLongPressArmed) {
+        e.preventDefault();
+        e.stopPropagation();
+        audioLongPressArmed = false;
+        return;
+      }
+      if (!state.audio.unlocked) return;
+      state.audio.enabled = !state.audio.enabled;
+      persistAudioEnabled();
+      updateAudioToggleDom();
+      if (state.audio.enabled) {
+        if (!state.audio.graphReady && state.audio.buffer) {
+          initAudioGraphAndStart();
+        } else if (!state.audio.graphReady) {
+          tryLoadPieBuffer().then(function () {
+            if (state.audio.buffer) initAudioGraphAndStart();
+          });
+        }
+        if (state.audio.graphReady) {
+          setMasterGainTarget(1, 1500);
+          refreshAudioFromConfig();
+        }
+      } else {
+        setMasterGainTarget(0.02, 2000);
+      }
+    });
   }
 
   function idbOpen() {
@@ -218,6 +970,7 @@ import { data } from "./data.js";
       })
       .catch(function () {})
       .then(function () {
+        tryLoadPieBuffer();
         return readVariablesFromHandle();
       })
       .then(function (diskVars) {
@@ -356,6 +1109,7 @@ import { data } from "./data.js";
     var evs = getEraEvents(state.currentEra);
     var stress = evs.length && evs[0].stress_level != null ? evs[0].stress_level : state.stressLevel;
     animateStressTo(stress);
+    if (state.audio.graphReady) applyEraAudio(state.currentEra, 5000);
     renderHome();
     updateDateline();
   }
@@ -641,32 +1395,35 @@ import { data } from "./data.js";
     html = html.replace(/\n\n+/g, "</p><p>");
     html = "<p>" + html + "</p>";
     html = html.replace(/<p><\/p>/g, "");
+    // Convert → **Name** connection links to tappable article links
+    html = html.replace(/<p>→ <strong>([^<]+)<\/strong>/g, function (m, name) {
+      var slug = name.toLowerCase().replace(/[()'']/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
+      if (MANIFEST_SLUGS[slug]) {
+        return '<p class="concept-link-para">→ <a href="#" class="text-link concept-link" data-slug="' + slug + '">' + name + "</a>";
+      }
+      return m;
+    });
     return html;
   }
 
   function renderSectionHtml(rawText, vars, editableKeys) {
     var map = buildReplaceMap(vars);
-    var parts = rawText.split(/\{\{(\w+)\}\}/g);
-    var html = "";
-    for (var i = 0; i < parts.length; i++) {
-      if (i % 2 === 0) {
-        html += mdInlineToHtml(parts[i]);
-      } else {
-        var key = parts[i];
-        var display = map[key] != null ? map[key] : "—";
-        var canEdit = editableKeys.indexOf(key) !== -1;
-        if (canEdit) {
-          html +=
-            '<button type="button" class="var-inline" data-var="' +
-            key +
-            '">' +
-            display +
-            "</button>";
-        } else {
-          html += '<span class="var-wrap" data-var="' + key + '">' + display + "</span>";
-        }
-      }
-    }
+    // Replace {{var}} with \x00PHn\x00 placeholders first so bold markers
+    // like **{{coverage_days}} days** survive the markdown pass intact.
+    var placeholders = [];
+    var withPH = rawText.replace(/\{\{(\w+)\}\}/g, function (_, key) {
+      var display = map[key] != null ? map[key] : "—";
+      var canEdit = editableKeys.indexOf(key) !== -1;
+      var span = canEdit
+        ? '<button type="button" class="var-inline" data-var="' + key + '">' + display + "</button>"
+        : '<span class="var-wrap" data-var="' + key + '">' + display + "</span>";
+      placeholders.push(span);
+      return "\x00PH" + (placeholders.length - 1) + "\x00";
+    });
+    var html = mdInlineToHtml(withPH);
+    html = html.replace(/\x00PH(\d+)\x00/g, function (_, idx) {
+      return placeholders[parseInt(idx, 10)];
+    });
     return html;
   }
 
@@ -726,6 +1483,7 @@ import { data } from "./data.js";
     state.ghostTracks = gt || {};
     loadConceptsFromStorage();
     hydrateDiskVariables(overrides);
+    maybeApplyEventStressAudio();
   }
 
   function hydrateDiskVariables(overrides) {
@@ -776,6 +1534,10 @@ import { data } from "./data.js";
     Object.assign(state.variables[key], entry);
     writeVariablesToHandle();
     updateNavClarity();
+    touchAudioLastInteraction();
+    if (state.audio.graphReady && key === "stress_level" && state.mode === "present") {
+      applyPresentBaselineAudio(3000);
+    }
   }
 
   function updateDateline() {
@@ -930,12 +1692,26 @@ import { data } from "./data.js";
     });
   }
 
+  function eraDateLabel(era) {
+    var evs = getEraEvents(era);
+    return evs.length ? evs[0].date : "2008";
+  }
+
+  function getHomeNewsEvents() {
+    if (state.mode !== "2008") return [];
+    var out = [];
+    for (var e = state.currentEra; e <= 9 && out.length < 7; e++) {
+      out = out.concat(getEraEvents(e));
+    }
+    return out.slice(0, 7);
+  }
+
   function renderHome() {
     var newsTitle = $("in-the-news-title");
     if (newsTitle) {
       if (state.mode === "present") newsTitle.textContent = "In the news — Your feed";
       else if (state.mode === "2008")
-        newsTitle.textContent = "In the news — Era " + state.currentEra;
+        newsTitle.textContent = "In the news — " + eraDateLabel(state.currentEra);
       else newsTitle.textContent = "In the news";
     }
     var newsList = $("in-the-news-list");
@@ -949,7 +1725,7 @@ import { data } from "./data.js";
       } else {
         var evs =
           state.mode === "2008"
-            ? getEraEvents(state.currentEra).slice(0, 7)
+            ? getHomeNewsEvents()
             : state.events.length
               ? state.events.slice(0, 7)
               : fallbackNews();
@@ -962,6 +1738,9 @@ import { data } from "./data.js";
             evt.preventDefault();
             if (state.mode === "2008") state.currentEventIndex = i;
             saveEraState();
+            syncEventStress();
+            maybeApplyEventStressAudio();
+            touchAudioLastInteraction();
             if (e.article) openArticle(e.article);
           });
           li.appendChild(a);
@@ -1057,6 +1836,10 @@ import { data } from "./data.js";
     if (b2008) b2008.setAttribute("aria-pressed", mode === "2008" ? "true" : "false");
     if (bp) bp.setAttribute("aria-pressed", mode === "present" ? "true" : "false");
     loadSimulationBundle();
+    if (state.audio.graphReady) {
+      if (state.mode === "present") applyPresentBaselineAudio(5000);
+      else applyEraAudio(state.currentEra, 5000);
+    }
     renderHome();
     syncChromeTickerGauge();
     if ($("view-article") && !$("view-article").classList.contains("hidden")) {
@@ -1087,14 +1870,11 @@ import { data } from "./data.js";
   function revealNavIfNeeded() {
     if (localStorage.getItem(LS_FIRST_DONE) === "1") {
       document.body.classList.add("nav-visible");
-      var shell = $("nav-shell");
-      if (shell && window.matchMedia && window.matchMedia("(max-width: 900px)").matches) {
-        shell.classList.add("show-mobile");
-      }
     }
   }
 
   function openArticle(slug) {
+    touchAudioLastInteraction();
     document.body.classList.remove("view-worksheet");
     var margin = $("article-margin");
     if (margin) margin.classList.remove("hidden");
@@ -1199,6 +1979,17 @@ import { data } from "./data.js";
     }
     if (body) body.innerHTML = html;
     wireVarButtons(keys);
+    // Wire → **Article** concept links
+    if (body) {
+      body.querySelectorAll(".concept-link").forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var slug = a.getAttribute("data-slug");
+          if (slug) openArticle(slug);
+        });
+      });
+    }
     if (next) {
       next.classList.toggle("hidden", state.currentSection >= state.sections.length - 1);
       next.onclick = function (e) {
@@ -1218,6 +2009,7 @@ import { data } from "./data.js";
   }
 
   function advanceSection() {
+    touchAudioLastInteraction();
     var slug = state.currentArticle;
     var prevSec = state.currentSection;
     if (slug === "federal-reserve" && !tickerLive() && prevSec >= 1) {
@@ -1241,6 +2033,7 @@ import { data } from "./data.js";
   }
 
   function markArticleComplete() {
+    var firstFullArticleEver = localStorage.getItem(LS_FIRST_DONE) !== "1";
     localStorage.setItem(LS_FIRST_DONE, "1");
     revealNavIfNeeded();
     if (Array.isArray(state.meta.concepts)) {
@@ -1267,6 +2060,7 @@ import { data } from "./data.js";
     }
     advanceEraFromArticleCompletion(slug);
     updateNavClarity();
+    if (firstFullArticleEver) unlockAudioAndPrepare();
   }
 
   function loadConceptsFromStorage() {
@@ -1422,11 +2216,29 @@ import { data } from "./data.js";
     if (logEl && track && track.log) {
       logEl.innerHTML = track.log
         .map(function (entry) {
+          var stats = "";
+          if (entry.net_worth != null || entry.cash != null) {
+            var parts = [];
+            if (entry.net_worth != null) parts.push("NW " + fmtMoney(entry.net_worth));
+            if (entry.cash != null) parts.push("Cash " + fmtMoney(entry.cash));
+            if (entry.coverage_days != null) parts.push(Math.round(entry.coverage_days) + " days coverage");
+            if (entry.credit_card_debt != null && entry.credit_card_debt > 0)
+              parts.push("CC debt " + fmtMoney(entry.credit_card_debt));
+            stats =
+              '<div class="ghost-entry-stats mono">' +
+              parts.join(" · ") +
+              "</div>";
+          }
+          var thinking = entry.thinking
+            ? '<div class="ghost-entry-thinking">"' + entry.thinking.replace(/</g, "&lt;") + '"</div>'
+            : "";
           return (
             '<div class="ghost-entry"><div class="ghost-entry-date">' +
             (entry.date || "").replace(/</g, "&lt;") +
             '</div><div class="ghost-entry-body">' +
-            (entry.action || entry.thinking || "").replace(/</g, "&lt;") +
+            (entry.action || "").replace(/</g, "&lt;") +
+            thinking +
+            stats +
             "</div></div>"
           );
         })
@@ -1656,15 +2468,20 @@ import { data } from "./data.js";
         revealNavIfNeeded();
       });
     }
+    wireAudioToggleChrome();
   }
 
   function init() {
+    hydrateAudioFromStorage();
     bindChrome();
+    updateAudioToggleDom();
+    if (state.audio.unlocked && state.audio.enabled) bindFirstUserGestureForAudio();
     loadPersistedEraState();
     syncChromeTickerGauge();
     restoreFolderHandleFromIdb()
       .then(function (h) {
         state.folderHandle = h;
+        if (h) tryLoadPieBuffer();
         tryGrantFolderOnce();
         revealNavIfNeeded();
         updateNavClarity();

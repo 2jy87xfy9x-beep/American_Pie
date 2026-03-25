@@ -25,7 +25,7 @@ If **{{your_monthly_expenses}}** leaves your accounts each month and your take-h
 
 **{{your_monthly_income}}** − **{{your_monthly_expenses}}** = savings or shortfall each month.
 
-With **{{your_cash}}** on hand and zero income, rough days of bare-bones coverage (same mock curve as emergency fund math) land near **{{coverage_days}} days** before you borrow, beg, or break a retirement account.
+With **{{your_cash}}** on hand and zero income, rough days of bare-bones coverage (same mock curve as emergency fund math) land near **{{coverage_days}}** before you borrow, beg, or break a retirement account.
 
 If unemployment later replaced ~45% of prior wages, the monthly hole after a layoff would be on the order of **{{income_gap}}** until you cut spending or replaced income.
 

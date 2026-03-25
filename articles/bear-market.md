@@ -25,7 +25,7 @@ If **{{your_investment_value}}** was **$20,000** at a −37% peak-to-trough sket
 
 Divide by **{{your_monthly_expenses}}** to see how many months of burn that loss represented emotionally even if not realized — the fear units humans actually trade in.
 
-Coverage clock on cash alone: **{{coverage_days}} days** if income hits zero — overlaps terrify people into selling lows.
+Coverage clock on cash alone: **{{coverage_days}}** if income hits zero — overlaps terrify people into selling lows.
 
 ## What People Did
 
