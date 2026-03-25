@@ -1,6 +1,8 @@
-(function () {
-  "use strict";
+import { data } from "./data.js";
 
+"use strict";
+
+(function () {
   var ROOT = "";
   var state = {
     mode: "2008",
@@ -57,11 +59,11 @@
     return String(Math.round(n)) + " days";
   }
 
-  function articlePath(slug) {
+  function articleDataKey(slug) {
     if (state.mode === "present" && slug.indexOf("/") === -1) {
-      return ROOT + "articles/present/" + slug + ".md";
+      return "present/" + slug;
     }
-    return ROOT + "articles/" + slug + ".md";
+    return slug;
   }
 
   function simPath(file) {
@@ -253,43 +255,31 @@
     };
   }
 
-  async function fetchText(url) {
-    var res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error("fetch failed: " + url);
-    return res.text();
+  function simulationDataKey(file) {
+    var folder = state.mode === "present" ? "present" : "2008";
+    var base = file.replace(/\.json$/i, "");
+    return folder + "/" + base;
   }
 
-  function showFileBanner() {
-    var b = $("file-protocol-banner");
-    if (b) b.classList.remove("hidden");
-  }
-
-  async function loadSimulationBundle() {
+  function loadSimulationBundle() {
     var overrides = loadLocalOverrides()[state.mode] || {};
-    try {
-      var vText = await fetchText(simPath("variables.json"));
-      var base = JSON.parse(vText);
+    var base = data.simulations[simulationDataKey("variables.json")];
+    if (base) {
       state.variables = mergeVariables(base, overrides);
-    } catch (e) {
-      showFileBanner();
+    } else {
       state.variables = {};
     }
-    try {
-      state.events = JSON.parse(await fetchText(simPath("events.json")));
+    var ev = data.simulations[simulationDataKey("events.json")];
+    if (ev) {
+      state.events = ev;
       syncEventStress();
-    } catch (e) {
+    } else {
       state.events = [];
     }
-    try {
-      state.didYouKnow = JSON.parse(await fetchText(simPath("did-you-know.json")));
-    } catch (e) {
-      state.didYouKnow = [];
-    }
-    try {
-      state.ghostTracks = JSON.parse(await fetchText(simPath("ghost-tracks.json")));
-    } catch (e) {
-      state.ghostTracks = {};
-    }
+    var dyk = data.simulations[simulationDataKey("did-you-know.json")];
+    state.didYouKnow = dyk || [];
+    var gt = data.simulations[simulationDataKey("ghost-tracks.json")];
+    state.ghostTracks = gt || {};
     loadConceptsFromStorage();
   }
 
@@ -562,12 +552,11 @@
     var bp = $("mode-present");
     if (b2008) b2008.setAttribute("aria-pressed", mode === "2008" ? "true" : "false");
     if (bp) bp.setAttribute("aria-pressed", mode === "present" ? "true" : "false");
-    loadSimulationBundle().then(function () {
-      renderHome();
-      if ($("view-article") && !$("view-article").classList.contains("hidden")) {
-        if (state.currentArticle) openArticle(state.currentArticle);
-      }
-    });
+    loadSimulationBundle();
+    renderHome();
+    if ($("view-article") && !$("view-article").classList.contains("hidden")) {
+      if (state.currentArticle) openArticle(state.currentArticle);
+    }
   }
 
   function showView(name) {
@@ -602,19 +591,19 @@
     state.revealOpen = false;
     state.marginEditOpen = false;
     hideMarginEditor();
-    fetchText(articlePath(slug))
-      .then(function (md) {
-        var parsed = parseFrontmatter(md);
-        state.meta = parsed.meta;
-        state.sections = splitSections(parsed.body);
-        renderArticle();
-        showView("article");
-        updateDateline();
-        updateNavClarity();
-      })
-      .catch(function () {
-        showFileBanner();
-      });
+    var key = articleDataKey(slug);
+    var md = data.articles[key];
+    if (!md) {
+      openStub("Article", "emergency-fund");
+      return;
+    }
+    var parsed = parseFrontmatter(md);
+    state.meta = parsed.meta;
+    state.sections = splitSections(parsed.body);
+    renderArticle();
+    showView("article");
+    updateDateline();
+    updateNavClarity();
   }
 
   function renderArticle() {
@@ -1051,9 +1040,6 @@
   }
 
   function init() {
-    if (location.protocol === "file:") {
-      showFileBanner();
-    }
     bindChrome();
     revealNavIfNeeded();
     updateNavClarity();

@@ -71,23 +71,6 @@ body.theme-newspaper::before {
   padding-bottom: 120px;
 }
 
-.file-protocol-banner {
-  background: var(--text);
-  color: var(--bg);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  padding: 8px 12px;
-  text-align: center;
-}
-
-.file-protocol-banner code {
-  color: var(--bg);
-}
-
-.file-protocol-banner.hidden {
-  display: none;
-}
-
 /* Dateline — newspaper primary; encyclopedia minimal strip */
 .dateline {
   font-family: var(--font-mono);

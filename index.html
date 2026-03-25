@@ -8,14 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Linux+Libertine:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script type="module" src="data.js"></script>
 </head>
 <body class="theme-encyclopedia">
-  <div id="file-protocol-banner" class="file-protocol-banner hidden" role="status">
-    American Pie loads articles and data over HTTP. From this folder run:
-    <code>python -m http.server 8765</code>
-    then open <code>http://localhost:8765</code>
-  </div>
-
   <header class="dateline" aria-hidden="false">
     <span class="dateline-brand">American Pie</span>
     <span class="dateline-date" id="dateline-text"></span>
@@ -212,6 +207,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
