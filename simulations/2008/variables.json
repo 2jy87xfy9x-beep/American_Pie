@@ -1,0 +1,42 @@
+{
+  "fed_funds_rate": {
+    "value": 3.0,
+    "unit": "percent",
+    "confirmed": true,
+    "source": "federalreserve.gov",
+    "last_checked": "2008-03-01",
+    "notes": "Target rate after early-2008 cuts (mock trajectory)"
+  },
+  "your_monthly_expenses": {
+    "value": 2100,
+    "unit": "dollars",
+    "confirmed": true,
+    "source": "mock data",
+    "last_checked": "2008-01-01",
+    "notes": "Rent 950, food 400, car 300, other 450"
+  },
+  "your_cash": {
+    "value": 7000,
+    "unit": "dollars",
+    "confirmed": true,
+    "source": "mock data",
+    "last_checked": "2008-01-01",
+    "notes": "Starting position — checking and savings"
+  },
+  "your_monthly_income": {
+    "value": 2100,
+    "unit": "dollars",
+    "confirmed": true,
+    "source": "mock data",
+    "last_checked": "2008-01-01",
+    "notes": "Take-home used in baseline ghost tracks"
+  },
+  "stress_level": {
+    "value": 38,
+    "unit": "number",
+    "confirmed": true,
+    "source": "simulation",
+    "last_checked": "2008-03-01",
+    "notes": "Era 2 baseline for UI"
+  }
+}

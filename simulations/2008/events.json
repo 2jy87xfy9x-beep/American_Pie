@@ -1,0 +1,71 @@
+[
+  {
+    "id": "2008-01",
+    "date": "January 2008",
+    "era": 1,
+    "headline": "Federal Reserve cuts interest rates again as credit stress builds",
+    "ticker_text": "FED CUTS RATES · CREDIT CONDITIONS TIGHTEN",
+    "track": "economy",
+    "article": "federal-reserve",
+    "stress_level": 12,
+    "variables_affected": ["fed_funds_rate"],
+    "ghost_track_updates": {}
+  },
+  {
+    "id": "2008-03-bear",
+    "date": "March 2008",
+    "era": 2,
+    "headline": "Bear Stearns reports heavy losses tied to mortgage-backed securities",
+    "full_headline": "Bear Stearns reports $1.9B loss tied to mortgage-backed securities",
+    "ticker_text": "BEAR STEARNS · MBS LOSSES",
+    "track": "markets",
+    "article": "bear-stearns",
+    "stress_level": 38,
+    "variables_affected": [],
+    "ghost_track_updates": {}
+  },
+  {
+    "id": "2008-03-unemployment",
+    "date": "March 2008",
+    "era": 2,
+    "headline": "US unemployment reaches multi-year highs",
+    "ticker_text": "UNEMPLOYMENT CLIMBS · SENTIMENT WEAK",
+    "article": "unemployment-insurance",
+    "stress_level": 38,
+    "variables_affected": [],
+    "ghost_track_updates": {}
+  },
+  {
+    "id": "2008-oil",
+    "date": "March 2008",
+    "era": 2,
+    "headline": "Oil prices touch triple digits for the first time",
+    "ticker_text": "OIL · $100",
+    "article": "inflation",
+    "stress_level": 38,
+    "variables_affected": [],
+    "ghost_track_updates": {}
+  },
+  {
+    "id": "2008-confidence",
+    "date": "March 2008",
+    "era": 2,
+    "headline": "Consumer confidence weakens to a multi-year low",
+    "ticker_text": "CONSUMER CONFIDENCE · WEAK",
+    "article": "bull-market",
+    "stress_level": 38,
+    "variables_affected": [],
+    "ghost_track_updates": {}
+  },
+  {
+    "id": "2008-fed-2",
+    "date": "March 2008",
+    "era": 2,
+    "headline": "Federal Reserve cuts interest rates for the fourth time in six months",
+    "ticker_text": "FED CUTS RATES 25BPS · FOURTH CUT IN SIX MONTHS",
+    "article": "federal-reserve",
+    "stress_level": 38,
+    "variables_affected": ["fed_funds_rate"],
+    "ghost_track_updates": {}
+  }
+]

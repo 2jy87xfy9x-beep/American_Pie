@@ -1,0 +1,97 @@
+{
+  "winner": {
+    "color": "#2D6A4F",
+    "label": "The Winner",
+    "philosophy": "Smart, boring, consistent decisions made early.",
+    "log": [
+      {
+        "date": "January 2008",
+        "cash": 7000,
+        "monthly_burn": 2100,
+        "coverage_days": 100,
+        "credit_card_debt": 0,
+        "net_worth": 7000,
+        "action": "Moved two months of expenses to a high-yield savings account.",
+        "thinking": "If it sits in checking, it earns nothing."
+      },
+      {
+        "date": "March 2008",
+        "cash": 7000,
+        "monthly_burn": 2100,
+        "coverage_days": 100,
+        "credit_card_debt": 0,
+        "net_worth": 7120,
+        "action": "Calculated monthly burn rate for the first time. Result: $2,100/month.",
+        "thinking": "I need to know exactly where I stand."
+      }
+    ]
+  },
+  "weatherer": {
+    "color": "#1D3557",
+    "label": "The Weatherer",
+    "philosophy": "Never got ahead. Never collapsed.",
+    "log": [
+      {
+        "date": "January 2008",
+        "action": "Saw the Fed cuts. Did not change where cash sat.",
+        "thinking": "Headlines are noisy."
+      },
+      {
+        "date": "March 2008",
+        "action": "Tracked account balances weekly but avoided big moves.",
+        "thinking": "Steady as it goes."
+      }
+    ]
+  },
+  "unaware": {
+    "color": "#E9C46A",
+    "label": "The Unaware",
+    "philosophy": "Did not know the rules. Most common outcome.",
+    "log": [
+      {
+        "date": "January 2008",
+        "action": "Did not see the news about rates.",
+        "thinking": "Things feel normal."
+      },
+      {
+        "date": "March 2008",
+        "action": "Paid rent from checking; did not compute runway.",
+        "thinking": "Things will pick up soon."
+      }
+    ]
+  },
+  "gambler_lost": {
+    "color": "#E63946",
+    "label": "The Gambler Who Lost",
+    "philosophy": "Knew everything. Acted on it badly.",
+    "log": [
+      {
+        "date": "January 2008",
+        "action": "Increased short exposure to financials.",
+        "thinking": "The stress is tradable."
+      },
+      {
+        "date": "March 2008",
+        "action": "Shorted Lehman. Position up 40% (then variance hits later).",
+        "thinking": "Volatility is the product."
+      }
+    ]
+  },
+  "gambler_won": {
+    "color": "#6A994E",
+    "label": "The Gambler Who Won",
+    "philosophy": "Same knowledge. Better timing.",
+    "log": [
+      {
+        "date": "January 2008",
+        "action": "Increased short exposure to financials.",
+        "thinking": "The stress is tradable."
+      },
+      {
+        "date": "March 2008",
+        "action": "Shorted Lehman. Position up 40%.",
+        "thinking": "Same trade — for now identical to the other track."
+      }
+    ]
+  }
+}

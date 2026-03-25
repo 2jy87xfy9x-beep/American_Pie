@@ -1,0 +1,57 @@
+{
+  "winner": {
+    "color": "#2D6A4F",
+    "label": "Future You (disciplined)",
+    "log": [
+      {
+        "date": "Present",
+        "action": "Placeholder — your real-app log grows as you use the app.",
+        "thinking": "Start by entering real numbers once."
+      }
+    ]
+  },
+  "weatherer": {
+    "color": "#1D3557",
+    "label": "Steady profile",
+    "log": [
+      {
+        "date": "Present",
+        "action": "No simulation entries yet.",
+        "thinking": ""
+      }
+    ]
+  },
+  "unaware": {
+    "color": "#E9C46A",
+    "label": "Baseline",
+    "log": [
+      {
+        "date": "Present",
+        "action": "No simulation entries yet.",
+        "thinking": ""
+      }
+    ]
+  },
+  "gambler_lost": {
+    "color": "#E63946",
+    "label": "High risk",
+    "log": [
+      {
+        "date": "Present",
+        "action": "No simulation entries yet.",
+        "thinking": ""
+      }
+    ]
+  },
+  "gambler_won": {
+    "color": "#6A994E",
+    "label": "High risk + luck",
+    "log": [
+      {
+        "date": "Present",
+        "action": "No simulation entries yet.",
+        "thinking": ""
+      }
+    ]
+  }
+}

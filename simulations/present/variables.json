@@ -1,0 +1,42 @@
+{
+  "your_cash": {
+    "value": null,
+    "unit": "dollars",
+    "confirmed": false,
+    "source": "",
+    "last_checked": "",
+    "notes": "Total liquid cash — checking + savings (from your bank app)."
+  },
+  "your_monthly_expenses": {
+    "value": null,
+    "unit": "dollars",
+    "confirmed": false,
+    "source": "",
+    "last_checked": "",
+    "notes": "Average monthly spending — last three statements, sum outflows ÷ 3."
+  },
+  "your_monthly_income": {
+    "value": null,
+    "unit": "dollars",
+    "confirmed": false,
+    "source": "",
+    "last_checked": "",
+    "notes": "Take-home pay per month (net on pay stub)."
+  },
+  "fed_funds_rate": {
+    "value": null,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "federalreserve.gov",
+    "last_checked": "",
+    "notes": "Monetary Policy → Target Range."
+  },
+  "stress_level": {
+    "value": 10,
+    "unit": "number",
+    "confirmed": false,
+    "source": "user",
+    "last_checked": "",
+    "notes": "Personal stress index you maintain manually (0–100)."
+  }
+}

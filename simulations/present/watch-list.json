@@ -1,0 +1,20 @@
+[
+  {
+    "variable": "fed_funds_rate",
+    "label": "Federal funds target rate",
+    "source": "federalreserve.gov",
+    "cadence": "monthly"
+  },
+  {
+    "variable": "your_cash",
+    "label": "Liquid cash total",
+    "source": "Bank app",
+    "cadence": "monthly"
+  },
+  {
+    "variable": "your_monthly_expenses",
+    "label": "Burn rate",
+    "source": "Statements",
+    "cadence": "monthly"
+  }
+]

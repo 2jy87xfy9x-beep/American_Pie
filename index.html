@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>American Pie — The Free Financial Encyclopedia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Linux+Libertine:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-encyclopedia">
+  <div id="file-protocol-banner" class="file-protocol-banner hidden" role="status">
+    American Pie loads articles and data over HTTP. From this folder run:
+    <code>python -m http.server 8765</code>
+    then open <code>http://localhost:8765</code>
+  </div>
+
+  <header class="dateline" aria-hidden="false">
+    <span class="dateline-brand">American Pie</span>
+    <span class="dateline-date" id="dateline-text"></span>
+  </header>
+
+  <div class="layout-body">
+    <aside class="nav-shell" id="nav-shell" aria-label="Main navigation">
+      <nav class="nav-rail">
+        <a href="#" class="nav-item" data-route="home" title="Home"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Home</span></a>
+        <a href="#" class="nav-item" data-route="simulation" title="Simulation"><span class="nav-icon" aria-hidden="true">◎</span><span class="nav-label">Simulation</span></a>
+        <a href="#" class="nav-item" data-route="situation" title="My Situation"><span class="nav-icon" aria-hidden="true">≡</span><span class="nav-label">My Situation</span></a>
+        <a href="#" class="nav-item" data-route="learn" title="Learn"><span class="nav-icon" aria-hidden="true">∞</span><span class="nav-label">Learn</span></a>
+        <a href="#" class="nav-item nav-item-clarity" data-route="clarity" title="Clarity"><span class="nav-icon" aria-hidden="true">△</span><span class="nav-label">Clarity</span><span class="nav-clarity-num" id="nav-clarity-num">0</span></a>
+      </nav>
+    </aside>
+
+    <main class="main-column" id="main-column">
+      <section id="view-home" class="view view-home">
+        <header class="home-masthead">
+          <div class="masthead-row">
+            <div class="masthead-titles">
+              <h1 class="masthead-title">American Pie</h1>
+              <p class="masthead-tagline">The Free Financial Encyclopedia</p>
+              <hr class="masthead-rule" />
+            </div>
+            <div class="mode-switch" role="group" aria-label="Simulation year">
+              <button type="button" class="mode-btn" data-mode="2008" id="mode-2008">2008</button>
+              <button type="button" class="mode-btn mode-btn-present" data-mode="present" id="mode-present">
+                Present <span class="live-dot" id="live-dot" title="Live data">●</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div class="home-featured">
+          <p class="home-kicker">★ Featured Article</p>
+          <hr class="thick-rule" />
+          <h2 class="featured-title"><a href="#" id="featured-article-link">The 2008 Financial Crisis: What Most Americans Did Not Know Was Already Happening To Them</a></h2>
+          <p class="featured-dek">By late 2007, the signals were already present. Housing prices had peaked. Credit was overextended. The institutions most Americans trusted with their money were quietly insolvent.</p>
+          <p class="featured-dek">Most households would not understand what had happened until it was already over. By then, the cost of not knowing had already been paid.</p>
+          <p><a href="#" id="featured-read-more" class="text-link">Read more →</a></p>
+          <hr class="thick-rule" />
+        </div>
+
+        <div class="home-columns">
+          <div class="home-col home-col-news">
+            <h3 class="home-col-title" id="in-the-news-title">In the news — Early 2008</h3>
+            <hr />
+            <ul class="home-list" id="in-the-news-list"></ul>
+          </div>
+          <div class="home-col home-col-dyk">
+            <h3 class="home-col-title">Did you know?</h3>
+            <hr />
+            <ul class="home-list" id="did-you-know-list"></ul>
+          </div>
+        </div>
+
+        <div class="home-on-this-day">
+          <hr class="thick-rule" />
+          <p class="on-this-day-label" id="on-this-day-label">On this day —</p>
+          <p class="on-this-day-body" id="on-this-day-body"></p>
+          <hr class="thick-rule" />
+        </div>
+      </section>
+
+      <section id="view-article" class="view view-article hidden">
+        <div class="article-toolbar">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="#" class="crumb" data-crumb="home">American Pie</a>
+            <span class="crumb-sep">›</span>
+            <a href="#" class="crumb" id="crumb-era">2008</a>
+            <span class="crumb-sep">›</span>
+            <a href="#" class="crumb" id="crumb-category">Banking</a>
+            <button type="button" class="source-toggle text-link" id="source-toggle" title="Source view" aria-expanded="false">&lt; &gt;</button>
+          </nav>
+          <h1 class="article-title" id="article-title"></h1>
+          <hr class="thick-rule" />
+          <p class="article-meta" id="article-meta"></p>
+        </div>
+
+        <div class="article-split">
+          <div class="article-content-col">
+            <div class="section-indicator" id="section-indicator"></div>
+            <article class="article-body" id="article-body"></article>
+            <div class="article-nav-bottom">
+              <button type="button" class="text-link reveal-toggle hidden" id="reveal-toggle" aria-expanded="false">▸ Reveal</button>
+              <a href="#" class="text-link article-next" id="article-next">Next →</a>
+            </div>
+          </div>
+          <aside class="article-margin" id="article-margin">
+            <div class="margin-block">
+              <h4 class="margin-heading">In this article</h4>
+              <hr />
+              <ol class="margin-toc" id="margin-toc"></ol>
+            </div>
+            <div class="margin-block">
+              <h4 class="margin-heading">Ghost Tracks</h4>
+              <hr />
+              <ul class="ghost-tracks-list" id="ghost-tracks-short"></ul>
+              <p class="margin-hint">Tap any track</p>
+            </div>
+            <div class="margin-block margin-editor hidden" id="margin-editor">
+              <h4 class="margin-heading" id="margin-editor-title">Your number</h4>
+              <hr />
+              <div id="margin-editor-fields"></div>
+              <hr class="margin-inner-rule" />
+              <div class="margin-mock-summary" id="margin-mock-summary"></div>
+              <p class="margin-hint small">Enter your real numbers above to see your actual coverage.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-ghost" class="view view-ghost hidden">
+        <div class="article-toolbar">
+          <nav class="breadcrumb">
+            <a href="#" class="crumb" data-crumb="home">American Pie</a>
+            <span class="crumb-sep">›</span>
+            <span class="crumb" id="ghost-breadcrumb-era">2008</span>
+            <span class="crumb-sep">›</span>
+            <span class="crumb">Profiles</span>
+          </nav>
+          <h1 class="article-title" id="ghost-profile-title"></h1>
+          <hr class="thick-rule" />
+          <p class="article-meta" id="ghost-profile-meta"></p>
+        </div>
+        <div class="ghost-log" id="ghost-log"></div>
+      </section>
+
+      <section id="view-clarity" class="view view-clarity hidden">
+        <div class="article-toolbar">
+          <h1 class="article-title">Your Financial Clarity</h1>
+          <hr class="thick-rule" />
+        </div>
+        <p class="clarity-lede" id="clarity-lede"></p>
+        <hr />
+        <h3 class="margin-heading">What you understand</h3>
+        <div class="clarity-bars" id="clarity-bars"></div>
+        <hr />
+        <p class="clarity-next" id="clarity-next"></p>
+      </section>
+
+      <section id="view-stub" class="view view-stub hidden">
+        <div class="article-toolbar">
+          <h1 class="article-title" id="stub-title"></h1>
+          <hr class="thick-rule" />
+        </div>
+        <p>This section has no data yet.</p>
+        <p><a href="#" class="text-link" id="stub-continue">Continue in simulation to build context →</a></p>
+      </section>
+    </main>
+  </div>
+
+  <div class="pressure-gauge-wrap" id="pressure-wrap">
+    <div class="pressure-gauge" id="pressure-gauge" role="img" aria-label="Economic stress indicator">
+      <div class="pressure-gradient"></div>
+      <div class="pressure-marker" id="pressure-marker"></div>
+    </div>
+    <div class="pressure-labels"><span>Calm</span><span>Crisis</span></div>
+  </div>
+
+  <footer class="ticker-bar" id="ticker-bar" aria-label="Ghost tracks ticker">
+    <div class="ticker-track" id="ticker-track"></div>
+  </footer>
+
+  <footer class="theme-switch" role="navigation" aria-label="Theme">
+    <span>Read in:</span>
+    <button type="button" class="theme-link" data-theme="encyclopedia">Encyclopedia</button>
+    <span class="theme-sep">·</span>
+    <button type="button" class="theme-link" data-theme="newspaper">Newspaper</button>
+  </footer>
+
+  <div class="overlay" id="source-overlay" hidden>
+    <div class="overlay-panel source-panel" role="dialog" aria-labelledby="source-heading">
+      <h2 id="source-heading">Source View</h2>
+      <hr class="thick-rule" />
+      <div id="source-content"></div>
+      <button type="button" class="text-link overlay-close" id="source-close">Close</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="simulation-complete-overlay" hidden>
+    <div class="overlay-panel" role="dialog" aria-labelledby="complete-heading">
+      <h2 id="complete-heading">The simulation is complete.</h2>
+      <p>You started in 2008 with $7,000 and no financial knowledge.</p>
+      <p>You now know what each decision costs and what it returns.</p>
+      <p>The real app is waiting.</p>
+      <p>Your numbers are different. The concepts are the same.</p>
+      <p>
+        <button type="button" class="text-link" id="sim-reset">Start over</button>
+        <span class="theme-sep"> </span>
+        <button type="button" class="text-link" id="sim-to-present">Switch to Present</button>
+      </p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

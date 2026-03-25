@@ -1,0 +1,28 @@
+[
+  {
+    "hook": "net-worth-drop",
+    "text": "The average American household lost 39% of their net worth between 2007 and 2010."
+  },
+  {
+    "hook": "no-ef",
+    "text": "57% of Americans had no emergency fund in 2008."
+  },
+  {
+    "hook": "seven-k",
+    "text": "A person who invested {{your_cash}} in March 2009 would have grown it materially by 2024—the figure seeds from your cash variable."
+  },
+  {
+    "hook": "mbs",
+    "text": "Most people learned what a mortgage-backed security was only after losing money because of one."
+  },
+  {
+    "on_this_day": "March 14, 2008",
+    "text": "JP Morgan acquired Bear Stearns for $2 per share. One year earlier the stock traded at $172. People who understood what this meant acted within hours.",
+    "body": "JP Morgan acquired Bear Stearns for $2 per share. One year earlier the stock traded at $172. People who understood what this meant acted within hours."
+  },
+  {
+    "on_this_day": "January 2008",
+    "text": "The Fed opened the year still cutting rates as housing stress spread through credit markets.",
+    "body": "The Fed opened the year still cutting rates as housing stress spread through credit markets."
+  }
+]
