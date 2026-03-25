@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/iCloudDrive/american_pie/articles/*.md)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node build.js)",
+      "Bash(python3 -c \":*)"
+    ]
+  }
+}

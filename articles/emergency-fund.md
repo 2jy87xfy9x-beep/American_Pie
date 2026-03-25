@@ -12,7 +12,7 @@ An emergency fund is money set aside specifically to cover unexpected expenses o
 
 In March 2008, the median American household had $6,800 in liquid savings. This sounds like a cushion. For most households, it covered less than 47 days of expenses. Many did not know that number until they needed it.
 
-Your estimated coverage: **{{coverage_days}} days**
+Your estimated coverage: **{{coverage_days}}**
 
 ## Your Number
 Your emergency fund coverage is calculated from two numbers you already know: how much cash you have and how much you spend each month.
@@ -21,7 +21,7 @@ Monthly expenses: **{{your_monthly_expenses}}**
 
 Current cash: **{{your_cash}}**
 
-Coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}} days**
+Coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}}**
 
 The standard recommendation is 90 to 180 days. Most financial advisors consider anything under 30 days a critical gap. Not because catastrophe is certain, but because you are one event away from choices you do not want to make.
 
@@ -73,4 +73,4 @@ Find your last three months of bank statements. Add the total spending for each 
 
 That is how many days you have. Write it down. It is the most important number in your financial life right now and most people have never calculated it.
 
-If you are using mock data, your number is **{{coverage_days}} days**. To see your real number, tap any value above and enter your actual figures.
+If you are using mock data, your number is **{{coverage_days}}**. To see your real number, tap any value above and enter your actual figures.

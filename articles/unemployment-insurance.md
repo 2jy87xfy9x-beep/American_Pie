@@ -25,7 +25,7 @@ Assume benefits replace ~45% of prior take-home (varies wildly by state and wage
 
 0.55 × **{{your_monthly_expenses}}** ≈ **{{income_gap}}** (aligned with app’s gap figure when expenses stand in for old income).
 
-With **{{your_cash}}** and no other income, survival length without UI approximates **{{coverage_days}} days** of full burn; with UI bridging part, you buy calendar space — still finite if **{{your_credit_card_debt}}** minimums do not negotiate.
+With **{{your_cash}}** and no other income, survival length without UI approximates **{{coverage_days}}** of full burn; with UI bridging part, you buy calendar space — still finite if **{{your_credit_card_debt}}** minimums do not negotiate.
 
 ## What People Did
 
