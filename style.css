@@ -1757,3 +1757,192 @@ body.nav-visible .nav-shell {
 
 }
 
+/* First-appearance: hide live ticker / gauge until unlocked */
+.ticker-bar.ticker-off {
+  display: none !important;
+}
+
+.pressure-gauge-wrap.gauge-off {
+  display: none !important;
+}
+
+.ticker-track.ticker-static {
+  animation: none !important;
+  transform: none !important;
+  padding-left: 0 !important;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
+  line-height: 1.4;
+}
+
+/* Static illustrations inside federal-reserve article */
+.static-ticker-illustration {
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 8px 10px;
+  overflow: hidden;
+}
+
+.static-ticker-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  align-items: center;
+}
+
+.static-gauge-illustration {
+  margin: 1rem 0;
+}
+
+.static-gauge-track {
+  position: relative;
+  height: 6px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.static-gauge-gradient {
+  height: 6px;
+  background: linear-gradient(90deg, #4a90d9, #e63946);
+}
+
+.static-gauge-marker {
+  position: absolute;
+  top: -2px;
+  left: calc(12% - 5px);
+  width: 10px;
+  height: 10px;
+  background: var(--text);
+}
+
+.static-gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.85;
+}
+
+.worksheet-h2 {
+  font-family: var(--font-headline);
+  margin-top: 1.5rem;
+}
+
+.home-worksheet-links {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin-top: 1rem;
+}
+
+@media print {
+  body.view-worksheet {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body.view-worksheet .dateline,
+  body.view-worksheet .ticker-bar,
+  body.view-worksheet .pressure-gauge-wrap,
+  body.view-worksheet .nav-shell,
+  body.view-worksheet .theme-switch,
+  body.view-worksheet #source-toggle,
+  body.view-worksheet .breadcrumb,
+  body.view-worksheet .article-toolbar .thick-rule,
+  body.view-worksheet .article-meta,
+  body.view-worksheet .article-margin,
+  body.view-worksheet .mode-switch,
+  body.view-worksheet .home-worksheet-links,
+  body.view-worksheet .home-on-this-day,
+  body.view-worksheet .reveal-toggle,
+  body.view-worksheet .article-nav-bottom,
+  body.view-worksheet .masthead-row .mode-switch,
+  body.view-worksheet button {
+    display: none !important;
+  }
+
+  body.view-worksheet .layout-body {
+    padding: 0 !important;
+    min-height: 0 !important;
+  }
+
+  body.view-worksheet .main-column {
+    max-width: 100% !important;
+    padding: 0.4in !important;
+  }
+
+  body.view-worksheet .article-split {
+    display: block !important;
+  }
+
+  body.view-worksheet .article-content-col {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  body.view-worksheet,
+  body.view-worksheet p,
+  body.view-worksheet li {
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    color: #000 !important;
+  }
+
+  body.view-worksheet .mono,
+  body.view-worksheet code,
+  body.view-worksheet .var-inline {
+    font-family: "Courier New", Courier, monospace !important;
+    font-size: 10pt !important;
+  }
+
+  body.view-worksheet h1,
+  body.view-worksheet .article-title {
+    font-family: Georgia, serif !important;
+    font-weight: 700 !important;
+    font-size: 18pt !important;
+    color: #000 !important;
+  }
+
+  body.view-worksheet .worksheet-h2 {
+    font-family: Georgia, serif !important;
+    font-weight: 700 !important;
+    font-size: 13pt !important;
+    break-before: page;
+    break-after: avoid;
+    page-break-before: always;
+    page-break-after: avoid;
+  }
+
+  body.view-worksheet .worksheet-h2:first-of-type {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  body.view-worksheet table,
+  body.view-worksheet th,
+  body.view-worksheet td {
+    border: 1px solid #000 !important;
+    background: transparent !important;
+    color: #000 !important;
+  }
+
+  body.view-worksheet a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    font-family: "Courier New", Courier, monospace;
+  }
+
+  body.view-worksheet a[href="#"]:after,
+  body.view-worksheet a:not([href]):after {
+    content: "";
+  }
+}
+

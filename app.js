@@ -4,10 +4,15 @@ import { data } from "./data.js";
 
 (function () {
   var ROOT = "";
+  var IDB_NAME = "american_pie_fs";
+  var IDB_STORE = "handles";
+  var IDB_KEY_HANDLE = "folderHandle";
+
   var state = {
     mode: "2008",
     simulationComplete: false,
-    eventIndex: 0,
+    currentEra: 1,
+    currentEventIndex: 0,
     stressLevel: 12,
     currentArticle: null,
     currentSection: 0,
@@ -20,9 +25,10 @@ import { data } from "./data.js";
     events: [],
     didYouKnow: [],
     ghostTracks: {},
-    tickerUnlocked: false,
-    gaugeUnlocked: false,
     conceptsRead: {},
+    folderHandle: null,
+    simulationEnded: false,
+    skipGaugeTransition: false,
   };
 
   var LS_VARS = "american_pie_variables";
@@ -30,9 +36,421 @@ import { data } from "./data.js";
   var LS_FIRST_DONE = "american_pie_first_article_complete";
   var LS_ON_THIS_DAY = "american_pie_on_this_day_index";
   var LS_CONCEPTS = "american_pie_concepts";
+  var LS_ERA = "american_pie_current_era";
+  var LS_EVENT_IDX = "american_pie_current_event_index";
+  var LS_TICKER_LIVE = "american_pie_ticker_live";
+  var LS_GAUGE_LIVE = "american_pie_gauge_live";
+  var LS_TICKER_AFTER = "american_pie_ticker_sections_after_seen";
+  var LS_GAUGE_AFTER = "american_pie_gauge_articles_after_seen";
+  var LS_FS_PROMPTED = "american_pie_fs_folder_prompted";
+  var LS_ARTICLES_DONE = "american_pie_articles_done";
+  var LS_SAW_TICKER_ILLU = "american_pie_saw_ticker_illustration";
+  var LS_SAW_GAUGE_ILLU = "american_pie_saw_gauge_illustration";
+
+  var MANIFEST_SLUGS = {
+    "emergency-fund": 1,
+    "burn-rate": 1,
+    "checking-vs-savings": 1,
+    "federal-reserve": 1,
+    "bear-stearns": 1,
+    "mortgage-backed-securities": 1,
+    "recession-defined": 1,
+    "unemployment-insurance": 1,
+    "cobra-insurance": 1,
+    "taxes-when-laid-off": 1,
+    "too-big-to-fail": 1,
+    "bear-market": 1,
+    "stimulus": 1,
+    "buying-the-dip": 1,
+    "dollar-cost-averaging": 1,
+    "index-funds": 1,
+    "sp500": 1,
+    "opportunity-cost": 1,
+    "compound-interest": 1,
+    "roth-ira": 1,
+    "401k-matching": 1,
+    "net-worth": 1,
+    "assets-vs-liabilities": 1,
+    "budget-reality": 1,
+    "bull-market": 1,
+    "idle-cash-inflation": 1,
+    "crypto-basics": 1,
+    "lifestyle-inflation": 1,
+    "tax-brackets": 1,
+    "diversification": 1,
+    "sequence-of-returns": 1,
+    "gig-economy-taxes": 1,
+    "market-crash-vs-correction": 1,
+    "quantitative-easing": 1,
+    "eviction-moratorium": 1,
+    "panic-selling-cost": 1,
+    "inflation-mechanics": 1,
+    "cpi": 1,
+    "fed-funds-rate": 1,
+    "bonds-and-rates": 1,
+    "i-bonds": 1,
+    "real-vs-nominal-returns": 1,
+    "housing-affordability": 1,
+    "wage-price-spiral": 1,
+    "ai-and-employment": 1,
+    "high-rates-home-buying": 1,
+    "market-valuation": 1,
+    "reading-your-documents": 1,
+  };
+
+  var B_VAR_WEIGHTS = {
+    your_cash: 2,
+    your_monthly_expenses: 2,
+    your_monthly_income: 2,
+    your_monthly_rent: 2,
+    your_credit_card_debt: 2,
+    your_investment_value: 2,
+    your_net_worth: 2,
+    your_credit_score: 2,
+    fed_funds_rate: 2,
+    inflation_rate: 2,
+    unemployment_rate: 2,
+    sp500_level: 2,
+    stress_level: 2,
+    marginal_tax_rate: 1,
+    short_term_cg_rate: 1,
+    long_term_cg_rate: 1,
+    high_yield_savings_rate: 1,
+  };
 
   function $(id) {
     return document.getElementById(id);
+  }
+
+  function idbOpen() {
+    return new Promise(function (resolve, reject) {
+      var req = indexedDB.open(IDB_NAME, 1);
+      req.onerror = function () {
+        reject(req.error);
+      };
+      req.onupgradeneeded = function () {
+        req.result.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = function () {
+        resolve(req.result);
+      };
+    });
+  }
+
+  function idbPutHandle(handle) {
+    return idbOpen().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(IDB_STORE, "readwrite");
+        tx.objectStore(IDB_STORE).put(handle, IDB_KEY_HANDLE);
+        tx.oncomplete = function () {
+          resolve();
+          db.close();
+        };
+        tx.onerror = function () {
+          reject(tx.error);
+          db.close();
+        };
+      });
+    });
+  }
+
+  function idbGetHandle() {
+    return idbOpen().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(IDB_STORE, "readonly");
+        var rq = tx.objectStore(IDB_STORE).get(IDB_KEY_HANDLE);
+        rq.onsuccess = function () {
+          resolve(rq.result || null);
+          db.close();
+        };
+        rq.onerror = function () {
+          reject(rq.error);
+          db.close();
+        };
+      });
+    });
+  }
+
+  function simFolderKey() {
+    if (state.mode === "present") return "present";
+    if (state.mode === "1999" || state.mode === "2020") return state.mode;
+    return "2008";
+  }
+
+  function simPath(file) {
+    return ROOT + "simulations/" + simFolderKey() + "/" + file;
+  }
+
+  function simulationDataKey(file) {
+    var folder = simFolderKey();
+    var base = file.replace(/\.json$/i, "");
+    return folder + "/" + base;
+  }
+
+  function restoreFolderHandleFromIdb() {
+    if (!window.indexedDB) return Promise.resolve(null);
+    return idbGetHandle().then(function (h) {
+      if (!h || !h.queryPermission) return null;
+      return h.queryPermission({ mode: "readwrite" }).then(function (st) {
+        if (st === "granted") return h;
+        if (st === "prompt") {
+          return h.requestPermission({ mode: "readwrite" }).then(function (st2) {
+            return st2 === "granted" ? h : null;
+          });
+        }
+        return null;
+      });
+    }).catch(function () {
+      return null;
+    });
+  }
+
+  function tryGrantFolderOnce() {
+    if (state.folderHandle) return;
+    if (localStorage.getItem(LS_FS_PROMPTED) === "1") return;
+    if (!window.showDirectoryPicker) return;
+    localStorage.setItem(LS_FS_PROMPTED, "1");
+    window
+      .showDirectoryPicker({ mode: "readwrite" })
+      .then(function (dir) {
+        state.folderHandle = dir;
+        return idbPutHandle(dir);
+      })
+      .catch(function () {})
+      .then(function () {
+        return readVariablesFromHandle();
+      })
+      .then(function (diskVars) {
+        if (diskVars) {
+          state.variables = mergeVariablesDisk(state.variables, diskVars);
+          if ($("view-home") && !$("view-home").classList.contains("hidden")) renderHome();
+        }
+      })
+      .catch(function () {});
+  }
+
+  function readVariablesFromHandle() {
+    if (!state.folderHandle || !state.folderHandle.getDirectoryHandle) return Promise.resolve(null);
+    var folder = simFolderKey();
+    return state.folderHandle
+      .getDirectoryHandle("simulations", { create: false })
+      .then(function (sim) {
+        return sim.getDirectoryHandle(folder, { create: false });
+      })
+      .then(function (y) {
+        return y.getFileHandle("variables.json", { create: false });
+      })
+      .then(function (fh) {
+        return fh.getFile();
+      })
+      .then(function (file) {
+        return file.text();
+      })
+      .then(function (txt) {
+        return JSON.parse(txt);
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
+  function writeVariablesToHandle() {
+    if (!state.folderHandle || !state.folderHandle.getDirectoryHandle) return Promise.resolve();
+    var folder = simFolderKey();
+    var json = JSON.stringify(state.variables, null, 2);
+    return state.folderHandle
+      .getDirectoryHandle("simulations", { create: true })
+      .then(function (sim) {
+        return sim.getDirectoryHandle(folder, { create: true });
+      })
+      .then(function (y) {
+        return y.getFileHandle("variables.json", { create: true });
+      })
+      .then(function (fh) {
+        return fh.createWritable();
+      })
+      .then(function (w) {
+        return w.write(json).then(function () {
+          return w.close();
+        });
+      })
+      .catch(function () {});
+
+  }
+
+  function loadPersistedEraState() {
+    try {
+      var e = parseInt(localStorage.getItem(LS_ERA) || "1", 10);
+      var ev = parseInt(localStorage.getItem(LS_EVENT_IDX) || "0", 10);
+      state.currentEra = e >= 1 && e <= 9 ? e : 1;
+      state.currentEventIndex = ev >= 0 ? ev : 0;
+    } catch (err) {
+      state.currentEra = 1;
+      state.currentEventIndex = 0;
+    }
+  }
+
+  function saveEraState() {
+    try {
+      localStorage.setItem(LS_ERA, String(state.currentEra));
+      localStorage.setItem(LS_EVENT_IDX, String(state.currentEventIndex));
+    } catch (e) {}
+  }
+
+  function tickerLive() {
+    return localStorage.getItem(LS_TICKER_LIVE) === "1";
+  }
+
+  function gaugeLive() {
+    return localStorage.getItem(LS_GAUGE_LIVE) === "1";
+  }
+
+  function setTickerChromeVisible(on) {
+    var tb = $("ticker-bar");
+    if (tb) tb.classList.toggle("ticker-off", !on);
+  }
+
+  function setGaugeChromeVisible(on) {
+    var pw = $("pressure-wrap");
+    if (pw) pw.classList.toggle("gauge-off", !on);
+  }
+
+  function syncChromeTickerGauge() {
+    var tl = tickerLive();
+    var gl = gaugeLive();
+    setTickerChromeVisible(tl);
+    setGaugeChromeVisible(gl);
+    var track = $("ticker-track");
+    if (track) {
+      track.classList.toggle("ticker-animate", tl);
+      track.classList.toggle("ticker-static", !tl);
+    }
+    var mk = $("pressure-marker");
+    if (mk && !state.skipGaugeTransition) mk.style.transition = gl ? "" : "none";
+  }
+
+  function getEraEvents(era) {
+    return state.events.filter(function (ev) {
+      return ev.era === era;
+    });
+  }
+
+  function lastEventForEra(era) {
+    var evs = getEraEvents(era);
+    return evs.length ? evs[evs.length - 1] : null;
+  }
+
+  function advanceEraFromArticleCompletion(slug) {
+    if (state.mode !== "2008") return;
+    var last = lastEventForEra(state.currentEra);
+    if (!last || last.article !== slug) return;
+    if (state.currentEra >= 9) {
+      state.simulationEnded = true;
+      saveEraState();
+      showFinalScreen();
+      return;
+    }
+    state.currentEra += 1;
+    state.currentEventIndex = 0;
+    saveEraState();
+    var evs = getEraEvents(state.currentEra);
+    var stress = evs.length && evs[0].stress_level != null ? evs[0].stress_level : state.stressLevel;
+    animateStressTo(stress);
+    renderHome();
+    updateDateline();
+  }
+
+  function animateStressTo(target) {
+    target = Math.max(0, Math.min(100, Number(target) || 0));
+    state.skipGaugeTransition = false;
+    state.stressLevel = target;
+    updatePressure();
+  }
+
+  function showFinalScreen() {
+    syncChromeTickerGauge();
+    showView("final");
+  }
+
+  function simulationReset() {
+    state.currentEra = 1;
+    state.currentEventIndex = 0;
+    state.simulationEnded = false;
+    try {
+      localStorage.removeItem(LS_ERA);
+      localStorage.removeItem(LS_EVENT_IDX);
+    } catch (e) {}
+    saveEraState();
+    $("simulation-complete-overlay").hidden = true;
+    setMode("2008");
+    goHome();
+  }
+
+  function loadArticlesDone() {
+    try {
+      return JSON.parse(localStorage.getItem(LS_ARTICLES_DONE) || "{}") || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveArticlesDone(map) {
+    try {
+      localStorage.setItem(LS_ARTICLES_DONE, JSON.stringify(map || {}));
+    } catch (e) {}
+  }
+
+  function primaryEraFromMeta(meta) {
+    var e = meta && meta.era;
+    if (e == null) return 1;
+    if (typeof e === "number") return e;
+    if (typeof e === "string") {
+      var m = e.match(/^(\d+)/);
+      return m ? Number(m[1]) : 1;
+    }
+    return 1;
+  }
+
+  function pointsForArticleMeta(meta) {
+    var pe = primaryEraFromMeta(meta);
+    return pe === 3 || pe === 4 ? 3 : 1;
+  }
+
+  function componentA() {
+    var done = loadArticlesDone();
+    var pts = 0;
+    Object.keys(MANIFEST_SLUGS).forEach(function (slug) {
+      if (!done[slug]) return;
+      var key = articleDataKey(slug);
+      var md = data.articles[key] || data.articles[slug];
+      if (!md) return;
+      var meta = parseFrontmatter(md).meta;
+      pts += pointsForArticleMeta(meta);
+    });
+    return Math.min(70, pts);
+  }
+
+  function componentB() {
+    if (state.mode !== "present") return 0;
+    var pts = 0;
+    Object.keys(B_VAR_WEIGHTS).forEach(function (k) {
+      var e = state.variables[k];
+      if (e && e.confirmed === true) pts += B_VAR_WEIGHTS[k];
+    });
+    return Math.min(30, pts);
+  }
+
+  function presentVariablesEnteredCount() {
+    var n = 0;
+    Object.keys(B_VAR_WEIGHTS).forEach(function (k) {
+      var e = state.variables[k];
+      if (e && e.confirmed === true) n += 1;
+    });
+    return n;
+  }
+
+  function clarityScoreTotal() {
+    return Math.min(100, componentA() + componentB());
   }
 
   function fmtMoney(n) {
@@ -66,11 +484,6 @@ import { data } from "./data.js";
     return slug;
   }
 
-  function simPath(file) {
-    var folder = state.mode === "present" ? "present" : "2008";
-    return ROOT + "simulations/" + folder + "/" + file;
-  }
-
   function loadLocalOverrides() {
     try {
       var raw = localStorage.getItem(LS_VARS);
@@ -92,8 +505,22 @@ import { data } from "./data.js";
     var o = overrides || {};
     Object.keys(o).forEach(function (k) {
       if (!out[k]) out[k] = { value: null, unit: "dollars", confirmed: false, source: "", last_checked: "", notes: "" };
-      out[k].value = o[k].value != null ? o[k].value : out[k].value;
-      if (o[k].unit != null) out[k].unit = o[k].unit;
+      var patch = o[k];
+      if (patch.value != null) out[k].value = patch.value;
+      if (patch.unit != null) out[k].unit = patch.unit;
+      if (patch.confirmed != null) out[k].confirmed = patch.confirmed;
+      if (patch.source != null) out[k].source = patch.source;
+      if (patch.last_checked != null) out[k].last_checked = patch.last_checked;
+      if (patch.notes != null) out[k].notes = patch.notes;
+    });
+    return out;
+  }
+
+  function mergeVariablesDisk(baseObj, diskObj) {
+    var out = JSON.parse(JSON.stringify(baseObj || {}));
+    var d = diskObj || {};
+    Object.keys(d).forEach(function (k) {
+      out[k] = JSON.parse(JSON.stringify(d[k]));
     });
     return out;
   }
@@ -243,6 +670,29 @@ import { data } from "./data.js";
     return html;
   }
 
+  function staticTickerIllustrationHtml() {
+    return (
+      '<div class="static-ticker-illustration" aria-hidden="true">' +
+      '<div class="static-ticker-inner">' +
+      '<span class="ticker-item"><span class="ticker-dot" style="background:var(--winner)"></span>Winner · Building runway with high-yield savings.</span>' +
+      '<span class="ticker-item"><span class="ticker-dot" style="background:var(--weatherer)"></span>Weatherer · Watching headlines. Holding steady.</span>' +
+      '<span class="ticker-item"><span class="ticker-dot" style="background:var(--unaware)"></span>Unaware · No change to routine.</span>' +
+      '<span class="ticker-item"><span class="ticker-dot" style="background:var(--gambler-lost)"></span>Gambler− · Considering positions.</span>' +
+      '<span class="ticker-item"><span class="ticker-dot" style="background:var(--gambler-won)"></span>Gambler+ · Considering positions.</span>' +
+      "</div></div>"
+    );
+  }
+
+  function staticGaugeIllustrationHtml() {
+    return (
+      '<div class="static-gauge-illustration" aria-hidden="true">' +
+      '<div class="static-gauge-track"><div class="static-gauge-gradient"></div>' +
+      '<div class="static-gauge-marker"></div></div>' +
+      '<div class="static-gauge-labels"><span>Calm</span><span>Crisis</span></div>' +
+      "</div>"
+    );
+  }
+
   function processReveal(html) {
     var idx = html.indexOf("If you had known");
     if (idx === -1) return { main: html, hasReveal: false };
@@ -255,82 +705,114 @@ import { data } from "./data.js";
     };
   }
 
-  function simulationDataKey(file) {
-    var folder = state.mode === "present" ? "present" : "2008";
-    var base = file.replace(/\.json$/i, "");
-    return folder + "/" + base;
-  }
-
   function loadSimulationBundle() {
+    loadPersistedEraState();
     var overrides = loadLocalOverrides()[state.mode] || {};
     var base = data.simulations[simulationDataKey("variables.json")];
+    var merged;
     if (base) {
-      state.variables = mergeVariables(base, overrides);
+      merged = JSON.parse(JSON.stringify(base));
+      merged = mergeVariables(merged, overrides);
     } else {
-      state.variables = {};
+      merged = mergeVariables({}, overrides);
     }
+    state.variables = merged;
     var ev = data.simulations[simulationDataKey("events.json")];
-    if (ev) {
-      state.events = ev;
-      syncEventStress();
-    } else {
-      state.events = [];
-    }
+    state.events = Array.isArray(ev) ? ev : [];
+    syncEventStress();
     var dyk = data.simulations[simulationDataKey("did-you-know.json")];
     state.didYouKnow = dyk || [];
     var gt = data.simulations[simulationDataKey("ghost-tracks.json")];
     state.ghostTracks = gt || {};
     loadConceptsFromStorage();
+    hydrateDiskVariables(overrides);
+  }
+
+  function hydrateDiskVariables(overrides) {
+    if (!state.folderHandle) return;
+    readVariablesFromHandle().then(function (disk) {
+      if (!disk || typeof disk !== "object") return;
+      var base = data.simulations[simulationDataKey("variables.json")] || {};
+      var merged = JSON.parse(JSON.stringify(base));
+      merged = mergeVariablesDisk(merged, disk);
+      merged = mergeVariables(merged, overrides || {});
+      state.variables = merged;
+      if ($("view-home") && !$("view-home").classList.contains("hidden")) renderHome();
+      if ($("view-article") && !$("view-article").classList.contains("hidden") && state.currentArticle)
+        renderArticleSection();
+      updateNavClarity();
+    });
   }
 
   function syncEventStress() {
-    var ev = state.events[state.eventIndex];
-    state.stressLevel = ev && ev.stress_level != null ? ev.stress_level : state.stressLevel;
+    if (state.mode !== "2008") {
+      var sv = getRawValue("stress_level", state.variables);
+      if (sv != null && !isNaN(Number(sv))) state.stressLevel = Number(sv);
+      return;
+    }
+    var evs = getEraEvents(state.currentEra);
+    if (!evs.length) return;
+    var idx = Math.min(state.currentEventIndex, evs.length - 1);
+    var ev = evs[idx];
+    if (ev && ev.stress_level != null) state.stressLevel = ev.stress_level;
   }
 
   function persistVariable(key, value) {
     var all = loadLocalOverrides();
     if (!all[state.mode]) all[state.mode] = {};
-    if (!all[state.mode][key]) {
-      all[state.mode][key] = {
-        value: value,
-        unit: state.variables[key] ? state.variables[key].unit : "dollars",
-        confirmed: true,
-        source: "user",
-        last_checked: new Date().toISOString().slice(0, 10),
-        notes: "",
-      };
-    } else {
-      all[state.mode][key].value = value;
-      all[state.mode][key].last_checked = new Date().toISOString().slice(0, 10);
-    }
+    var prev = state.variables[key] || {};
+    var unit = prev.unit != null ? prev.unit : "dollars";
+    var entry = {
+      value: value,
+      unit: unit,
+      confirmed: true,
+      source: "user",
+      last_checked: new Date().toISOString().slice(0, 10),
+      notes: prev.notes != null ? prev.notes : "",
+    };
+    all[state.mode][key] = Object.assign({}, prev, entry);
     saveLocalOverrides(all);
-    if (state.variables[key]) state.variables[key].value = value;
+    if (!state.variables[key]) state.variables[key] = {};
+    Object.assign(state.variables[key], entry);
+    writeVariablesToHandle();
+    updateNavClarity();
   }
 
   function updateDateline() {
     var el = $("dateline-text");
     if (!el) return;
     var d = new Date();
-    if (state.mode === "2008" && state.events[state.eventIndex] && state.events[state.eventIndex].date) {
-      el.textContent = String(state.events[state.eventIndex].date).toUpperCase();
-    } else {
-      el.textContent = d
-        .toLocaleDateString(undefined, {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-        .toUpperCase();
+    if (state.mode === "2008") {
+      var evs = getEraEvents(state.currentEra);
+      if (evs.length) {
+        var idx = Math.min(state.currentEventIndex, evs.length - 1);
+        el.textContent = String(evs[idx].date || "").toUpperCase();
+        return;
+      }
     }
+    el.textContent = d
+      .toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+      .toUpperCase();
   }
 
   function updatePressure() {
     var m = $("pressure-marker");
     if (!m) return;
+    if (state.skipGaugeTransition) {
+      m.style.transition = "none";
+    }
     var pct = Math.max(0, Math.min(100, state.stressLevel));
     m.style.left = "calc(" + pct + "% - 5px)";
+    if (state.skipGaugeTransition) {
+      void m.offsetWidth;
+      m.style.transition = "";
+      state.skipGaugeTransition = false;
+    }
   }
 
   function ghostTrackMeta() {
@@ -343,11 +825,17 @@ import { data } from "./data.js";
     ];
   }
 
+  function currentContextEvent() {
+    if (state.mode !== "2008") return null;
+    var evs = getEraEvents(state.currentEra);
+    if (!evs.length) return null;
+    var idx = Math.min(state.currentEventIndex, evs.length - 1);
+    return evs[idx];
+  }
+
   function currentGhostLogEntries() {
-    var date =
-      state.events[state.eventIndex] && state.events[state.eventIndex].date
-        ? state.events[state.eventIndex].date
-        : "January 2008";
+    var ce = currentContextEvent();
+    var date = ce && ce.date ? ce.date : "January 2008";
     var out = [];
     ghostTrackMeta().forEach(function (gt) {
       var track = state.ghostTracks[gt.key];
@@ -445,25 +933,41 @@ import { data } from "./data.js";
   function renderHome() {
     var newsTitle = $("in-the-news-title");
     if (newsTitle) {
-      newsTitle.textContent =
-        state.mode === "present" ? "In the news — Your feed" : "In the news — Early 2008";
+      if (state.mode === "present") newsTitle.textContent = "In the news — Your feed";
+      else if (state.mode === "2008")
+        newsTitle.textContent = "In the news — Era " + state.currentEra;
+      else newsTitle.textContent = "In the news";
     }
     var newsList = $("in-the-news-list");
     if (newsList) {
       newsList.innerHTML = "";
-      var evs = state.events.length ? state.events.slice(0, 7) : fallbackNews();
-      evs.forEach(function (e) {
-        var li = document.createElement("li");
-        var a = document.createElement("a");
-        a.href = "#";
-        a.textContent = e.headline || e.ticker_text || "Event";
-        a.addEventListener("click", function (evt) {
-          evt.preventDefault();
-          if (e.article) openArticle(e.article);
+      if (state.mode !== "present" && (!state.events || !state.events.length)) {
+        var li0 = document.createElement("li");
+        li0.textContent =
+          "No simulation data yet for this year. Use the built 2008 arc to see how feeds are authored, or add events.json here.";
+        newsList.appendChild(li0);
+      } else {
+        var evs =
+          state.mode === "2008"
+            ? getEraEvents(state.currentEra).slice(0, 7)
+            : state.events.length
+              ? state.events.slice(0, 7)
+              : fallbackNews();
+        evs.forEach(function (e, i) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          a.href = "#";
+          a.textContent = e.headline || e.ticker_text || "Event";
+          a.addEventListener("click", function (evt) {
+            evt.preventDefault();
+            if (state.mode === "2008") state.currentEventIndex = i;
+            saveEraState();
+            if (e.article) openArticle(e.article);
+          });
+          li.appendChild(a);
+          newsList.appendChild(li);
         });
-        li.appendChild(a);
-        newsList.appendChild(li);
-      });
+      }
     }
     var dyk = $("did-you-know-list");
     if (dyk) {
@@ -554,17 +1058,22 @@ import { data } from "./data.js";
     if (bp) bp.setAttribute("aria-pressed", mode === "present" ? "true" : "false");
     loadSimulationBundle();
     renderHome();
+    syncChromeTickerGauge();
     if ($("view-article") && !$("view-article").classList.contains("hidden")) {
-      if (state.currentArticle) openArticle(state.currentArticle);
+      if (state.currentArticle && state.currentArticle.indexOf("worksheet:") === 0) {
+        openWorksheet(state.currentArticle.slice(10));
+      } else if (state.currentArticle) openArticle(state.currentArticle);
     }
   }
 
   function showView(name) {
-    ["view-home", "view-article", "view-ghost", "view-clarity", "view-stub"].forEach(function (id) {
-      var el = $(id);
-      if (!el) return;
-      el.classList.toggle("hidden", id !== "view-" + name && !(id === "view-stub" && name === "stub"));
-    });
+    ["view-home", "view-article", "view-ghost", "view-clarity", "view-stub", "view-final"].forEach(
+      function (id) {
+        var el = $(id);
+        if (!el) return;
+        el.classList.toggle("hidden", id !== "view-" + name && !(id === "view-stub" && name === "stub"));
+      }
+    );
     if (name !== "stub") {
       var stub = $("view-stub");
       if (stub) stub.classList.add("hidden");
@@ -586,6 +1095,13 @@ import { data } from "./data.js";
   }
 
   function openArticle(slug) {
+    document.body.classList.remove("view-worksheet");
+    var margin = $("article-margin");
+    if (margin) margin.classList.remove("hidden");
+    var ind0 = $("section-indicator");
+    if (ind0) ind0.classList.remove("hidden");
+    var next0 = $("article-next");
+    if (next0) next0.classList.remove("hidden");
     state.currentArticle = slug;
     state.currentSection = 0;
     state.revealOpen = false;
@@ -655,8 +1171,14 @@ import { data } from "./data.js";
     var sec = state.sections[state.currentSection];
     if (!sec) return;
     if (ind) ind.textContent = "Section " + (state.currentSection + 1) + " of " + state.sections.length;
+    if (state.currentArticle === "federal-reserve") {
+      if (state.currentSection >= 1) localStorage.setItem(LS_SAW_TICKER_ILLU, "1");
+      if (state.currentSection >= 2) localStorage.setItem(LS_SAW_GAUGE_ILLU, "1");
+    }
     var keys = extractEditableKeys(sec.text);
     var html = renderSectionHtml(sec.text, state.variables, keys);
+    html = html.split("[[STATIC_TICKER]]").join(staticTickerIllustrationHtml());
+    html = html.split("[[STATIC_GAUGE]]").join(staticGaugeIllustrationHtml());
     var pr = processReveal(html);
     if (pr.hasReveal && (state.meta.sections === 6 || sec.title.toLowerCase().indexOf("people") !== -1)) {
       if (rev) {
@@ -696,12 +1218,24 @@ import { data } from "./data.js";
   }
 
   function advanceSection() {
+    var slug = state.currentArticle;
+    var prevSec = state.currentSection;
+    if (slug === "federal-reserve" && !tickerLive() && prevSec >= 1) {
+      var t = parseInt(localStorage.getItem(LS_TICKER_AFTER) || "0", 10) + 1;
+      localStorage.setItem(LS_TICKER_AFTER, String(t));
+      if (t >= 2) {
+        localStorage.setItem(LS_TICKER_LIVE, "1");
+        syncChromeTickerGauge();
+        renderTicker();
+      }
+    }
     if (state.currentSection < state.sections.length - 1) {
       state.currentSection += 1;
       state.revealOpen = false;
       renderArticleSection();
     } else {
       markArticleComplete();
+      if (state.simulationEnded) return;
       goHome();
     }
   }
@@ -715,6 +1249,23 @@ import { data } from "./data.js";
       });
       saveConcepts();
     }
+    var slug = state.currentArticle;
+    if (slug && MANIFEST_SLUGS[slug]) {
+      var d = loadArticlesDone();
+      d[slug] = true;
+      saveArticlesDone(d);
+    }
+    if (localStorage.getItem(LS_SAW_GAUGE_ILLU) === "1" && !gaugeLive()) {
+      var g = parseInt(localStorage.getItem(LS_GAUGE_AFTER) || "0", 10) + 1;
+      localStorage.setItem(LS_GAUGE_AFTER, String(g));
+      if (g >= 3) {
+        localStorage.setItem(LS_GAUGE_LIVE, "1");
+        syncChromeTickerGauge();
+        syncEventStress();
+        updatePressure();
+      }
+    }
+    advanceEraFromArticleCompletion(slug);
     updateNavClarity();
   }
 
@@ -730,18 +1281,9 @@ import { data } from "./data.js";
     localStorage.setItem(LS_CONCEPTS, JSON.stringify(state.conceptsRead));
   }
 
-  function clarityScore() {
-    var vals = Object.values(state.conceptsRead);
-    if (!vals.length) return 2;
-    var s = vals.reduce(function (a, b) {
-      return a + b;
-    }, 0);
-    return Math.min(100, Math.max(2, Math.round(s / 5)));
-  }
-
   function updateNavClarity() {
     var n = $("nav-clarity-num");
-    if (n) n.textContent = String(clarityScore());
+    if (n) n.textContent = String(clarityScoreTotal());
   }
 
   function wireVarButtons(keys) {
@@ -857,7 +1399,7 @@ import { data } from "./data.js";
       "",
       "To edit variables: open " + varPath + " or tap any value in the article.",
       "",
-      "Note: edits from this page are stored in the browser (localStorage) and overlay the JSON file when values differ.",
+      "Persistence: localStorage overlays bundled JSON; File System Access API also writes simulations/[mode]/variables.json when a folder permission is granted.",
     );
     box.innerHTML = "<pre class=\"mono\">" + lines.join("\n") + "</pre>";
   }
@@ -872,8 +1414,9 @@ import { data } from "./data.js";
     if (crumb) crumb.textContent = state.mode === "present" ? "Present" : "2008";
     if (title) title.textContent = track && track.label ? track.label : key;
     if (meta) {
+      var ce = currentContextEvent();
       meta.textContent =
-        (state.events[state.eventIndex] && state.events[state.eventIndex].date) ||
+        (ce && ce.date) ||
         "March 2008 · Age 28 · Renting";
     }
     if (logEl && track && track.log) {
@@ -893,6 +1436,7 @@ import { data } from "./data.js";
   }
 
   function goHome() {
+    document.body.classList.remove("view-worksheet");
     showView("home");
     renderHome();
   }
@@ -910,35 +1454,40 @@ import { data } from "./data.js";
   }
 
   function openClarityView() {
+    document.body.classList.remove("view-worksheet");
     var lede = $("clarity-lede");
     var bars = $("clarity-bars");
     var nx = $("clarity-next");
-    var score = clarityScore();
+    var applied = $("clarity-applied");
+    var score = clarityScoreTotal();
+    var a = componentA();
+    var b = componentB();
     if (lede) {
       lede.innerHTML =
         "Score: <strong>" +
         score +
-        " / 100</strong><br/>You understand " +
-        score +
-        "% of what affects your financial life.<br/>That is " +
-        score +
-        "% more than when you started.";
+        " / 100</strong> (concepts " +
+        a +
+        " + applied " +
+        b +
+        ").<br/>Every finished article and every confirmed real variable moves the number.";
     }
     var catalog = [
       { k: "emergency-fund", label: "Emergency funds" },
       { k: "burn-rate", label: "Burn rate" },
       { k: "checking-vs-savings", label: "Checking vs savings" },
       { k: "federal-reserve", label: "Federal Reserve" },
-      { k: "income-tax-basics", label: "Income tax basics" },
-      { k: "investment-accounts", label: "Investment accounts" },
-      { k: "capital-gains", label: "Capital gains" },
-      { k: "inflation", label: "Inflation" },
+      { k: "taxes-when-laid-off", label: "Taxes when laid off" },
+      { k: "index-funds", label: "Index funds" },
+      { k: "inflation-mechanics", label: "Inflation" },
+      { k: "reading-your-documents", label: "Reading documents" },
     ];
+    var done = loadArticlesDone();
+    var fillUniform = Math.min(10, Math.round((a / 70) * 10));
     if (bars) {
       bars.innerHTML = catalog
         .map(function (row) {
-          var v = state.conceptsRead[row.k] || 0;
-          var filled = Math.round(v / 10);
+          var filled = done[row.k] ? 10 : fillUniform;
           filled = Math.max(0, Math.min(10, filled));
           var bar = "█".repeat(filled) + "░".repeat(10 - filled);
           return (
@@ -951,9 +1500,22 @@ import { data } from "./data.js";
         })
         .join("");
     }
+    var entered = presentVariablesEnteredCount();
+    if (applied) {
+      var pf = Math.min(10, Math.round((entered / 17) * 10));
+      var abar = "█".repeat(pf) + "░".repeat(10 - pf);
+      applied.innerHTML =
+        "<h3 class=\"margin-heading\">Applied to your life</h3><hr />" +
+        "<p>" +
+        entered +
+        " of 17 variables entered in Present mode (confirmed).</p>" +
+        '<div class="clarity-row"><div class="mono">' +
+        abar +
+        "</div></div>";
+    }
     if (nx) {
       nx.innerHTML =
-        'Next concept that will move your score the most:<br/>→ <a href="#" class="text-link" id="clarity-next-link">Burn Rate</a> (you are close)';
+        'Next concept that will move your score the most:<br/>→ <a href="#" class="text-link" id="clarity-next-link">Burn Rate</a>';
       var l = $("clarity-next-link");
       if (l) {
         l.onclick = function (e) {
@@ -963,6 +1525,46 @@ import { data } from "./data.js";
       }
     }
     showView("clarity");
+  }
+
+  function openWorksheet(slug) {
+    document.body.classList.add("view-worksheet");
+    var md = data.worksheets && data.worksheets[slug];
+    if (!md) {
+      openStub("Worksheet", "emergency-fund");
+      return;
+    }
+    var parsed = parseFrontmatter(md);
+    state.sections = splitSections(parsed.body);
+    if (!state.sections.length) state.sections = [{ title: "Worksheet", text: parsed.body }];
+    state.currentArticle = "worksheet:" + slug;
+    state.currentSection = 0;
+    var body = $("article-body");
+    var fullHtml = state.sections
+      .map(function (s) {
+        return (
+          "<h2 class=\"worksheet-h2\">" +
+          s.title.replace(/</g, "&lt;") +
+          "</h2>" +
+          mdInlineToHtml(s.text)
+        );
+      })
+      .join("");
+    if (body) body.innerHTML = fullHtml;
+    var ind = $("section-indicator");
+    if (ind) ind.classList.add("hidden");
+    var next = $("article-next");
+    if (next) next.classList.add("hidden");
+    var rev = $("reveal-toggle");
+    if (rev) rev.classList.add("hidden");
+    var margin = $("article-margin");
+    if (margin) margin.classList.add("hidden");
+    var title = $("article-title");
+    if (title) title.textContent = slug.replace(/-/g, " ");
+    var meta = $("article-meta");
+    if (meta) meta.textContent = "Printable worksheet";
+    showView("article");
+    updateDateline();
   }
 
   function bindChrome() {
@@ -1019,17 +1621,34 @@ import { data } from "./data.js";
     });
     var sr = $("sim-reset");
     var sp = $("sim-to-present");
-    if (sr) {
-      sr.addEventListener("click", function () {
-        state.eventIndex = 0;
-        $("simulation-complete-overlay").hidden = true;
-        setMode("2008");
-      });
-    }
+    var fr = $("final-start-over");
+    var fp = $("final-switch-present");
+    if (sr) sr.addEventListener("click", simulationReset);
+    if (fr) fr.addEventListener("click", simulationReset);
     if (sp) {
       sp.addEventListener("click", function () {
         $("simulation-complete-overlay").hidden = true;
         setMode("present");
+      });
+    }
+    if (fp) {
+      fp.addEventListener("click", function () {
+        setMode("present");
+        goHome();
+      });
+    }
+    var ws1 = $("worksheet-simulation-research");
+    var ws2 = $("worksheet-real-life-snapshot");
+    if (ws1) {
+      ws1.addEventListener("click", function (e) {
+        e.preventDefault();
+        openWorksheet("simulation-research");
+      });
+    }
+    if (ws2) {
+      ws2.addEventListener("click", function (e) {
+        e.preventDefault();
+        openWorksheet("real-life-snapshot");
       });
     }
     if (window.matchMedia) {
@@ -1041,9 +1660,26 @@ import { data } from "./data.js";
 
   function init() {
     bindChrome();
-    revealNavIfNeeded();
-    updateNavClarity();
-    setMode("2008");
+    loadPersistedEraState();
+    syncChromeTickerGauge();
+    restoreFolderHandleFromIdb()
+      .then(function (h) {
+        state.folderHandle = h;
+        tryGrantFolderOnce();
+        revealNavIfNeeded();
+        updateNavClarity();
+        setMode("2008");
+        if (gaugeLive()) {
+          state.skipGaugeTransition = true;
+          syncEventStress();
+          updatePressure();
+        }
+      })
+      .catch(function () {
+        revealNavIfNeeded();
+        updateNavClarity();
+        setMode("2008");
+      });
   }
 
   if (document.readyState === "loading") {

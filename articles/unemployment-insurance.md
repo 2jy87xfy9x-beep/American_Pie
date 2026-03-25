@@ -1,32 +1,54 @@
 ---
 title: Unemployment Insurance
 era: 3
-date: 2008
-category: Safety Net
+date: September 2008
+category: Labor
 sections: 6
-concepts: ["unemployment-insurance"]
-related: ["emergency-fund", "burn-rate"]
+concepts: ["ui", "benefits", "labor"]
+related: ["cobra-insurance", "taxes-when-laid-off", "emergency-fund"]
 ---
 ## What It Is
-Unemployment insurance replaces only part of prior wages for a limited time—rules vary by state, but filing delay costs real money.
+
+Unemployment insurance is state-run wage insurance you paid for indirectly via payroll taxes. It is not charity — it is a timed replacement of part of your old paycheck with forms, waiting weeks, and strict certifications.
+
+In autumn 2008, phone lines jammed. People who waited to file learned filing day mattered more than pride.
 
 ## Your Number
-With expenses at **{{your_monthly_expenses}}**, a 45% replacement rate leaves roughly **{{income_gap}}** per month to cover from savings or cuts.
+
+Your modeled monthly expenses **{{your_monthly_expenses}}** against take-home **{{your_monthly_income}}** set the stress baseline.
+
+National unemployment rate in your sheet: **{{unemployment_rate}}%** — macro context, not your personal benefit dollar.
 
 ## The Math
-The math is simple and brutal: monthly gap × months of job search = burn from the fund you could have preserved by acting fast.
+
+Assume benefits replace ~45% of prior take-home (varies wildly by state and wage). Monthly gap from old spending:
+
+0.55 × **{{your_monthly_expenses}}** ≈ **{{income_gap}}** (aligned with app’s gap figure when expenses stand in for old income).
+
+With **{{your_cash}}** and no other income, survival length without UI approximates **{{coverage_days}} days** of full burn; with UI bridging part, you buy calendar space — still finite if **{{your_credit_card_debt}}** minimums do not negotiate.
 
 ## What People Did
+
 **What most people did**
 
-They waited to file because the process felt embarrassing or confusing.
+They filed three Fridays after severance, “to think it over,” burning **{{your_cash}}** for pride.
 
-**What financially stable** people did
+**What financially stable people did**
 
-They filed immediately, then built a spend plan against the known benefit amount.
+They filed the same day signatures dried on the separation paperwork, screenshotted confirmations, and treated the first payable week as a line on the same spreadsheet as rent.
+
+▸ If you had known this before 2008
+
+You would have stopped treating UI like a welfare stigma and started treating it like delayed paycheck insurance your employer already priced in. The awkward form became cheaper than **{{your_monthly_expenses}}** auto-paid from **{{your_cash}}** while you “felt ready.”
 
 ## What It Connects To
-→ **Emergency fund** — fills the gap UI does not cover.
+
+→ **COBRA** — health premiums often eat what UI leaves.
+
+→ **Taxes when laid off** — partial year brackets and withholding surprises.
+
+→ **Emergency fund** — UI reduces bleed but does not erase **{{your_monthly_expenses}}**.
 
 ## Your Next Step
-Look up your state’s filing URL and the documents you need before you need them.
+
+Open your state workforce site in a new tab, bookmark the “file a new claim” path without submitting anything, and write the customer service number into your phone contacts as **UI — do not hesitate**.

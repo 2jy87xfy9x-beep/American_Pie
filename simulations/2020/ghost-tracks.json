@@ -1,0 +1,7 @@
+{
+  "winner": {"color": "#2D6A4F", "label": "The Winner", "philosophy": "", "log": []},
+  "weatherer": {"color": "#1D3557", "label": "The Weatherer", "philosophy": "", "log": []},
+  "unaware": {"color": "#C9952A", "label": "The Unaware", "philosophy": "", "log": []},
+  "gambler_lost": {"color": "#C1121F", "label": "The Gambler Who Lost", "philosophy": "", "log": []},
+  "gambler_won": {"color": "#6A994E", "label": "The Gambler Who Won", "philosophy": "", "log": []}
+}

@@ -3,50 +3,60 @@ title: Getting Started With Your Real Numbers
 era: present
 date: Present
 category: Your Situation
-sections: 4
+sections: 6
 concepts: ["real-data", "first-steps", "document-organization"]
-related: ["emergency-fund"]
+related: ["emergency-fund", "burn-rate", "federal-reserve"]
 ---
-## The First Number That Matters
-Before anything else in this app becomes personal, you need one number: your monthly burn rate.
+## What It Is
 
-This is not your income. It is not your rent. It is the total amount of money you spend in an average month on everything. Rent, food, transportation, subscriptions, utilities, everything.
+This mode is not a game score. It is your financial life with the training wheels disguised as typography. Every article you read here uses the same six-section rhythm as the simulation — definition, your number, math, what people did, links, one action — but the **{{variable_name}}** slots pull from **simulations/present/variables.json**, the file you are about to treat as seriously as a medical chart.
 
-You do not need to know this precisely to start. An estimate within $200 is close enough for now. You will refine it as you use the app.
+Silence is intentional: demographic seeds may already populate fields so the page is never empty. The moment you type a real figure, that key becomes yours — confirmed, sourced, dated — and syncs the way your environment allows.
 
-To find it: open your last three bank statements. Add the total money that left your account each month. Divide by three. That is your burn rate.
+## Your Number
 
-Tap the value below to enter your number:
+Before ideology, before optimization, you need **{{your_monthly_expenses}}** — not your salary, not your rent alone, but the full monthly bleed: housing, food, transit, insurance minimums, subscriptions, debt minimums, the honest total.
 
-Your monthly burn rate: **{{your_monthly_expenses}}**
+Tap **{{your_monthly_expenses}}** in the margin if the inline value still feels anonymous.
 
-## What To Enter Next
-With your burn rate entered, two things become real:
+Then look at **{{your_cash}}** — checking plus savings you could deploy this week without begging a penalty — and notice **{{coverage_days}}** because it is **{{your_cash}} ÷ {{your_monthly_expenses}} × 30** dressed in fewer scary words.
 
-Your coverage days with current cash: **{{coverage_days}} days**
+## The Math
 
-Your monthly income gap if you lost income today: **{{income_gap}}** (what expenses exceed unemployment)
+With **{{your_monthly_expenses}}** locked in, unemployment math stops being hypothetical. If assistance replaces ~45% of prior take-home, the monthly hole is roughly:
 
-These two numbers determine everything else in this app. Every article, every calculation, every "did you know" item will become personal once these are set.
+**{{your_monthly_expenses}} × 0.55 ≈ {{income_gap}}** (aligned with the app’s simplified gap label).
 
-Enter your current cash next. It is on your bank app right now. Just the checking and savings total. Not investments yet.
+That gap lands on **{{your_credit_card_debt}}** or **{{your_cash}}** — there is no magic third bucket unless you build one.
 
-Your current cash: **{{your_cash}}**
+If **{{your_monthly_income}}** still flows, subtract **{{your_monthly_expenses}}** and the surplus is what funds **{{your_investment_value}}**, extra debt paydown, or sanity — write that delta on paper tonight even if the app already knows.
 
-## How To Organize Your Documents
-You do not need to upload anything. You do not need to scan anything. You need to know where things are when the app asks for a specific number.
+## What People Did
 
-Create one folder on your computer: **Documents → finances → bank-statements → pay-stubs → tax-returns → other**
+**What most people did**
 
-When the app asks for a number, it will tell you exactly which document has it and exactly where on the document to look. Your job is to have the document in the right folder so you can find it in under 30 seconds.
+They waited until a crisis to open spreadsheets — exported panic PDFs, rounded numbers to feel calmer, and wondered why clarity arrived with nausea.
 
-That is the entire organization system. Simple enough to actually use. Structured enough to actually work.
+**What financially stable people did**
 
-## Your First Watch List Item
-The first thing to monitor in your real financial life is the Federal Reserve interest rate. Not because you are investing. Because the rate affects your savings account, any debt you carry, and the job market you are navigating.
+They treated **{{your_net_worth}}** like a blood pressure cuff — measured often enough to see trends, rarely enough to obsess intraday — and updated **{{your_credit_score}}** only when it changed something actionable.
 
-Check it once a month at: **federalreserve.gov → Monetary Policy → Target Rate**
+They also learned where **{{marginal_tax_rate}}** and **{{long_term_cg_rate}}** live on actual forms, not blog summaries.
 
-Current rate as you have entered it: **{{fed_funds_rate}}**
+▸ If you had known this earlier
 
-When it changes, update that value in your variables file. The app will show you exactly what the change means for your specific situation.
+You would have stopped negotiating with shame about numbers you did not want to be true — **{{your_cash}}** is not a moral grade; it is a coordinate. Pretending coordinates were higher did not move the map; it only moved the cliff.
+
+## What It Connects To
+
+Here are three simulation articles whose logic still applies once the calendar says **{{today}}**:
+
+→ **Emergency fund** — the same coverage math, different emotional weight when the cash is literally yours.
+
+→ **Burn rate** — vocabulary for the expense number you just put under a spotlight.
+
+→ **Federal Reserve** — why **{{fed_funds_rate}}** still shapes **{{high_yield_savings_rate}}**, variable APRs, and macro mood.
+
+## Your Next Step
+
+Create **Documents/finances/YYYY-MM-DD-snapshot.txt** (use the real date) with four lines only: **{{your_monthly_expenses}}**, **{{your_cash}}**, **{{your_monthly_income}}**, **{{coverage_days}}** — copy from the screen — save — that file is now your first artifact outside the app.

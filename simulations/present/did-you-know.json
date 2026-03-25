@@ -1,8 +1,24 @@
 [
   {
-    "text": "Enter your cash and burn rate in Getting Started to personalize every hook here."
+    "text": "At roughly {{your_monthly_expenses}} a month in spending, your {{your_cash}} in cash is about {{coverage_days}} days of runway before anything else breaks your fall."
   },
   {
-    "text": "The app never pulls data for you — you bring the numbers, it teaches the meaning."
+    "text": "If unemployment replaced about 45% of prior pay, the monthly hole after losing {{your_monthly_income}} in take-home looks roughly like {{income_gap}} before you touch the credit card at {{your_credit_card_debt}}."
+  },
+  {
+    "text": "With rent near {{your_monthly_rent}}, the Fed at {{fed_funds_rate}}, and inflation near {{inflation_rate}}, every \"small\" APR or lease escalation shows up in the same checking account."
+  },
+  {
+    "text": "A {{your_credit_score}} score and {{your_credit_card_debt}} in revolving debt change the interest rate table you actually meet in the wild, not the headline teaser on a website."
+  },
+  {
+    "text": "Reports near {{sp500_level}} on the S&P are abstract until you compare them to {{your_investment_value}} actually invested on your statement — the gap is the lesson."
+  },
+  {
+    "text": "Net worth near {{your_net_worth}} in the demographic seed is one line: assets minus liabilities. Replace every number with yours and the sentence still has to balance."
+  },
+  {
+    "on_this_day": "April 15",
+    "text": "Tax day is a document day, not a panic day, if {{marginal_tax_rate}} and your real withholding already live on paper."
   }
 ]

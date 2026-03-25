@@ -1,42 +1,138 @@
 {
   "your_cash": {
-    "value": null,
+    "value": 5400,
     "unit": "dollars",
     "confirmed": false,
-    "source": "",
-    "last_checked": "",
-    "notes": "Total liquid cash — checking + savings (from your bank app)."
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate median liquid savings — silent seed until you replace it."
   },
   "your_monthly_expenses": {
-    "value": null,
+    "value": 3200,
     "unit": "dollars",
     "confirmed": false,
-    "source": "",
-    "last_checked": "",
-    "notes": "Average monthly spending — last three statements, sum outflows ÷ 3."
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate typical household monthly outflows."
   },
   "your_monthly_income": {
-    "value": null,
+    "value": 4200,
     "unit": "dollars",
     "confirmed": false,
-    "source": "",
-    "last_checked": "",
-    "notes": "Take-home pay per month (net on pay stub)."
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate median take-home — replace with your pay stub net."
   },
-  "fed_funds_rate": {
-    "value": null,
-    "unit": "percent",
+  "your_monthly_rent": {
+    "value": 1400,
+    "unit": "dollars",
     "confirmed": false,
-    "source": "federalreserve.gov",
-    "last_checked": "",
-    "notes": "Monetary Policy → Target Range."
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Typical renter metro-weighted estimate."
   },
-  "stress_level": {
-    "value": 10,
+  "your_credit_card_debt": {
+    "value": 6500,
+    "unit": "dollars",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate per-household revolving balance."
+  },
+  "your_investment_value": {
+    "value": 0,
+    "unit": "dollars",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Many households hold no brokerage assets — zero is a real baseline."
+  },
+  "your_net_worth": {
+    "value": 121700,
+    "unit": "dollars",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Fed-style household net worth near median."
+  },
+  "your_credit_score": {
+    "value": 714,
     "unit": "number",
     "confirmed": false,
-    "source": "user",
-    "last_checked": "",
-    "notes": "Personal stress index you maintain manually (0–100)."
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Typical good FICO range."
+  },
+  "marginal_tax_rate": {
+    "value": 22,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate middle-bracket federal marginal for median earners."
+  },
+  "short_term_cg_rate": {
+    "value": 22,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Ordinary income rate on short-term gains for this bracket."
+  },
+  "long_term_cg_rate": {
+    "value": 15,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Typical long-term capital gains cap rate for middle incomes."
+  },
+  "fed_funds_rate": {
+    "value": 5.33,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Representative 2024 policy target mid-range."
+  },
+  "inflation_rate": {
+    "value": 3.4,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate CPI year-over-year anchor year."
+  },
+  "unemployment_rate": {
+    "value": 3.9,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "U.S. civilian unemployment near-cycle low."
+  },
+  "sp500_level": {
+    "value": 5137,
+    "unit": "number",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Approximate index level for seed year."
+  },
+  "high_yield_savings_rate": {
+    "value": 5.0,
+    "unit": "percent",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Competitive HYSA APY during higher-rate era."
+  },
+  "stress_level": {
+    "value": 28,
+    "unit": "number",
+    "confirmed": false,
+    "source": "national average",
+    "last_checked": "2024-01-01",
+    "notes": "Personal stress index placeholder — replace with your read."
   }
 }
