@@ -473,26 +473,27 @@ import { data } from "./data.js";
   }
 
   function tryLoadPieBuffer() {
-    if (state.audio.buffer || !state.folderHandle) return Promise.resolve();
-    return state.folderHandle
-      .getDirectoryHandle("audio", { create: false })
-      .then(function (dh) {
-        return dh.getFileHandle("Pie.m4a", { create: false });
-      })
-      .then(function (fh) {
-        return fh.getFile();
-      })
-      .then(function (file) {
-        return file.arrayBuffer();
-      })
-      .then(function (ab) {
-        var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-        if (!OAC) return null;
-        var tmp = new OAC(1, 2, 44100);
-        return tmp.decodeAudioData(ab.slice(0)).then(function (buf) {
-          state.audio.buffer = buf;
-        });
-      })
+    if (state.audio.buffer) return Promise.resolve();
+    function decodeAb(ab) {
+      var OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+      if (!OAC) return Promise.resolve();
+      var tmp = new OAC(1, 2, 44100);
+      return tmp.decodeAudioData(ab.slice(0)).then(function (buf) {
+        state.audio.buffer = buf;
+      });
+    }
+    if (state.folderHandle) {
+      return state.folderHandle
+        .getDirectoryHandle("audio", { create: false })
+        .then(function (dh) { return dh.getFileHandle("Pie.m4a", { create: false }); })
+        .then(function (fh) { return fh.getFile(); })
+        .then(function (file) { return file.arrayBuffer(); })
+        .then(decodeAb)
+        .catch(function () { return fetch("audio/Pie.m4a").then(function (r) { return r.arrayBuffer(); }).then(decodeAb).catch(function () {}); });
+    }
+    return fetch("audio/Pie.m4a")
+      .then(function (r) { return r.arrayBuffer(); })
+      .then(decodeAb)
       .catch(function () {});
   }
 
@@ -783,21 +784,11 @@ import { data } from "./data.js";
     var c = state.audio.config;
     ph.innerHTML =
       '<div class="audio-config-panel" id="audio-config-panel" tabindex="-1">' +
-      "<div>Audio</div>" +
-      '<hr class="thick-rule" />' +
-      '<div class="audio-config-row">Volume <input type="number" min="0" max="100" class="audio-config-inp mono" id="ac-vol-inp" value="' +
+      '<span class="audio-config-label">Vol</span>' +
+      '<input type="range" min="0" max="100" class="audio-config-slider" id="ac-vol-inp" value="' +
       c.volume +
-      '" />%</div>' +
-      '<div class="audio-config-row" data-field="effects">Effects <span class="mono">[ full · subtle · off ]</span> → <span class="mono" id="ac-eff-cur">' +
-      c.effects +
-      "</span></div>" +
-      '<div class="audio-config-row" data-field="momentum">Momentum <span class="mono">[ on · off ]</span> → <span class="mono" id="ac-mom-cur">' +
-      (c.momentumFade ? "on" : "off") +
-      "</span></div>" +
-      '<div class="audio-config-row">Fade after <input type="number" min="15" max="300" class="audio-config-inp mono" id="ac-fade-inp" value="' +
-      c.fadeDelay +
-      '" />s</div>' +
-      '<hr class="thick-rule" />' +
+      '" />' +
+      '<span class="audio-config-val mono" id="ac-vol-val">' + c.volume + '</span>' +
       "</div>";
     wireAudioConfigPanel();
   }
@@ -805,49 +796,19 @@ import { data } from "./data.js";
   function wireAudioConfigPanel() {
     var panel = $("audio-config-panel");
     if (!panel) return;
+    panel.addEventListener("click", function (e) { e.stopPropagation(); });
     var volInp = $("ac-vol-inp");
     if (volInp) {
-      volInp.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
       volInp.addEventListener("input", function () {
         var v = parseInt(String(volInp.value), 10);
         if (isNaN(v)) return;
         state.audio.config.volume = Math.max(0, Math.min(100, v));
+        var valEl = $("ac-vol-val");
+        if (valEl) valEl.textContent = state.audio.config.volume;
         persistAudioConfig();
         refreshAudioFromConfig();
       });
     }
-    var fdInp = $("ac-fade-inp");
-    if (fdInp) {
-      fdInp.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
-      fdInp.addEventListener("input", function () {
-        var v = parseInt(String(fdInp.value), 10);
-        if (isNaN(v)) return;
-        state.audio.config.fadeDelay = Math.max(15, Math.min(300, v));
-        persistAudioConfig();
-      });
-    }
-    panel.querySelectorAll(".audio-config-row[data-field]").forEach(function (row) {
-      row.addEventListener("click", function (e) {
-        e.stopPropagation();
-        var f = row.getAttribute("data-field");
-        if (f === "effects") {
-          var order = ["full", "subtle", "off"];
-          var i = order.indexOf(state.audio.config.effects);
-          state.audio.config.effects = order[(i + 1) % 3];
-          persistAudioConfig();
-          refreshAudioFromConfig();
-          renderAudioConfigPanel();
-        } else if (f === "momentum") {
-          state.audio.config.momentumFade = !state.audio.config.momentumFade;
-          persistAudioConfig();
-          renderAudioConfigPanel();
-        }
-      });
-    });
   }
 
   function refreshAudioFromConfig() {
@@ -1909,10 +1870,6 @@ import { data } from "./data.js";
   function revealNavIfNeeded() {
     if (localStorage.getItem(LS_FIRST_DONE) === "1") {
       document.body.classList.add("nav-visible");
-      var shell = $("nav-shell");
-      if (shell && window.matchMedia && window.matchMedia("(max-width: 900px)").matches) {
-        shell.classList.add("show-mobile");
-      }
     }
   }
 
