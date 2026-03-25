@@ -1,0 +1,505 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#F8F9FA;color:#202122;font-family:Georgia,serif;font-size:15px;line-height:1.75}
+.shell{max-width:900px;margin:0 auto;border:1px solid #A2A9B1;min-height:580px;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.on{display:flex}
+
+.home-head{padding:16px 24px 12px;border-bottom:1px solid #A2A9B1;overflow:hidden}
+.yr-row{float:right;font-family:'Courier New',monospace;font-size:12px;color:#54595D}
+.yr{cursor:pointer;margin-left:12px}
+.yr.active{color:#202122;border-bottom:1px solid #202122}
+.pulse{display:inline-block;width:5px;height:5px;border-radius:50%;background:#2D6A4F;animation:pu 4s ease-in-out infinite;margin-left:3px;vertical-align:middle}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.1}}
+.wm{font-size:22px;font-weight:400}
+.sub{font-family:'Courier New',monospace;font-size:11px;color:#54595D;margin-top:2px}
+
+.home-body{display:flex;overflow-y:auto;flex:1}
+.hl{flex:1.6;padding:20px 24px;border-right:1px solid #EAECF0}
+.hr{flex:1;padding:20px 20px}
+
+.fl{font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#54595D;margin-bottom:6px}
+.fr{border:none;border-top:1px solid #A2A9B1;margin:6px 0 12px}
+.fh{font-size:17px;line-height:1.35;font-weight:400;margin-bottom:10px}
+.fb{font-size:13px;line-height:1.7;color:#54595D;margin-bottom:10px}
+.rm{font-family:'Courier New',monospace;font-size:12px;color:#3366CC;cursor:pointer}
+.rm:hover{text-decoration:underline}
+.nl{font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#54595D;margin:18px 0 6px}
+.ni{display:block;font-size:13px;line-height:1.5;color:#3366CC;padding:5px 0;border-bottom:1px solid #EAECF0;cursor:pointer}
+.ni:before{content:'· ';color:#54595D}
+.ni:hover{text-decoration:underline}
+.dl{font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#54595D;margin-bottom:8px}
+.dr{border:none;border-top:1px solid #A2A9B1;margin-bottom:10px}
+.di{font-size:13px;line-height:1.6;color:#54595D;padding:7px 0;border-bottom:1px solid #EAECF0}
+.di strong{color:#202122;font-weight:500}
+.da{display:block;margin-top:3px;font-family:'Courier New',monospace;font-size:11px;color:#3366CC;cursor:pointer}
+.da:hover{text-decoration:underline}
+.otd{padding:10px 24px;background:#F0F2F4;border-top:1px solid #A2A9B1;font-size:13px;line-height:1.6;color:#54595D}
+.otd strong{font-family:'Courier New',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#202122;display:block;margin-bottom:3px}
+
+.ah{padding:12px 24px;border-bottom:1px solid #A2A9B1;display:flex;justify-content:space-between;align-items:baseline}
+.bc{font-family:'Courier New',monospace;font-size:11px;color:#54595D}
+.bc a{color:#3366CC;cursor:pointer}
+.bc a:hover{text-decoration:underline}
+.bcs{margin:0 4px;color:#A2A9B1}
+.sv{font-family:'Courier New',monospace;font-size:11px;color:#54595D;cursor:pointer}
+.sv:hover{color:#202122}
+
+.ab{display:flex;flex:1;overflow:hidden}
+.ac{flex:1.7;padding:24px 28px;display:flex;flex-direction:column;overflow:hidden}
+.ath{font-size:19px;font-weight:400;line-height:1.3;margin-bottom:18px}
+.st{flex:1;font-size:14px;line-height:1.85;overflow:hidden}
+.st p{margin-bottom:14px}
+.il{color:#3366CC;cursor:pointer;border-bottom:1px dotted #3366CC}
+.il:hover{background:rgba(51,102,204,.06)}
+.vv{font-family:'Courier New',monospace;font-size:13px;color:#202122;border-bottom:1px dotted #54595D;cursor:pointer;padding:0 1px}
+.vv:hover{background:#EAECF0}
+.vs{font-size:9px;color:#72777D;vertical-align:super;margin-left:1px}
+.af{padding-top:14px;border-top:1px solid #EAECF0;display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.kr{font-family:'Courier New',monospace;font-size:12px;color:#54595D;cursor:pointer}
+.kr:hover{color:#202122}
+.bl{font-family:'Courier New',monospace;font-size:11px;color:#54595D;cursor:pointer}
+.bl:hover{color:#3366CC}
+.rv{font-family:'Courier New',monospace;font-size:11px;color:#54595D;cursor:pointer;display:inline-block;margin:8px 0 4px}
+.rv:hover{color:#202122}
+.rb{display:none;border-left:2px solid #A2A9B1;padding:8px 12px;margin:4px 0 8px;font-size:13px;line-height:1.7;color:#54595D;font-family:-apple-system,sans-serif}
+.rb.on{display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chip{font-family:'Courier New',monospace;font-size:11px;color:#54595D;border:1px solid #A2A9B1;padding:4px 9px;cursor:pointer;background:#F8F9FA}
+.chip:hover{color:#202122;background:#EAECF0}
+
+.mg{width:200px;border-left:1px solid #EAECF0;padding:18px 14px;font-family:'Courier New',monospace;font-size:11px;background:#FAFAFA;overflow-y:auto;display:flex;flex-direction:column;gap:16px}
+.ml{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#54595D;border-bottom:1px solid #EAECF0;padding-bottom:6px;margin-bottom:4px}
+.ti{color:#54595D;padding:2px 0;cursor:pointer;line-height:1.4}
+.ti:hover{color:#3366CC}
+.ti.ton{color:#202122;border-left:2px solid #202122;padding-left:6px;margin-left:-8px}
+.sai{padding:5px 0;border-bottom:1px solid #EAECF0;cursor:pointer}
+.sai:last-child{border-bottom:none}
+.sad{font-size:10px;color:#72777D;display:block;margin-bottom:1px}
+.sat{color:#3366CC;display:block;line-height:1.4;font-size:11px}
+.sat:hover{text-decoration:underline}
+.sax{color:#54595D;font-size:10px;display:none;margin-top:3px;line-height:1.5}
+.sai.ex .sax{display:block}
+.sai.ex .sat{color:#202122}
+.med{display:none}
+.med.on{display:block}
+.mfl label{color:#54595D;display:block;margin-bottom:2px;font-size:10px}
+.mfl{margin-bottom:8px}
+.mi{width:100%;font-family:'Courier New',monospace;font-size:11px;background:#F8F9FA;border:1px solid #A2A9B1;padding:4px 6px;color:#202122;outline:none}
+.mi:focus{border-color:#54595D}
+.mn{font-size:10px;color:#54595D;border-top:1px solid #EAECF0;padding-top:6px;margin-top:4px;line-height:1.6}
+.mc{font-size:10px;color:#54595D;cursor:pointer;text-align:right;margin-top:4px}
+.mc:hover{color:#202122}
+
+.tk{border-top:1px solid #A2A9B1;background:#202122;height:28px;display:flex;align-items:center;overflow:hidden;position:relative;flex-shrink:0}
+.tt{display:flex;align-items:center;white-space:nowrap}
+.ti2{font-family:'Courier New',monospace;font-size:10px;color:#F8F9FA;opacity:.85;padding:0 20px}
+.tsp{color:#555;margin:0 2px}
+.tc2{position:absolute;right:8px;display:flex;gap:8px;background:#202122;padding:0 0 0 6px}
+.tcb{font-family:'Courier New',monospace;font-size:11px;color:#666;cursor:pointer}
+.tcb:hover{color:#F8F9FA}
+
+.ft{padding:5px 24px;border-top:1px solid #EAECF0;display:flex;justify-content:space-between;align-items:center;background:#F8F9FA}
+.tsw{font-family:'Courier New',monospace;font-size:11px;color:#54595D}
+.tsw span{cursor:pointer;margin-right:10px}
+.tsw span.on{color:#202122;border-bottom:1px solid #202122}
+.cl{font-family:'Courier New',monospace;font-size:11px;color:#54595D}
+.cl strong{color:#202122}
+
+.so{display:none;position:absolute;bottom:28px;left:0;right:0;background:#F8F9FA;border-top:1px solid #A2A9B1;padding:14px 24px;font-family:'Courier New',monospace;font-size:11px;line-height:1.8;z-index:10}
+.so.on{display:block}
+.soh{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#54595D;margin-bottom:8px}
+.soc{float:right;cursor:pointer;color:#54595D}
+.soc:hover{color:#202122}
+
+.shell{position:relative}
+
+.np .shell{background:#F5F0E8}
+.np .home-body,.np .hl,.np .hr,.np .ab,.np .ac,.np .mg{background:#F5F0E8}
+.np .otd{background:#EDE8DC;border-color:#2B2B2B}
+.np .ft{background:#F5F0E8;border-color:#2B2B2B}
+.np .tk{background:#1A1A1A;border-color:#2B2B2B}
+.np .vv{color:#8B0000;border-color:#8B0000}
+.np .il{color:#1A1A1A;border-color:#1A1A1A}
+.np .ni,.np .rm,.np .da,.np .sat{color:#1A1A1A}
+.np .mg{background:#EDE8DC}
+.np .so{background:#F5F0E8}
+</style>
+
+<div id="root">
+<div class="shell" id="shell">
+
+<div class="screen on" id="s-home">
+  <div class="home-head">
+    <div class="yr-row">
+      <span class="yr active">2008</span>
+      <span class="yr">Present <span class="pulse"></span></span>
+    </div>
+    <div class="wm">American Pie</div>
+    <div class="sub">The Free Financial Encyclopedia</div>
+  </div>
+  <div class="home-body">
+    <div class="hl">
+      <div class="fl">★ Featured Article</div>
+      <hr class="fr">
+      <div class="fh">What Was Already Over Before Anyone Called It A Crisis</div>
+      <div class="fb">The official start date of the 2008 recession is December 2007. By then seven of the nine indicators used to determine that date had already been deteriorating for between four and eleven months.<br><br>The people who came out of it ahead were not the ones who predicted it. They just knew a number most people had never calculated.</div>
+      <span class="rm" onclick="go('s-main')">Read more →</span>
+      <div class="nl">In the news — Early 2008</div>
+      <span class="ni" onclick="go('s-bear')">An 85-year-old institution that survived the Great Depression, two world wars and the dot-com collapse did not survive the weekend. It sold for $2 a share. Twelve months earlier: $172.</span>
+      <span class="ni" onclick="go('s-fed')">The Federal Reserve cut rates for the fourth time in six months. Your savings account already noticed. You probably haven't.</span>
+      <span class="ni" onclick="go('s-bear')">The safety rating on the product at the center of the collapse was AAA. The firm that issued that rating was paid by the firm that created the product. Both firms are still operating.</span>
+      <span class="ni" onclick="go('s-main')">A man who had been warning about this specific scenario in writing since 2005 quietly made $100 million the week Bear Stearns collapsed. The warning was public. The trade was legal.</span>
+      <span class="ni" onclick="go('s-fed')">Oil hits $100 a barrel. Something else also hit a record that week. It was in your wallet. Nobody was covering that story.</span>
+    </div>
+    <div class="hr">
+      <div class="dl">Did you know?</div>
+      <hr class="dr">
+      <div class="di">The men who rated the instruments that destroyed <strong>$19 trillion</strong> in household wealth gave them the highest possible safety rating. They were paid by the banks that created them. This was not illegal.<span class="da" onclick="go('s-bear')">It still isn't →</span></div>
+      <div class="di">There is a calculation that takes <strong>eleven minutes</strong>. The people who had done it before 2008 kept their savings. The people who hadn't lost an average of <strong>$34,000</strong> trying to figure it out in real time.<span class="da" onclick="go('s-calc')">What the calculation is →</span></div>
+      <div class="di">Your bank is required by law to tell you what it pays on your deposits. It is also allowed to put that number in <strong>6.5-point font on page 47</strong> of a document it calls a welcome letter.<span class="da" onclick="go('s-fed')">What it actually pays →</span></div>
+      <div class="di">Someone you have never heard of made <strong>$1 billion in 2008</strong> by betting that Americans would not be able to pay their mortgages. He is not in prison.<span class="da" onclick="go('s-bear')">He gave a TED talk →</span></div>
+    </div>
+  </div>
+  <div class="otd">
+    <strong>On this day — March 14, 2008</strong>
+    The board of Bear Stearns accepted $2 per share from JP Morgan. The CEO had told shareholders the firm was fine five days earlier. He was not charged with anything.
+  </div>
+</div>
+
+<div class="screen" id="s-main">
+  <div class="ah">
+    <div class="bc"><a onclick="go('s-home')">American Pie</a><span class="bcs">›</span><a onclick="go('s-home')">2008</a><span class="bcs">›</span>Crisis</div>
+    <span class="sv" onclick="toggleSrc()">&#60; &#62;</span>
+  </div>
+  <div class="ab">
+    <div class="ac">
+      <div class="ath">What Was Already Over Before Anyone Called It A Crisis</div>
+      <div class="st">
+        <p>In January 2008 five households had roughly the same amount of money, roughly the same expenses, and roughly the same understanding of what was happening around them. Which is to say almost none.</p>
+        <p>What was happening was not hidden. The Federal Reserve's own published minutes described it with increasing urgency across six consecutive meetings. The largest banks in the country had <span class="il" onclick="go('s-bear')">stopped lending to each other</span> — the financial equivalent of hospitals refusing to share blood. None of this was classified. All of it was public.</p>
+        <p>One of the five households was reading it.</p>
+      </div>
+      <div class="af">
+        <span class="bl" onclick="go('s-home')">← Home</span>
+        <span class="kr" onclick="go('s-calc')">Keep reading →</span>
+      </div>
+    </div>
+    <div class="mg">
+      <div>
+        <div class="ml">In this story</div>
+        <div class="ti ton">The setup</div>
+        <div class="ti" onclick="go('s-calc')">The calculation</div>
+        <div class="ti">The crack</div>
+        <div class="ti">The fall</div>
+        <div class="ti">The bottom</div>
+      </div>
+      <div>
+        <div class="ml">See also</div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sat">One household's position entering January 2008</span>
+          <span class="sax">Savings moved to high-yield. Runway calculated. No debt. Nothing to react to.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sat">The position most households were in without knowing it</span>
+          <span class="sax">Savings in checking at 0.04%. Runway unknown. Credit card balance quietly climbing.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sat">A different read on the same public information</span>
+          <span class="sax">Short position opened on financial sector. Thesis correct. Position bleeding slowly. Still held.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-calc">
+  <div class="ah">
+    <div class="bc"><a onclick="go('s-home')">American Pie</a><span class="bcs">›</span><a onclick="go('s-main')">2008</a><span class="bcs">›</span>Crisis</div>
+    <span class="sv" onclick="toggleSrc()">&#60; &#62;</span>
+  </div>
+  <div class="ab">
+    <div class="ac">
+      <div class="st">
+        <p>The thing they were reading was not complicated. It required no finance degree, no brokerage account, no money beyond what was already sitting in a checking account.</p>
+        <p>It required knowing one number. Take everything liquid. Divide by what leaves the account in an average month — not income, what leaves. Multiply by thirty. The result is days.</p>
+        <p>For one household that number was <span class="vv" onclick="openEd()" id="vdays">97 days<span class="vs">▸</span></span>. Calculated on a Tuesday. Nothing prompted it except mild unease about money that had been building since November.</p>
+        <p>The other four households had a feeling about this number. Fine, probably. The feeling was not a number. In a crisis <span class="il" onclick="go('s-fed')">a feeling spends like nothing at all</span>.</p>
+        <span class="rv" onclick="toggleRv()" id="rvt">▸ What the other four had instead of a number</span>
+        <div class="rb" id="rvb">The other four had between 23 and 61 days of runway — a fact none of them knew. They would find out. Not on a quiet Tuesday. In the middle of something else entirely, when the information arrived with no good options attached to it.</div>
+      </div>
+      <div class="af">
+        <span class="bl" onclick="go('s-main')">← Back</span>
+        <span class="kr" onclick="go('s-bear')">Keep reading →</span>
+      </div>
+    </div>
+    <div class="mg">
+      <div>
+        <div class="ml">In this story</div>
+        <div class="ti" onclick="go('s-main')">The setup</div>
+        <div class="ti ton">The calculation</div>
+        <div class="ti">The crack</div>
+        <div class="ti">The fall</div>
+        <div class="ti">The bottom</div>
+      </div>
+      <div class="med" id="med">
+        <div class="ml">Your number ▸</div>
+        <div class="mfl">
+          <label>Monthly expenses</label>
+          <input class="mi" id="iexp" placeholder="$2,100" oninput="recalc()">
+        </div>
+        <div class="mfl">
+          <label>Current savings</label>
+          <input class="mi" id="isav" placeholder="$7,000" oninput="recalc()">
+        </div>
+        <div class="mn" id="mnote">Using mock data<br>Expenses: $2,100<br>Savings: $7,000<br>Coverage: 97 days</div>
+        <div class="mc" onclick="closeEd()">close ×</div>
+      </div>
+      <div id="calcsa">
+        <div class="ml">See also</div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">January 2008</span>
+          <span class="sat">One response to the emergency rate cut</span>
+          <span class="sax">Savings moved. Interest captured. Runway: 142 days and climbing.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">January 2008</span>
+          <span class="sat">The more common non-response</span>
+          <span class="sax">Savings stayed. Nothing changed. Runway: 41 days. Unknown to its owner.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">January 2008</span>
+          <span class="sat">A leveraged interpretation of the same news</span>
+          <span class="sax">Short position on financial sector. Thesis correct. Still bleeding. Two households made this trade. Identical for now.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-bear">
+  <div class="ah">
+    <div class="bc"><a onclick="go('s-home')">American Pie</a><span class="bcs">›</span><a onclick="go('s-main')">2008</a><span class="bcs">›</span>Banking</div>
+    <span class="sv" onclick="toggleSrc()">&#60; &#62;</span>
+  </div>
+  <div class="ab">
+    <div class="ac">
+      <div class="ath">The Weekend An 85-Year-Old Institution Ceased To Exist</div>
+      <div class="st">
+        <p>Bear Stearns had survived the Great Depression, World War II, the savings and loan crisis, and the dot-com collapse. It did not survive the weekend of March 14, 2008.</p>
+        <p>Its two internal hedge funds were holding approximately $20 billion in mortgage-backed securities — bundles of American home loans repackaged and sold as investment-grade assets. The credit rating on most of them was AAA. The firm that issued those ratings was paid by the firm that created the products.</p>
+        <p>By July 2007 both funds had lost essentially all of their value. The firm told clients the situation was <span class="il">contained</span>. When something that size gets called contained, the correct response is to find out what that word is doing in that sentence. It was doing nothing. It was decoration.</p>
+      </div>
+      <div class="chips">
+        <div class="chip" onclick="go('s-fed')">What the Fed did about it →</div>
+        <div class="chip" onclick="go('s-calc')">The number that changed outcomes →</div>
+      </div>
+      <div class="af">
+        <span class="bl" onclick="go('s-home')">← Home</span>
+        <span class="kr" onclick="go('s-fed')">Keep reading →</span>
+      </div>
+    </div>
+    <div class="mg">
+      <div>
+        <div class="ml">In this story</div>
+        <div class="ti" onclick="go('s-main')">The setup</div>
+        <div class="ti" onclick="go('s-calc')">The calculation</div>
+        <div class="ti ton">The crack</div>
+        <div class="ti">The fall</div>
+        <div class="ti">The bottom</div>
+      </div>
+      <div>
+        <div class="ml">March 14 — BSC</div>
+        <div style="font-size:10px;color:#54595D;line-height:2">12 months prior &nbsp;$172<br>Friday close &nbsp;&nbsp;&nbsp;&nbsp;$30<br>Sale price &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$2<br>Market cap lost &nbsp;~$18B<br>Time elapsed &nbsp;&nbsp;&nbsp;one weekend</div>
+      </div>
+      <div>
+        <div class="ml">See also</div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">March 14, 2008</span>
+          <span class="sat">One household read the news and did nothing</span>
+          <span class="sax">Already prepared. Runway intact. No reaction required or taken.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">March 14, 2008</span>
+          <span class="sat">One household did not hear about it</span>
+          <span class="sax">Credit card: $1,200. Savings: declining. The news did not reach them that weekend.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">March 14, 2008</span>
+          <span class="sat">Two households made the same trade on the same news</span>
+          <span class="sax">Both short financial sector. Both up 40%. One added leverage Thursday. One did not. They are identical for now.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-fed">
+  <div class="ah">
+    <div class="bc"><a onclick="go('s-home')">American Pie</a><span class="bcs">›</span><a onclick="go('s-main')">2008</a><span class="bcs">›</span>Economy</div>
+    <span class="sv" onclick="toggleSrc()">&#60; &#62;</span>
+  </div>
+  <div class="ab">
+    <div class="ac">
+      <div class="ath">The Meeting Notes That Were Always Public And Almost Never Read</div>
+      <div class="st">
+        <p>On January 22 2008 the Federal Reserve cut its benchmark rate by 75 basis points in an emergency session. Largest single cut in 26 years. Not scheduled. Emergency sessions are rare. The Fed does not hold them for announcements that do not matter.</p>
+        <p>What it meant for the <span class="vv" onclick="openEd2()" id="vcash">$7,000<span class="vs">▸</span></span> sitting in the average household checking account: the rate on that account, already at 0.04 percent annually, would fall further. The <span class="vv" id="vearn">$2.80<span class="vs">▸</span></span> earned per year on that balance would become less.</p>
+        <p>Somewhere else — a high-yield account requiring only knowledge of its existence — the same amount was earning <span class="vv" id="vhysa">$315<span class="vs">▸</span></span> a year. The distance between those two outcomes was <span class="il" onclick="go('s-calc')">one phone call and nineteen minutes</span>. One household made it in January.</p>
+      </div>
+      <div class="chips">
+        <div class="chip" onclick="go('s-calc')">Calculate your own runway →</div>
+        <div class="chip" onclick="go('s-bear')">What else happened that week →</div>
+      </div>
+      <div class="af">
+        <span class="bl" onclick="go('s-home')">← Home</span>
+        <span class="kr" onclick="alert('Simulation continues — Era 2: The Crack begins here')">Keep reading →</span>
+      </div>
+    </div>
+    <div class="mg">
+      <div>
+        <div class="ml">In this story</div>
+        <div class="ti" onclick="go('s-main')">The setup</div>
+        <div class="ti" onclick="go('s-calc')">The calculation</div>
+        <div class="ti ton">The crack</div>
+        <div class="ti">The fall</div>
+        <div class="ti">The bottom</div>
+      </div>
+      <div>
+        <div class="ml">Fed funds rate</div>
+        <div style="font-size:10px;color:#54595D;line-height:2;font-family:'Courier New',monospace">Sep 2007 &nbsp;5.25%<br>Oct 2007 &nbsp;4.75% ↓<br>Dec 2007 &nbsp;4.25% ↓<br>Jan 22 &nbsp;&nbsp;&nbsp;3.50% ↓↓<br>Jan 30 &nbsp;&nbsp;&nbsp;3.00% ↓<br>Mar 2008 &nbsp;2.25% ↓<br>Apr 2008 &nbsp;2.00% ↓</div>
+      </div>
+      <div>
+        <div class="ml">See also</div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">January 22, 2008</span>
+          <span class="sat">One household had already moved</span>
+          <span class="sax">High-yield account opened two weeks prior. Earning $315/yr. The cut changed nothing for them.</span>
+        </div>
+        <div class="sai" onclick="xSA(this)">
+          <span class="sad">January 22, 2008</span>
+          <span class="sat">Most households did not notice</span>
+          <span class="sax">Savings in checking at 0.04%. Falling further now. Earning $2.80/yr. Account holder unaware.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="so" id="sov">
+  <div class="soh">Source View <span class="soc" onclick="toggleSrc()">close ×</span></div>
+  <div>Article: articles/2008/crisis.md<br>Variables: your_cash → $7,000 (mock) · your_monthly_expenses → $2,100 (mock)<br>coverage_days = 7000 ÷ 2100 × 30 = 100 days<br>Edit variables: simulations/2008/variables.json</div>
+</div>
+
+<div class="tk" id="tk">
+  <div class="tt" id="ttrack">
+    <span class="ti2">Fed holds emergency session<span class="tsp">·</span>largest rate cut in 26 years<span class="tsp">·</span>your savings account earns less starting today<span class="tsp">·</span>one household moved funds before the announcement<span class="tsp">·</span>most did not<span class="tsp">·</span>Bear Stearns tells clients situation is contained<span class="tsp">·</span>one household calculates: 97 days<span class="tsp">·</span>the AAA rating was issued by a firm paid by the issuer<span class="tsp">·</span>this is still legal<span class="tsp">·</span>one household reads the Fed minutes<span class="tsp">·</span>four do not<span class="tsp">·</span>Fed holds emergency session<span class="tsp">·</span>largest rate cut in 26 years<span class="tsp">·</span>your savings account earns less starting today<span class="tsp">·</span>one household moved funds before the announcement<span class="tsp">·</span>most did not<span class="tsp">·</span>Bear Stearns tells clients situation is contained<span class="tsp">·</span>one household calculates: 97 days<span class="tsp">·</span>the AAA rating was issued by a firm paid by the issuer<span class="tsp">·</span>this is still legal<span class="tsp">·</span>one household reads the Fed minutes<span class="tsp">·</span>four do not</span>
+  </div>
+  <div class="tc2">
+    <span class="tcb" id="tpb" onclick="tPause()">⏸</span>
+    <span class="tcb" onclick="tStep(-1)">‹</span>
+    <span class="tcb" onclick="tStep(1)">›</span>
+  </div>
+</div>
+
+<div class="ft">
+  <div class="tsw">
+    <span class="on" onclick="setTheme('enc')">Encyclopedia</span>
+    <span onclick="setTheme('np')">Newspaper</span>
+  </div>
+  <div class="cl">Clarity <strong id="cln">0</strong> / 100</div>
+</div>
+
+</div>
+</div>
+
+<script>
+var cl=0,exp=2100,sav=7000,paused=false,tx=0,spd=0.35;
+var entries=['Fed holds emergency session · largest rate cut in 26 years','your savings account earns less starting today · most did not move','Bear Stearns tells clients situation is contained · one household calculates 97 days','the AAA rating was issued by a firm paid by the issuer · this is still legal','one household reads the Fed minutes · four do not'];
+var ei=0;
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
+  document.getElementById(id).classList.add('on');
+  cl=Math.min(cl+4,100);
+  document.getElementById('cln').textContent=cl;
+  document.getElementById('sov').classList.remove('on');
+}
+
+function xSA(el){
+  el.classList.toggle('ex');
+  cl=Math.min(cl+1,100);
+  document.getElementById('cln').textContent=cl;
+}
+
+function openEd(){
+  document.getElementById('med').classList.add('on');
+  var cs=document.getElementById('calcsa');
+  if(cs)cs.style.display='none';
+}
+function openEd2(){openEd();}
+function closeEd(){
+  document.getElementById('med').classList.remove('on');
+  var cs=document.getElementById('calcsa');
+  if(cs)cs.style.display='';
+}
+
+function recalc(){
+  var er=document.getElementById('iexp').value.replace(/[^0-9]/g,'');
+  var sr=document.getElementById('isav').value.replace(/[^0-9]/g,'');
+  if(er)exp=parseInt(er);else exp=2100;
+  if(sr)sav=parseInt(sr);else sav=7000;
+  var d=Math.round((sav/exp)*30);
+  var e=(sav*0.0004).toFixed(2);
+  var h=Math.round(sav*0.045);
+  var f=function(n){return n.toLocaleString()};
+  var vd=document.getElementById('vdays');
+  if(vd)vd.innerHTML=d+' days<span class="vs">▸</span>';
+  var vc=document.getElementById('vcash');
+  if(vc)vc.innerHTML='$'+f(sav)+'<span class="vs">▸</span>';
+  var ve=document.getElementById('vearn');
+  if(ve)ve.innerHTML='$'+e+'<span class="vs">▸</span>';
+  var vh=document.getElementById('vhysa');
+  if(vh)vh.innerHTML='$'+f(h)+'<span class="vs">▸</span>';
+  document.getElementById('mnote').innerHTML=(er||sr?'Your numbers<br>':'Using mock data<br>')+'Expenses: $'+f(exp)+'<br>Savings: $'+f(sav)+'<br>Coverage: '+d+' days';
+}
+
+function toggleRv(){
+  var b=document.getElementById('rvb');
+  var t=document.getElementById('rvt');
+  if(b.classList.contains('on')){b.classList.remove('on');t.textContent='▸ What the other four had instead of a number';}
+  else{b.classList.add('on');t.textContent='▾ What the other four had instead of a number';cl=Math.min(cl+2,100);document.getElementById('cln').textContent=cl;}
+}
+
+function toggleSrc(){document.getElementById('sov').classList.toggle('on');}
+
+function tPause(){
+  paused=!paused;
+  document.getElementById('tpb').textContent=paused?'▶':'⏸';
+  if(!paused)tick();
+}
+function tStep(d){
+  if(!paused){paused=true;document.getElementById('tpb').textContent='▶';}
+  ei=(ei+d+entries.length)%entries.length;
+  var t=document.getElementById('ttrack');
+  t.style.transform='translateX(0)';
+  t.querySelector('.ti2').textContent=entries[ei];
+  tx=0;
+}
+function tick(){
+  if(paused)return;
+  var t=document.getElementById('ttrack');
+  var w=t.scrollWidth/2;
+  tx-=spd;
+  if(Math.abs(tx)>=w)tx=0;
+  t.style.transform='translateX('+tx+'px)';
+  requestAnimationFrame(tick);
+}
+function setTheme(th){
+  var r=document.getElementById('root');
+  if(th==='np'){r.classList.add('np');document.querySelectorAll('.tsw span').forEach(function(s,i){s.classList.toggle('on',i===1)});}
+  else{r.classList.remove('np');document.querySelectorAll('.tsw span').forEach(function(s,i){s.classList.toggle('on',i===0)});}
+}
+tick();
+</script>
