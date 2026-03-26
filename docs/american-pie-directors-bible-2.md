@@ -1,7 +1,9 @@
 # American Pie — Director's Bible, Volume 2
 ## The Production Standard
-*Version 2.0 — March 2026*
+*Version 2.1 — March 2026*
 *This document governs what gets built, what gets written, and what never appears. Bible 1 established the emotional architecture. Bible 2 is the production standard that prevents drift.*
+
+*v2.1 additions: Article screen count is now variable (minimum three, target four to seven). The six-screen rule is retired; articles now follow five movements at any length. Navigation model codified: within-article advances use a downward canvas slide; between-article navigation uses a horizontal slide; ticker and chrome never move. New Section 17 documents the section editing system — all section types support drag-drop, upload, copy-paste, and export directly from the UI.*
 
 ---
 
@@ -23,6 +25,8 @@
 - [14. The First Fifteen Articles — Shell Map](#14-the-first-fifteen-articles--shell-map)
 - [15. Anti-Drift Checklist](#15-anti-drift-checklist)
 - [16. The One Question](#16-the-one-question)
+- [17. The Section Editing System — Authoring from the UI](#17-the-section-editing-system--authoring-from-the-ui)
+- [18. UI Mockups — Reference Layouts](#18-ui-mockups--reference-layouts)
 
 ---
 
@@ -215,41 +219,50 @@ ticker_state: [calm / elevated / crisis / chaotic / still]
 
 `ticker_state` drives the ticker behavior during this article. It is set at the article level and overrides the era default during reading. An article about the market bottom in Era 7 uses `still` even though the era default is `elevated`.
 
-### The Six Screens
+### Article Length and Screens
 
-Every article has exactly six screens. Each screen has one job.
+Articles are not constrained to a fixed screen count. The correct length is the length required to do the journalism. A Bear Stearns wire piece may warrant three screens. A long-form retrospective on the full 2008 arc may warrant eight or nine. The previous standard of exactly six screens was a scaffold. It has been retired.
 
-**Screen 1 — The Hook**
-Opens in the publication's voice, mid-scene or mid-fact. Never with a definition. Never with context-setting. The first sentence contains one specific number, date, or proper noun that is alarming enough to demand the second sentence. The screen ends with a question the reader did not arrive with but cannot leave without answering.
+**The minimum is three screens.** No article with fewer than three screens has enough room for a hook, the mechanics, and the behavior data. Articles below three screens are fragments, not articles.
 
-No variable fields on Screen 1. No interactive elements. Pure journalism. The reader is not a participant yet. They are a reader.
+**The practical target is four to seven screens for most articles.** Fewer screens mean richer individual screens. The goal is depth, not breadth. An article that covers one subject thoroughly in five screens is worth more than an article that covers one subject thinly in six.
 
-**Screen 2 — The Mechanics**
-This is where the reader learns what they need to understand the rest of the article. The mechanics are embedded in journalism — a source explaining something, a data table being described, a sequence of events that requires the reader to understand a concept to follow it. The concept is never named as a lesson. It is narrated as context.
+**The `{{screen}}` delimiter is a page-flip moment, not a structural checkpoint.** It is placed where the journalism earns a pause — where the reader has absorbed something and is ready for the next movement. It is never placed to hit a number. The wrong reason to add a `{{screen}}` is "this article only has three screens." The right reason is "this is where the article takes its breath."
+
+**Frontmatter `sections` field:** Set to the actual number of `{{screen}}` divisions in the article. This is the count the application displays in article metadata. It is informational.
+
+### The Five Movements
+
+Every article, regardless of screen count, passes through five movements. These are not one-screen-each. A movement may take one screen or two depending on the journalism's demands. The movements must all be present. Their order is fixed.
+
+**Movement 1 — The Hook**
+Opens in the publication's voice, mid-scene or mid-fact. Never with a definition. Never with context-setting. The first sentence contains one specific number, date, or proper noun that is alarming enough to demand the second sentence. This movement ends with a question the reader did not arrive with but cannot leave without answering.
+
+No variable fields in this movement. No interactive elements. Pure journalism. The reader is not a participant yet. They are a reader.
+
+**Movement 2 — The Mechanics**
+The reader learns what they need to understand the rest of the article. The mechanics are embedded in journalism — a source explaining something, a data table being described, a sequence of events that requires the reader to understand a concept to follow it. The concept is never named as a lesson. It is narrated as context.
 
 Variable fields may appear here if they are natural to the journalism (e.g., "At the median household income of ${{your_monthly_income}}, the calculation is as follows").
 
-**Screen 3 — The Scale**
-The reader now understands the mechanism. This screen shows them the scale. Numbers. Geography. How many households. Which sectors. Which states. The specific human and institutional dimensions of what the journalism is covering. This screen produces the transition from "this is interesting" to "this is real."
+**Movement 3 — The Scale**
+The reader now understands the mechanism. This movement shows them the scale. Numbers. Geography. How many households. Which sectors. Which states. The specific human and institutional dimensions of what the journalism is covering. This movement produces the transition from "this is interesting" to "this is real."
 
 Variable fields appear here in comparison form — the reader's number alongside the historical number they have just been shown.
 
-**Screen 4 — What People Did**
-This is the most important screen in every article. It is the screen that contains the behavior data — what households, institutions, or individuals actually did when faced with the situation the article describes. Not what experts recommended. Not what the theory prescribes. What actually happened.
+**Movement 4 — What People Did**
+This is the most important movement in every article. It contains the behavior data — what households, institutions, or individuals actually did when faced with the situation the article describes. Not what experts recommended. Not what the theory prescribes. What actually happened.
 
-This screen always contains the reveal block. The reveal separator `▸` appears after the first description of the predominant behavior (what most people did). What follows the reveal is what the households that preserved or gained the most did differently. Same events, same timeline, different decisions. The gap between before and after the reveal is the hidden lesson landing.
+This movement always contains the reveal block. The reveal separator `▸` appears after the first description of the predominant behavior (what most people did). What follows the reveal is what the households that preserved or gained the most did differently. Same events, same timeline, different decisions. The gap between before and after the reveal is the hidden lesson landing.
 
-Ghost track archetypes appear on this screen. They are embedded as anonymous sources, case studies, or statistical abstractions.
+Ghost track archetypes appear in this movement. They are embedded as anonymous sources, case studies, or statistical abstractions.
 
-**Screen 5 — The Connections**
-Three or four genuine connections to related articles in the archive. These are written as journalism — "the dynamic described above intersects with a separate phenomenon in the federal mortgage market, documented in [link]." Not a list of related topics. A paragraph of journalism that opens three doors.
+**Movement 5 — The Residue**
+The article ends the way great journalism ends: not with a conclusion, but with a fact or image that stays. Something specific. A number. A date. A name. A sentence that the reader will carry. This movement does not summarize. It does not draw lessons. It ends with the article's most consequential fact, stated plainly.
 
-No variable fields. The screen is an invitation to continue down the rabbit hole.
+Optional: Three or four genuine connections to related articles in the archive, written as journalism — "the dynamic described above intersects with a separate phenomenon in the federal mortgage market, documented in [link]." Not a list. A paragraph that opens doors.
 
-**Screen 6 — The Residue**
-The article ends the way great journalism ends: not with a conclusion, but with a fact or image that stays. Something specific. A number. A date. A name. A sentence that the reader will carry. The screen does not summarize. It does not draw lessons. It ends with the article's most consequential fact, stated plainly.
-
-Optional: A single action-item sentence at the end of Screen 6 for articles that have a direct personal application. This sentence is written in the same journalistic voice as the rest of the article. It is never instructional in tone. "The Bureau of Labor Statistics' unemployment insurance estimator calculates a household's expected benefit in under four minutes" is acceptable. "You should calculate your unemployment insurance estimate now" is not.
+Optional: A single action-item sentence for articles with direct personal application. Written in the same journalistic voice. Never instructional. "The Bureau of Labor Statistics' unemployment insurance estimator calculates a household's expected benefit in under four minutes" is acceptable. "You should calculate your unemployment insurance estimate now" is not.
 
 ### The Reveal Block
 
@@ -753,6 +766,34 @@ Layout:
 
 **No element in this application should require a tooltip to understand its function if you have been reading for more than two minutes.** The interface teaches itself through use. The controls that are hidden until hover (ticker zones) are hidden because they are advanced — not because they are primary. The primary actions are always visible.
 
+### Navigation and Motion — The Layered Canvas Model
+
+The application has one screen. Not the illusion of one screen — actually one screen. The ticker strip is a permanent fixture. The chrome frame (sidebar, dateline, overall structure) is a permanent fixture. Only the content layer moves, and what it does depends on what kind of navigation is happening.
+
+**Within an article — the page-flip:**
+When the reader advances from one screen to the next within the same article, only the article text canvas moves. It slides downward — a vertical translation, as if a new page is being revealed beneath the current one. The article toolbar (title, breadcrumb, meta line) remains in place. The section indicator updates in place without motion. The ticker stays. The margin stays. Nothing outside the text canvas changes.
+
+This is not scroll. The reader does not drag or swipe. They advance — the same gesture that turns a page — and the canvas responds. The motion takes approximately 250ms. It is fast enough that it does not feel like an animation; it feels like the page reacting.
+
+**Between articles — the horizontal slide:**
+When the reader navigates to a different article, the content region slides out horizontally and the new article slides in from the same direction. The ticker stays anchored at the bottom throughout. The dateline header stays. The sidebar stays. Only the main content column moves.
+
+The direction of the slide is consistent: forward in the simulation sequence moves right-to-left (the new article enters from the right). Backward navigation reverses this. Navigation that is not sequential — jumping via a concept link or See Also — uses the same right-to-left convention as forward movement.
+
+**View transitions (home, clarity, ghost tracks):**
+These are not article-to-article transitions. They are context switches. They use a fade — a 150ms opacity change — rather than a directional slide. The ticker always remains. The dateline always remains.
+
+**What never moves:**
+- The ticker strip
+- The dateline header
+- The sidebar navigation and controls
+- The section indicator (it updates in place)
+- The article toolbar when advancing within an article
+
+**The principle:** The reader should never feel like the entire screen has changed. Something has changed — the text, the content — but the room has not. The ticker is still there. The brand is still there. They have turned a page, not walked into a different building.
+
+This model is not optional. Every navigation interaction in the application must respect it. A new view type that requires a full-screen replacement breaks the illusion and is not acceptable.
+
 [↑ Back to top](#table-of-contents)
 
 ---
@@ -804,6 +845,13 @@ Before any article, UI component, or design element is added to the simulation, 
 - [ ] Do variable fields appear only on Screen 2 and Screen 3?
 - [ ] Does Screen 6 end with a specific fact, not a summary or lesson?
 
+### Article Architecture Checklist
+
+- [ ] Does the article have at least three screens?
+- [ ] Is each `{{screen}}` delimiter placed where the journalism earns a pause — not to hit a number?
+- [ ] Are all five movements present: Hook, Mechanics, Scale, What People Did, Residue?
+- [ ] Is the reveal block in Movement 4?
+
 ### UI Checklist
 
 - [ ] Does the new component look like it belongs in a 1953 broadsheet or a 2001 encyclopedia?
@@ -813,6 +861,25 @@ Before any article, UI component, or design element is added to the simulation, 
 - [ ] Are the three ticker zones interaction-only (no visual distinction)?
 - [ ] Do new navigation elements maintain the archive illusion?
 - [ ] Does the sidebar contain any element that looks like an app feature? (Must be no.)
+
+### Navigation and Motion Checklist
+
+- [ ] Does within-article navigation (screen to screen) use a downward canvas slide only?
+- [ ] Does between-article navigation use a horizontal slide only?
+- [ ] Does the ticker remain anchored during all navigation events?
+- [ ] Does the dateline header remain anchored during all navigation events?
+- [ ] Does the article toolbar remain in place during within-article navigation?
+- [ ] Does any new transition require the full screen to replace itself? (Must be no.)
+- [ ] Do view transitions (home, clarity, ghost tracks) use a fade rather than a slide?
+
+### Section Editing Checklist
+
+- [ ] Is edit mode inaccessible via any reader-facing gesture?
+- [ ] Are the section affordances (drag handle, upload, export) invisible until hover in edit mode?
+- [ ] Does the article remain fully readable while in edit mode?
+- [ ] Does section replacement trigger link-manifest resolution automatically?
+- [ ] Does section replacement update only content — not frontmatter? (Must be yes.)
+- [ ] Does the exported section filename follow the `[article-slug]-section-[n].md` convention?
 
 ### Image Checklist
 
@@ -843,7 +910,47 @@ It is an archive that teaches, the way all great archives teach: by being so com
 
 ---
 
-## 17. UI Mockups — Reference Layouts
+## 17. The Section Editing System — Authoring from the UI
+
+Every section in every article is a plug-and-play unit. The reader never sees the editing layer. The author never needs to touch a markdown file to update content. The two audiences see the same article through completely different interfaces — one is a reading environment, one is an authoring environment — and neither interferes with the other.
+
+### What a Section Is
+
+For authoring purposes, a section is any block of content delimited by a `{{screen}}` marker in the article's markdown. Each section is treated as an independent, replaceable unit. The article is an ordered collection of sections. Sections can be replaced, reordered, or removed without affecting the others.
+
+### The Four Authoring Operations
+
+Every section — regardless of type (text block, image slot, reveal block, variable section, concept-link paragraph) — supports the same four operations:
+
+**Drag and drop:** A file (markdown fragment, image, plain text) dragged onto a section replaces it. The drop target highlights when a valid file is dragged over it. Release drops the new content in. The application parses the incoming content, identifies any embedded links, updates their targets, and renders the updated section in place. No save button. No confirmation. The change is visible immediately and written to the article file.
+
+**Copy and paste:** Paste anywhere within a section's active editing zone to replace the section's content. The application accepts plain text, markdown, or an image from the clipboard. Same link-parsing and render logic as drag and drop.
+
+**Upload:** A per-section upload affordance (invisible until the section is in edit mode) opens the system file picker. Selected file replaces the section content. Same parsing and render logic.
+
+**Export:** A per-section export affordance (same visibility rule) downloads the section's current content as a markdown fragment. The filename is `[article-slug]-section-[n].md`. The exported file can be edited externally and re-imported via drag and drop or upload.
+
+### Link-Aware Replacement
+
+Sections contain embedded links — concept links, article cross-references, See Also targets. When a section is replaced, the application scans the incoming content for any link targets (slugs, article references) and compares them against the manifest. Valid targets are rendered as live links. Invalid targets are rendered as plain text with a faint indicator that the link is unresolved.
+
+The author does not need to manually update link syntax. If the new section contains `→ **Mortgage-backed securities**` in the expected format, the application resolves it against the manifest and renders it as a live concept link automatically. Swapping a section never requires manually updating the surrounding application state.
+
+### Edit Mode
+
+Sections are not editable by default in the reader-facing view. Edit mode is toggled per-session — it is an authoring context, not a reader feature. In edit mode, each section gains a faint border and a small affordance strip (drag handle, upload icon, export icon) that appears on hover. The article remains fully readable in edit mode; the affordances are additive, not disruptive.
+
+Edit mode is never accessible via a reader-facing gesture. It requires a deliberate authoring action (a keyboard shortcut or a URL parameter) to activate. The reader can never accidentally enter it.
+
+### What Does Not Change
+
+The application's rendering pipeline — variable substitution, reveal blocks, ghost track archetypes, ticker state — is driven by the article's frontmatter and the content of each section. Replacing a section's content updates what is displayed. Replacing a section's content does not change the article's frontmatter. If the new section content changes the ticker state for a given screen, the author must update the frontmatter `ticker_state` field separately. The editing system is for content, not for metadata.
+
+[↑ Back to top](#table-of-contents)
+
+---
+
+## 18. UI Mockups — Reference Layouts
 
 These are static ASCII mockups of key screens. They are canonical in structure and proportion. They are not canonical in content — the text shown is placeholder. The layouts, column widths, sidebar positions, and ticker behaviors shown here are the target.
 
