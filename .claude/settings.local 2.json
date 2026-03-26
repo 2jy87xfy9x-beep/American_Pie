@@ -9,7 +9,15 @@
       "Bash(node --input-type=module --eval \"import { createRequire } from ''module''; import\\(''./C:/iCloudDrive/american_pie/data.js''\\).then\\(m => console.log\\(''keys:'', Object.keys\\(m.data\\)\\)\\).catch\\(e => console.error\\(''ERROR:'', e.message\\)\\)\")",
       "Bash(curl -s \"http://localhost:5174/data.js\")",
       "Read(//c/Users/Folma/iCloudDrive/american_pie/**)",
-      "Read(//c/iCloudDrive/american_pie/$USERPROFILE/iCloudDrive/american_pie/**)"
+      "Read(//c/iCloudDrive/american_pie/$USERPROFILE/iCloudDrive/american_pie/**)",
+      "Bash(python3 -c \"import urllib.request; r = urllib.request.urlopen\\(''http://localhost:5174/style.css''\\); content = r.read\\(\\).decode\\(''utf-8''\\); print\\(len\\(content\\), ''V2'' in content\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)"
     ]
   }
 }
