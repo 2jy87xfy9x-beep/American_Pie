@@ -91,6 +91,114 @@
   var LS_AUDIO_POS = "audio_last_position";
   var LS_AUDIO_FIRST_PLAY = "audio_first_play_done";
 
+  var LS_SEE_ALSO_SEEN = "american_pie_see_also_seen";
+
+  var SEE_ALSO = [
+    // Vehicle 0 — built runway early, boring decisions, consistent
+    { eras: {
+      1: { link: "The position one household carried entering 2008" },
+      2: { date: "January 2008", link: "One household's first response to the rate cut", detail: "Moved one month of expenses into a high-yield savings account.\nNo other changes to routine." },
+      3: { date: "March 2008", link: "What one household did the week Bear Stearns was acquired", detail: "Cash: $12,400. Coverage: 82 days.\nOpened a high-yield savings account for emergency funds.\nDid not reduce spending. Did not change investment contributions." },
+      4: { link: "One household's position entering the conservatorship announcements", detail: "Cash: $14,200. Coverage: 94 days.\nDecision: build to 6 months before any market moves.\nCost: no equity exposure during the worst quarter. Return: full capital preservation." },
+      5: { link: "The month one balance sheet crossed the 6-month threshold", detail: "Coverage reached 186 days in July 2009.\nDid not feel significant at the time.\n▸ What that number meant three months later\nThe same household was the only one in its immediate circle that did not change behavior during the 2009 panic. That is the entire story." },
+      6: { link: "Net worth trajectory 2008–2010", detail: "Jan 2008: $7,000 → Dec 2010: $38,400 ↑\nPattern: boring, consistent, early." }
+    }},
+    // Vehicle 1 — watched, held, never planned, survived by income continuity
+    { eras: {
+      1: { link: "What the same news meant for a second balance sheet" },
+      2: { date: "January 2008", link: "The adjustment one household did not make until forced", detail: "Watched the news. Made no changes to accounts or spending patterns." },
+      3: { date: "March 2008", link: "One household's cash position the month it first read the headline", detail: "Cash: $5,200. Coverage: 31 days.\nNo separate emergency account. Funds in checking.\nHad not calculated days of coverage." },
+      4: { link: "The decision that preserved this household's capital without a plan", detail: "Cash: $5,200. Coverage: 31 days.\nDecision: no decision. Income continued. Position held.\nReturn: survived without loss. Lucky." },
+      5: { link: "How one household navigated 2008–2010 without a financial plan", detail: "Did not invest. Did not lose. Did not gain.\nNet position: effectively flat across three years." },
+      6: { link: "Net worth trajectory 2008–2010", detail: "Jan 2008: $7,000 → Dec 2010: $7,800 →\nPattern: cautious by inertia, not design." }
+    }},
+    // Vehicle 2 — did not connect the news to their own position
+    { eras: {
+      2: { date: "January 2008", link: "A household that did not read the January news", detail: "No change to routine. Did not connect the Federal Reserve announcement to its own balance sheet." },
+      3: { date: "March 2008", link: "One household's cash position the week it received its pink slip", detail: "Cash: $1,800. Coverage: 11 days.\nDid not know its own burn rate.\nHad not connected the macroeconomic news to its personal position." },
+      4: { link: "The $10,000 decision that returned $6,500", detail: "Cash: $0. Credit card debt: $2,400.\nDecision: early 401(k) withdrawal of $10,000.\nAfter 10% penalty and income tax: approximately $6,500 received.\nDescribed afterward as the most expensive financial decision of its life." },
+      5: { link: "What one household discovered about its 401(k) in 2009", detail: "The withdrawn $10,000, left untouched, would have grown to approximately $28,000 by 2013.\nThe penalty was not the worst cost." },
+      6: { link: "Net worth trajectory 2008–2010", detail: "Jan 2008: $7,000 → Dec 2010: $2,100 ↓\nPattern: reactive, uninformed until after the mechanism had operated." }
+    }},
+    // Vehicle 3 — leveraged position, full understanding, bad timing
+    { eras: {
+      3: { date: "March 2008", link: "One household's leveraged position entering the crisis", detail: "Cash: $3,200. Credit card debt: $8,000.\nLeveraged real estate position. Understood the risk. Accepted it." },
+      4: { link: "The leveraged position that did not survive the rate cycle", detail: "Cash: -$4,200 net. Leverage losses exceeded projections.\nDecision: increase position.\nReturn: liquidated at loss. Debt carried forward into 2009." },
+      5: { link: "What a fully understood risk looks like when it materializes", detail: "The analysis was correct. The timing was wrong by six months.\nNot ignorance. The worst kind of outcome: the one you understood." },
+      6: { link: "Net worth trajectory 2008–2010", detail: "Jan 2008: $7,000 → Dec 2010: -$28,000 ↓\nPattern: sophisticated entry, wrong era." }
+    }}
+  ];
+
+  var ERA_TICKER_CONTENT = {
+    1: [
+      "Jan 2008 · Fed cuts rate to 3.5% · Third reduction in four months",
+      "Jan 2008 · Bear Stearns reports losses tied to mortgage-backed securities",
+      "Jan 2008 · Oil touches $100 per barrel for the first time",
+      "Jan 2008 · Consumer confidence falls to lowest reading since 2003",
+      "Jan 2008 · Unemployment insurance claims rise for fourth consecutive week"
+    ],
+    2: [
+      "Feb 2008 · Fed cuts again · Rate now 3.0%",
+      "Feb 2008 · Fannie Mae reports $3.6 billion quarterly loss",
+      "Feb 2008 · Stimulus checks announced · $600 per qualifying taxpayer",
+      "Feb 2008 · Housing starts fall 11.2% year over year",
+      "Feb 2008 · Retail sales decline for second consecutive month"
+    ],
+    3: [
+      "Mar 2008 · Bear Stearns collapses · JPMorgan acquires at $2 per share",
+      "Mar 2008 · Fed emergency cut · Rate now 2.25%",
+      "Mar 2008 · Dollar hits record low against the euro",
+      "Apr 2008 · Unemployment reaches 5.1% · Up from 4.9% in January",
+      "May 2008 · Lehman Brothers reports $2.8 billion loss · Stock falls 48%"
+    ],
+    4: [
+      "Sep 2008 · Fannie Mae and Freddie Mac enter conservatorship",
+      "Sep 2008 · Lehman Brothers files for bankruptcy · Largest in US history",
+      "Sep 2008 · Merrill Lynch sold to Bank of America",
+      "Oct 2008 · TARP signed · $700 billion authorized",
+      "Dec 2008 · Dow Jones finishes year down 33% · Worst since 1931"
+    ],
+    5: [
+      "Mar 2009 · Market bottoms · S&P 500 at 666 · Down 57% from peak",
+      "2009 · TARP banks begin repaying funds ahead of schedule",
+      "Oct 2009 · Unemployment peaks at 10.0%",
+      "2009 · Foreclosure filings top 3.8 million",
+      "2009 · Fed holds rates near zero through year end"
+    ],
+    6: [
+      "2010 · Recovery continues · Unemployment still 9.6% in December",
+      "2010 · Dodd-Frank financial reform signed into law",
+      "2010 · Housing prices continue declining in most markets",
+      "2010 · Stock market recovers 60% from March 2009 lows",
+      "2010 · Consumer confidence slowly rebuilds"
+    ],
+    7: [
+      "Aug 2011 · S&P downgrades US credit rating for the first time in history",
+      "2011 · European debt crisis spreads to Italy and Spain",
+      "2011 · Dow falls 635 points in single session · Third largest point drop",
+      "2011 · Unemployment stalls at 9.0% through summer",
+      "2011 · Fed holds rates near zero · Announces Operation Twist"
+    ],
+    8: [
+      "Sep 2012 · Fed launches QE3 · Open-ended bond purchases",
+      "2012 · US economy adds jobs for 27 consecutive months",
+      "2012 · Housing market shows first clear signs of broad recovery",
+      "Nov 2012 · Stock market reaches pre-crisis highs",
+      "Dec 2012 · Unemployment falls to 7.8%"
+    ],
+    9: [
+      "2013 · S&P 500 gains 30% for the year",
+      "2013 · Fed begins tapering bond purchases",
+      "2013 · Unemployment falls below 7% for first time since 2008",
+      "2013 · Housing prices recover in most major markets",
+      "2013 · GDP growth accelerates to 4.1% in Q3"
+    ]
+  };
+
+  var ERA_TICKER_SPEED = { 1:"calm", 2:"calm", 3:"crisis", 4:"elevated", 5:"calm", 6:"calm", 7:"crisis", 8:"elevated", 9:"calm" };
+  var TICKER_DURATIONS = { calm: 60, elevated: 40, crisis: 22 };
+  var glitchTimer = null;
+
   var ERA_AUDIO_ROWS = [
     { era: 1, stress: 12, rate: 0.88, gain: 0.4, distortion: 0, filter: 18000, reverb: 0.0 },
     { era: 2, stress: 38, rate: 0.95, gain: 0.58, distortion: 80, filter: 16000, reverb: 0.1 },
@@ -1109,6 +1217,7 @@
     animateStressTo(stress);
     if (state.audio.graphReady) applyEraAudio(state.currentEra, 5000);
     renderHome();
+    renderSeeAlso();
     updateDateline();
   }
 
@@ -1201,8 +1310,17 @@
     return n;
   }
 
+  function loadSeeAlsoSeen() {
+    try { return JSON.parse(localStorage.getItem(LS_SEE_ALSO_SEEN) || "{}") || {}; } catch(e) { return {}; }
+  }
+  function saveSeeAlsoSeen(map) {
+    try { localStorage.setItem(LS_SEE_ALSO_SEEN, JSON.stringify(map || {})); } catch(e) {}
+  }
+  function componentC() {
+    return Object.keys(loadSeeAlsoSeen()).length;
+  }
   function clarityScoreTotal() {
-    return Math.min(100, componentA() + componentB());
+    return Math.min(100, componentA() + componentB() + componentC());
   }
 
   function fmtMoney(n) {
@@ -1383,6 +1501,18 @@
     });
   }
 
+  function splitScreens(body) {
+    var pieces = body.split("{{screen}}");
+    var screens = [];
+    pieces.forEach(function (piece) {
+      var text = piece.trim();
+      if (!text) return;
+      var m = text.match(/^## (.+)/m);
+      screens.push({ title: m ? m[1].trim() : "", text: text });
+    });
+    return screens;
+  }
+
   function mdInlineToHtml(text) {
     if (!text) return "";
     var esc = text
@@ -1390,9 +1520,20 @@
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
     var html = esc.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    // Mark ## headings before paragraph splitting so they aren't wrapped in <p>
+    html = html.replace(/^## (.+)$/gm, "\x00H2\x00$1\x00EH2\x00");
     html = html.replace(/\n\n+/g, "</p><p>");
     html = "<p>" + html + "</p>";
     html = html.replace(/<p><\/p>/g, "");
+    // Unwrap headings: heading alone in a <p>
+    html = html.replace(/<p>\x00H2\x00([^\x00]+)\x00EH2\x00<\/p>/g, "<h2>$1</h2>");
+    // Unwrap headings: heading at start of a <p> with trailing content
+    html = html.replace(/<p>\x00H2\x00([^\x00]+)\x00EH2\x00/g, "</p><h2>$1</h2><p>");
+    // Remove any remaining markers
+    html = html.replace(/\x00H2\x00([^\x00]*)\x00EH2\x00/g, "<h2>$1</h2>");
+    // Clean up empty <p> tags created by heading extraction
+    html = html.replace(/<p><\/p>/g, "");
+    html = html.replace(/^<\/p>/, "").replace(/<p>$/, "");
     // Convert → **Name** connection links to tappable article links
     html = html.replace(/<p>→ <strong>([^<]+)<\/strong>/g, function (m, name) {
       var slug = name.toLowerCase().replace(/[()'']/g, "").replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
@@ -1449,7 +1590,8 @@
   }
 
   function processReveal(html) {
-    var idx = html.indexOf("If you had known");
+    var idx = html.indexOf("<p>▸ ");
+    if (idx === -1) idx = html.indexOf("If you had known");
     if (idx === -1) return { main: html, hasReveal: false };
     var before = html.slice(0, idx);
     var after = html.slice(idx);
@@ -1613,81 +1755,150 @@
   function renderTicker() {
     var track = $("ticker-track");
     if (!track) return;
-    var items = currentGhostLogEntries();
-    if (!items.length) {
-      items = [
-        {
-          key: "winner",
-          label: "Winner",
-          color: "var(--winner)",
-          text: "Building runway with high-yield savings.",
-        },
-        {
-          key: "weatherer",
-          label: "Weatherer",
-          color: "var(--weatherer)",
-          text: "Watching headlines. Holding steady.",
-        },
-        {
-          key: "unaware",
-          label: "Unaware",
-          color: "var(--unaware)",
-          text: "No change to routine.",
-        },
-        {
-          key: "gambler_lost",
-          label: "Gambler−",
-          color: "var(--gambler-lost)",
-          text: "Considering positions.",
-        },
-        {
-          key: "gambler_won",
-          label: "Gambler+",
-          color: "var(--gambler-won)",
-          text: "Considering positions.",
-        },
-      ];
+    var era = state.mode === "2008" ? state.currentEra : 9;
+    var content = ERA_TICKER_CONTENT[era] || ERA_TICKER_CONTENT[1];
+    var html = content.concat(content).map(function(text) {
+      return '<span class="ticker-item">' + text.replace(/</g, "&lt;") + "</span>";
+    }).join("");
+    track.innerHTML = html;
+    var speed = ERA_TICKER_SPEED[era] || "calm";
+    var dur = TICKER_DURATIONS[speed] || 60;
+    track.style.animationDuration = dur + "s";
+    if (speed === "crisis") {
+      startGlitchCycle();
+    } else {
+      clearGlitchCycle();
     }
-    function row(list) {
-      return list
-        .map(function (it) {
-          return (
-            '<span class="ticker-item"><span class="ticker-dot" style="background:' +
-            it.color +
-            '"></span>' +
-            it.label +
-            " · " +
-            (it.text || "").replace(/</g, "&lt;") +
-            "</span>"
-          );
-        })
-        .join("");
-    }
-    var inner = row(items) + row(items);
-    track.innerHTML = inner;
   }
 
-  function renderGhostMarginList() {
-    var ul = $("ghost-tracks-short");
-    if (!ul) return;
-    ul.innerHTML = ghostTrackMeta()
-      .map(function (gt) {
-        return (
-          '<li data-track="' +
-          gt.key +
-          '"><span class="ghost-dot" style="background:' +
-          gt.color +
-          '"></span>' +
-          gt.label +
-          "</li>"
-        );
-      })
-      .join("");
-    ul.querySelectorAll("li").forEach(function (li) {
-      li.addEventListener("click", function () {
-        openGhostFull(li.getAttribute("data-track"));
+  function startGlitchCycle() {
+    clearGlitchCycle();
+    var delay = 50000 + Math.floor(Math.random() * 80000);
+    glitchTimer = setTimeout(function() {
+      doGlitch();
+      startGlitchCycle();
+    }, delay);
+  }
+
+  function clearGlitchCycle() {
+    if (glitchTimer) { clearTimeout(glitchTimer); glitchTimer = null; }
+  }
+
+  function doGlitch() {
+    var track = $("ticker-track");
+    if (!track) return;
+    var roll = Math.random();
+    if (roll < 0.4) {
+      track.style.animationPlayState = "paused";
+      setTimeout(function() { track.style.animationPlayState = ""; }, 800);
+    } else if (roll < 0.7) {
+      var items = track.querySelectorAll(".ticker-item");
+      if (items.length) {
+        var first = items[0];
+        var clone = document.createElement("span");
+        clone.className = "ticker-item";
+        clone.textContent = first.textContent;
+        track.insertBefore(clone, track.firstChild);
+        setTimeout(function() { if (clone.parentNode) clone.parentNode.removeChild(clone); }, 6000);
+      }
+    } else {
+      var all = track.querySelectorAll(".ticker-item");
+      if (all.length) {
+        var t = all[Math.floor(Math.random() * all.length)];
+        var orig = t.textContent;
+        var cut = Math.floor(orig.length * (0.3 + Math.random() * 0.3));
+        t.textContent = orig.slice(0, cut) + " —";
+        setTimeout(function() { t.textContent = orig; }, 3000);
+      }
+    }
+  }
+
+  function getSeeAlsoEntriesForEra(era) {
+    var count = era <= 1 ? 2 : era === 2 ? 3 : 4;
+    var vehicles = SEE_ALSO.slice(0, count);
+    return vehicles.map(function(vehicle, i) {
+      var entry = null;
+      for (var e = era; e >= 1; e--) {
+        if (vehicle.eras[e]) { entry = vehicle.eras[e]; break; }
+      }
+      if (!entry) return null;
+      return { id: i, date: entry.date || null, link: entry.link, detail: entry.detail || "", era: era };
+    }).filter(Boolean);
+  }
+
+  function renderSeeAlso() {
+    var block = $("margin-see-also");
+    if (!block) return;
+    var era = state.currentEra;
+    var list = $("see-also-list");
+    if (!list) return;
+    list.innerHTML = "";
+    var entries = getSeeAlsoEntriesForEra(era);
+    if (entries.length) block.classList.remove("hidden");
+    else { block.classList.add("hidden"); return; }
+    var seen = loadSeeAlsoSeen();
+    entries.forEach(function(entry) {
+      var div = document.createElement("div");
+      div.className = "see-also-entry";
+      div.setAttribute("data-entry-id", String(entry.id));
+      var html = "";
+      if (entry.date) html += '<span class="see-also-date">' + entry.date + "</span>";
+      html += '<a href="#" class="see-also-link">' + entry.link.replace(/</g, "&lt;") + "</a>";
+      if (entry.detail) {
+        var detailHtml = entry.detail.replace(/</g, "&lt;").replace(/\n/g, "<br>");
+        var secIdx = detailHtml.indexOf("<br>▸ ");
+        var primaryHtml = detailHtml;
+        var secondaryHtml = "";
+        if (secIdx !== -1) {
+          primaryHtml = detailHtml.slice(0, secIdx);
+          secondaryHtml = detailHtml.slice(secIdx + 5);
+        }
+        html += '<div class="see-also-detail hidden" id="see-also-detail-' + entry.id + '">';
+        html += '<pre class="see-also-detail-text">' + primaryHtml + "</pre>";
+        if (secondaryHtml) {
+          html += '<a href="#" class="see-also-secondary-link" data-entry-id="' + entry.id + '">▸ ' + secondaryHtml.split("<br>")[0] + "</a>";
+          html += '<div class="see-also-secondary-detail hidden" id="see-also-sec-' + entry.id + '"><pre class="see-also-detail-text">' + secondaryHtml.split("<br>").slice(1).join("<br>") + "</pre></div>";
+        }
+        html += "</div>";
+      } else {
+        html += '<div class="see-also-detail hidden" id="see-also-detail-' + entry.id + '"></div>';
+      }
+      div.innerHTML = html;
+      var link = div.querySelector(".see-also-link");
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+        toggleSeeAlso(entry.id, entry.era, entry.detail);
       });
+      var secLink = div.querySelector(".see-also-secondary-link");
+      if (secLink) {
+        secLink.addEventListener("click", function(e) {
+          e.preventDefault();
+          var sid = $("see-also-sec-" + entry.id);
+          if (sid) sid.classList.toggle("hidden");
+          e.stopPropagation();
+        });
+      }
+      list.appendChild(div);
     });
+  }
+
+  function toggleSeeAlso(id, era, detail) {
+    var detailEl = $("see-also-detail-" + id);
+    var isExpanded = detailEl && !detailEl.classList.contains("hidden");
+    document.querySelectorAll(".see-also-detail").forEach(function(d) { d.classList.add("hidden"); });
+    document.querySelectorAll(".see-also-secondary-detail").forEach(function(d) { d.classList.add("hidden"); });
+    document.querySelectorAll(".see-also-link").forEach(function(a) { a.classList.remove("see-also-active"); });
+    if (!isExpanded && detailEl && era >= 2 && detail) {
+      detailEl.classList.remove("hidden");
+      var link = document.querySelector('[data-entry-id="' + id + '"] .see-also-link');
+      if (link) link.classList.add("see-also-active");
+      var seen = loadSeeAlsoSeen();
+      if (!seen[id]) {
+        seen[id] = true;
+        saveSeeAlsoSeen(seen);
+        updateNavClarity();
+      }
+    }
   }
 
   function eraDateLabel(era) {
@@ -1725,7 +1936,7 @@
           state.mode === "2008"
             ? getHomeNewsEvents()
             : state.events.length
-              ? state.events.slice(0, 7)
+              ? state.events.slice(0, 4)
               : fallbackNews();
         evs.forEach(function (e, i) {
           var li = document.createElement("li");
@@ -1749,7 +1960,7 @@
     var dyk = $("did-you-know-list");
     if (dyk) {
       dyk.innerHTML = "";
-      var hooks = state.didYouKnow.length ? state.didYouKnow.slice(0, 6) : fallbackDyk();
+      var hooks = state.didYouKnow.length ? state.didYouKnow.slice(0, 4) : fallbackDyk();
       var map = buildReplaceMap(state.variables);
       hooks.forEach(function (h) {
         var li = document.createElement("li");
@@ -1814,17 +2025,16 @@
   }
 
   function fallbackDyk() {
-    var cash = fmtMoney(getRawValue("your_cash", state.variables) || 7000);
     return [
-      { text: "The average American household lost 39% of their net worth between 2007 and 2010." },
-      { text: "57% of Americans had no emergency fund in 2008." },
-      { text: "A person who invested " + cash + " at the March 2009 low would have grown it materially by 2024—mock data seeds from your entered cash." },
-      { text: "Most people learned what a mortgage-backed security was only after losing money because of one." },
+      { text: "57% of Americans had no emergency fund in 2008. Most discovered this during the fourth week of unemployment, when the number that mattered was days." },
+      { text: "JPMorgan acquired Bear Stearns for $2 per share on March 14, 2008. One year earlier the stock traded at $172. Shareholders lost 98.8% of their value. No one was charged with anything." },
+      { text: "A $10,000 early 401(k) withdrawal in 2008 returned approximately $6,500 after penalty and tax. Left untouched, the same $10,000 was worth $29,000 by 2013. Both facts were available before the decision." },
+      { text: "You probably do not know your burn rate. In 2008, the households that did preserved an average of $2,300 more over the following six months than the ones that did not." },
     ];
   }
 
   function fallbackOnThisDay() {
-    return "JP Morgan acquired Bear Stearns for $2 per share. One year earlier the stock traded near $170. People who understood what this meant acted within hours.";
+    return "JPMorgan acquired Bear Stearns for $2 per share. One year earlier, Bear Stearns traded at $172. Shareholders lost 98.8 percent of their value overnight. The acquisition was completed in a weekend. No one was charged with anything.";
   }
 
   function setMode(mode) {
@@ -1863,6 +2073,8 @@
       var st = $("view-stub");
       if (st) st.classList.remove("hidden");
     }
+    document.body.classList.toggle("view-article-active", name === "article");
+    document.body.classList.toggle("view-home-active", name === "home");
   }
 
   function revealNavIfNeeded() {
@@ -1893,7 +2105,7 @@
     }
     var parsed = parseFrontmatter(md);
     state.meta = parsed.meta;
-    state.sections = splitSections(parsed.body);
+    state.sections = splitScreens(parsed.body);
     renderArticle();
     showView("article");
     updateDateline();
@@ -1936,7 +2148,7 @@
         toc.appendChild(li);
       });
     }
-    renderGhostMarginList();
+    renderSeeAlso();
     renderArticleSection();
     buildSourceViewContent();
   }
@@ -1958,7 +2170,7 @@
     html = html.split("[[STATIC_TICKER]]").join(staticTickerIllustrationHtml());
     html = html.split("[[STATIC_GAUGE]]").join(staticGaugeIllustrationHtml());
     var pr = processReveal(html);
-    if (pr.hasReveal && (state.meta.sections === 6 || sec.title.toLowerCase().indexOf("people") !== -1)) {
+    if (pr.hasReveal) {
       if (rev) {
         rev.classList.remove("hidden");
         rev.setAttribute("aria-expanded", state.revealOpen ? "true" : "false");

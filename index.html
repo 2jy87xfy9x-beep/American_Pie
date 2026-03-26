@@ -10,23 +10,13 @@
   <link rel="stylesheet" href="style.css" />
   <script src="data.js"></script>
 </head>
-<body class="theme-encyclopedia">
+<body class="theme-encyclopedia view-home-active">
   <header class="dateline" aria-hidden="false">
     <span class="dateline-brand">American Pie</span>
     <span class="dateline-date" id="dateline-text"></span>
   </header>
 
   <div class="layout-body">
-    <aside class="nav-shell" id="nav-shell" aria-label="Main navigation">
-      <nav class="nav-rail">
-        <a href="#" class="nav-item" data-route="home" title="Home"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Home</span></a>
-        <a href="#" class="nav-item" data-route="simulation" title="Simulation"><span class="nav-icon" aria-hidden="true">◎</span><span class="nav-label">Simulation</span></a>
-        <a href="#" class="nav-item" data-route="situation" title="My Situation"><span class="nav-icon" aria-hidden="true">≡</span><span class="nav-label">My Situation</span></a>
-        <a href="#" class="nav-item" data-route="learn" title="Learn"><span class="nav-icon" aria-hidden="true">∞</span><span class="nav-label">Learn</span></a>
-        <a href="#" class="nav-item nav-item-clarity" data-route="clarity" title="Clarity"><span class="nav-icon" aria-hidden="true">△</span><span class="nav-label">Clarity</span><span class="nav-clarity-num" id="nav-clarity-num">0</span></a>
-      </nav>
-    </aside>
-
     <main class="main-column" id="main-column">
       <section id="view-home" class="view view-home">
         <header class="home-masthead">
@@ -112,11 +102,10 @@
               <hr />
               <ol class="margin-toc" id="margin-toc"></ol>
             </div>
-            <div class="margin-block">
-              <h4 class="margin-heading">Ghost Tracks</h4>
+            <div class="margin-block margin-see-also hidden" id="margin-see-also">
+              <h4 class="margin-heading">See also</h4>
               <hr />
-              <ul class="ghost-tracks-list" id="ghost-tracks-short"></ul>
-              <p class="margin-hint">Tap any track</p>
+              <div id="see-also-list"></div>
             </div>
             <div class="margin-block margin-editor hidden" id="margin-editor">
               <h4 class="margin-heading" id="margin-editor-title">Your number</h4>
@@ -187,29 +176,11 @@
     </main>
   </div>
 
-  <div class="pressure-gauge-wrap" id="pressure-wrap">
-    <div class="pressure-gauge" id="pressure-gauge" role="img" aria-label="Economic stress indicator">
-      <div class="pressure-gradient"></div>
-      <div class="pressure-marker" id="pressure-marker"></div>
-    </div>
-    <div class="pressure-labels"><span>Calm</span><span>Crisis</span></div>
-  </div>
-
   <footer class="ticker-bar" id="ticker-bar" aria-label="Ghost tracks ticker">
     <div class="ticker-track" id="ticker-track"></div>
+    <div class="ticker-read-in" id="ticker-read-in">Read in: <button class="theme-link" data-theme="encyclopedia">Encyclopedia</button> · <button class="theme-link" data-theme="newspaper">Newspaper</button></div>
   </footer>
 
-  <footer class="theme-switch" role="navigation" aria-label="Theme">
-    <span>Read in:</span>
-    <button type="button" class="theme-link" data-theme="encyclopedia">Encyclopedia</button>
-    <span class="theme-sep">·</span>
-    <button type="button" class="theme-link" data-theme="newspaper">Newspaper</button>
-    <span class="theme-sep">·</span>
-    <span class="audio-cluster" id="audio-toggle-wrap" hidden>
-      <span id="audio-config-panel-holder"></span>
-      <span class="audio-toggle" id="audio-toggle" role="button" tabindex="0">♪</span>
-    </span>
-  </footer>
 
   <div class="overlay" id="source-overlay" hidden>
     <div class="overlay-panel source-panel" role="dialog" aria-labelledby="source-heading">

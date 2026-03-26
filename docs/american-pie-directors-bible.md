@@ -1057,5 +1057,134 @@ Write every screen to produce a feeling first. The understanding will follow on 
 
 ---
 
+## 14. The Archive — What This Looks Like
+
+The research folder is not all front-page drama. Most of it is not. It is dry government surveys, rate decision notices, housing data releases — the kind of thing a careful person saves to understand context. Interspersed with those are the articles they could not not save: the Bear Stearns weekend wire, the Lehman filing, the trading floor photograph from September 15. The mix of mundane and explosive is what makes the folder feel like a real research archive rather than a curated narrative. The ratio is roughly 60% analytical/documentary to 40% front-page/sensationalized. Both types teach. Neither type announces that it is teaching.
+
+<details>
+<summary><strong>UI Reference — Home Screen, Encyclopedia Theme, Era 1 (Calm)</strong></summary>
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  [American Pie — Georgia bold]            The Free Financial            │
+│                                            Encyclopedia · Jan 2008      │
+├─────────────────────┬───────────────────────────────────────────────────┤
+│  NAVIGATION         │  ★ FEATURED ARTICLE          IN THE NEWS         │
+│  ─────────────────  │  ──────────────────────────  ─────────────────── │
+│  Main Page          │  ┌──────────────────────┐    · Emergency Fund     │
+│  My Situation       │  │  [IMAGE PLACEHOLDER]  │      Levels Below 30   │
+│  Simulation         │  │  BRIEF: Quiet 2007    │      Days for Half US  │
+│  Learn              │  │  suburban street. For │                        │
+│  Clarity       [0]  │  │  Sale sign barely     │    · Fed Cuts Rates    │
+│                     │  │  visible. Calm.       │      to 3.5% Second    │
+│  ─────────────────  │  └──────────────────────┘      Time in Nine Days  │
+│  SIMULATION YEAR    │                                                   │
+│  [2008]  [Present]  │  Emergency Fund Levels Below   DID YOU KNOW?      │
+│                     │  30 Days for Half of US         ────────────      │
+│  ─────────────────  │  Households                    · 57% of US hh    │
+│  READ IN            │                                  had no liquid    │
+│  Encyclopedia ✓     │  The Federal Reserve's own       emergency fund   │
+│  Newspaper          │  survey, released without        in 2008.         │
+│                     │  announcement in December...                      │
+│  ─────────────────  │  Read more →               · Avg hh lost 39%     │
+│  ♪  Audio  [off]    │                               net worth by 2010   │
+│                     │  ON THIS DAY — Jan 22, 2008                       │
+│  ─────────────────  │  Fed cuts 75bps in emergency                      │
+│  Source view        │  action. Largest single cut    Simulation sheet · │
+│  Worksheets         │  since 1984.                   Snapshot           │
+└─────────────────────┴───────────────────────────────────────────────────┘
+ Jan 2008 · Fed funds rate: 3.5%        [controls hidden until hover]
+```
+
+Ticker barely moves. Almost static. An article that is analytical, not front-page.
+
+</details>
+
+<details>
+<summary><strong>UI Reference — Home Screen, Newspaper Theme, Era 4 (Crisis)</strong></summary>
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│  North Financial Mail  𝔄𝔪𝔢𝔯𝔦𝔠𝔞𝔫 𝔓𝔦𝔢  CRISIS EDITION · SEPT 15, 2008  │
+│  ──────────────────────────────────────────────────────────────────────  │
+│  SIMULATION: [2008] [Present]              Encyclopedia · Newspaper  ♪  │
+│  ──────────────────────────────────────────────────────────────────────  │
+│     LEHMAN BROTHERS COLLAPSES. $639 BILLION.                             │
+│     The largest bankruptcy filing in US history was submitted at 1:45 AM │
+│  ──────────────────────────────────────────────────────────────────────  │
+│  COMMENTARY        │  FEATURED STORY             │  IN THE NEWS          │
+│  ──────────────    │  ─────────────────────────  │  ─────────────────── │
+│  DID YOU KNOW?     │  ┌───────────────────────┐  │  Merrill Sold to BofA │
+│                    │  │   [IMAGE PLACEHOLDER] │  │  in Weekend Deal      │
+│  Lehman held       │  │  BRIEF: Trading floor  │  │                       │
+│  $639B in assets.  │  │  Sept 15, 2008. Wide   │  │  AIG Seeks Emergency  │
+│  $236M was what    │  │  shot. Screens red.    │  │  Federal Assistance   │
+│  JPMorgan paid     │  │  One trader, hands on  │  │                       │
+│  for Bear Stearns. │  │  head. News wire qual. │  │  Money Market Fund    │
+│                    │  └───────────────────────┘  │  Breaks the Dollar    │
+│  The FDIC          │                             │                       │
+│  insures to        │  NEW YORK (AP) — Lehman     │  ─────────────────── │
+│  $250,000. Most    │  Brothers Holdings filed    │  ON THIS DAY          │
+│  did not know how  │  for Chapter 11 at 1:45 AM  │                       │
+│  close some        │  Monday. $639 billion in    │  Sept 15, 2008:       │
+│  accounts came.    │  assets. Read full article →│  Markets open in 6h.  │
+│  Simulation →      │                             │                       │
+└────────────────────┴─────────────────────────────┴───────────────────────┘
+ CRISIS · Sept 15 2008 · Lehman files · AIG · Merrill sold · Sept 15 ↻ C—
+```
+
+Ticker chaotic — stuttering, repeating fragments, items cut mid-sentence.
+This is a front-page article. One the researcher absolutely could not scroll past.
+
+</details>
+
+<details>
+<summary><strong>UI Reference — Article Screen, Encyclopedia Theme, with Reveal</strong></summary>
+
+```
+┌─────────────────────┬───────────────────────────────────────────────────┐
+│  American Pie       │  American Pie › 2008 › Markets              < >  │
+│  ─────────────────  │  ─────────────────────────────────────────────── │
+│  IN THIS ARTICLE    │  The $10,000 Withdrawal That Returned $6,500      │
+│  ─────────────────  │  ─────────────────────────────────────────────── │
+│  1 · The Policy     │  September 2008 · Markets · Section 4 of 6       │
+│  2 · The Math       │                                                   │
+│  3 · The Data       │  What People Did                                 │
+│  4 · The Record ←   │                                                   │
+│  5 · Related        │  ┌─────────────────────┐                         │
+│  6 · The Number     │  │  [IMAGE PLACEHOLDER] │  Between September and  │
+│                     │  │                      │  December 2008, an est. │
+│  ─────────────────  │  │  BRIEF: Unemployment │  2.4 million households │
+│  SEE ALSO           │  │  office line, 2009.  │  made early withdrawals │
+│  ─────────────────  │  │  Three people.       │  from retirement        │
+│  · The position one │  │  No faces. Shot from │  accounts — Investment  │
+│    household        │  │  behind. Fluorescent │  Company Institute.     │
+│    carried into     │  │  light. Ordinary.    │                         │
+│    2008             │  └─────────────────────┘  A $10,000 withdrawal   │
+│                     │                           triggered a 10% penalty │
+│  · Exhibit 14 ▾     │  plus income tax at the marginal rate. Net:      │
+│  ┌──────────────┐   │  $6,500 to $7,200. The difference went to the   │
+│  │ Leveraged    │   │  federal government.                             │
+│  │ pos. filed   │   │                                                   │
+│  │ March 2008   │   │  ─────────────────────────────────────────────── │
+│  │ $142k → $11k │   │  ▸ The same $10,000, not withdrawn               │
+│  └──────────────┘   │  ─────────────────────────────────────────────── │
+│                     │                                                   │
+│  ─────────────────  │                              ← Back   Next →      │
+│  [2008]  [Present]  │                                                   │
+│  Encyclopedia ✓     │                                                   │
+└─────────────────────┴───────────────────────────────────────────────────┤
+ Sept 2008 · 401k Withdrawals · Section 4 of 6
+```
+
+The reveal `▸` line is one sentence. What comes after it is data. Not advice.
+The See Also gambler_lost entry is a filing exhibit — one line, a number, no explanation.
+
+</details>
+
+[↑ Back to top](#table-of-contents)
+
+---
+
 *American Pie — Director's Bible v1.0*
 *The variables are the characters. The decisions are the plot. The reader is the protagonist.*
