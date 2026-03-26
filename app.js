@@ -2072,10 +2072,17 @@
     var feat = $("featured-article-link");
     var more = $("featured-read-more");
     var slug = state.mode === "present" ? "getting-started" : "emergency-fund";
-    var title =
+    var fallbackTitle =
       state.mode === "present"
         ? "Getting Started With Your Real Numbers"
-        : "The 2008 Financial Crisis: What Most Americans Did Not Know Was Already Happening To Them";
+        : "Emergency Fund Levels Below 30 Days for Half of US Households";
+    var title = fallbackTitle;
+    var featKey = articleDataKey(slug);
+    var featMd = data.articles[featKey] || data.articles[slug];
+    if (featMd) {
+      var parsedFeat = parseFrontmatter(featMd);
+      if (parsedFeat.meta && parsedFeat.meta.title) title = parsedFeat.meta.title;
+    }
     if (feat) {
       feat.textContent = title;
       feat.onclick = function (e) {
