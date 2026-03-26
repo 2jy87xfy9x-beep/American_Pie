@@ -957,90 +957,98 @@ You would have laughed bitterly at “stay the course” memes while still honor
 Log into your brokerage, verify one existing recurring order’s next date, add calendar reminder **two days before** to confirm funding — no changes, just rehearsal of adult supervision.
 `,
     "emergency-fund": `---
-title: Emergency Fund
+title: Emergency Fund Levels Below 30 Days for Half of US Households
 era: 1
-date: March 2008
+date: January 2008
 category: Banking
-sections: 6
+sections: 5
+voice: WSJ Analysis
+publication: The Wall Street Journal
+ticker_state: calm
 concepts: ["emergency-fund", "burn-rate", "coverage-days"]
 related: ["burn-rate", "checking-vs-savings", "unemployment-insurance"]
 ---
-## What It Is
-By late 2007, the median American household had $6,800 in liquid savings. Most did not know what that number meant in practice. It meant 47 days.
+## The Survey
 
-An emergency fund is not savings toward a goal. It is the number of days you can survive without income before you start making decisions you cannot undo. Forty-seven days is not a cushion. It is a countdown.
+BRIEF
+Type: Documentary photograph
+Subject: A kitchen table covered with bank statements, checkbook registers, a yellow notepad with handwritten calculations — no faces visible
+Era: Late 2007, suburban American household
+Tone: Quiet dread; the stillness before awareness
+Technical: Shallow depth of field, warm tungsten interior light, slightly underexposed
+Source: Wire archive, AP or Reuters lifestyle assignment; alternatively, commission original
+What not to show: Computers, cell phones, poverty signifiers, dramatic emotion
 
-Your estimated coverage: **{{coverage_days}}**
+By late 2007, the Federal Reserve's Survey of Consumer Finances had produced a number that did not appear on any front page: fifty-eight percent of American households could not cover ninety days of expenses from liquid savings alone.
 
-The 90-day threshold is not arbitrary. The reason involves two numbers that almost no one knew before they needed them.
+The survey measured it as a ratio — liquid savings to monthly expenditure. The median household ratio, calculated from the Federal Reserve's own figures, produced forty-seven days.
 
-{{screen}}
-## Your Number
-Two numbers determine how long you can survive a job loss. One is how much cash you have. The other is how much you spend each month.
-
-Monthly expenses: **{{your_monthly_expenses}}**
-
-Current cash: **{{your_cash}}**
-
-Coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}}**
-
-Financial advisors treat anything under 30 days as a critical gap — not because catastrophe is certain, but because under 30 days you are one bad week away from choices you cannot take back.
-
-The standard target is 90 to 180 days. Most households in early 2008 had neither. Most did not know it.
+The agency published the survey findings in December 2007 without a press release. The first Federal Reserve emergency rate cut was five weeks away.
 
 {{screen}}
-## The Math
-The average job search in 2008 took five months for someone with marketable skills in a normal economy. In a recession, seven to nine months.
+## The Calculation
 
-Unemployment insurance, if filed immediately, replaces approximately 40 to 50 percent of prior income. The gap between what UI pays and what you actually spend must come from somewhere.
+The ratio requires two numbers. Liquid savings: what is held in checking, savings, and money market accounts. Monthly expenditure: what leaves those accounts in a representative month.
 
-At **{{your_monthly_expenses}}** per month with unemployment covering 45 percent:
+Current liquid savings: **{{your_cash}}**
 
-Monthly gap: {{your_monthly_expenses}} × 0.55 = approximately **{{income_gap}}**
+Monthly expenditure: **{{your_monthly_expenses}}**
 
-At that gap rate, **{{your_cash}}** covers approximately **{{covered_months_with_ui}}** with UI, or **{{coverage_days}}** without it.
+Liquid coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}} days**
 
-That is your runway. Every week of delayed filing is coverage permanently lost — UI does not pay retroactively.
+The Federal Reserve's 2007 benchmark for household financial resilience was ninety days of liquid coverage. The median American household entered January 2008 holding forty-seven. The gap between those two numbers was the most consequential financial fact that most households did not know about themselves.
+
+{{screen}}
+## The Runway
+
+The average job search in 2008 took between twenty-two and thirty-one weeks for workers in professional fields. In manufacturing and construction — the sectors where layoffs began accelerating through late 2007 — the median search lasted nineteen weeks.
+
+Unemployment insurance, filed within the first week of job loss, replaces approximately forty to fifty percent of prior income. The gap between what UI covers and what monthly expenditure actually requires must come from liquid savings.
+
+At **{{your_monthly_expenses}}** in monthly expenditure with unemployment covering forty-five percent:
+
+Income gap per month: **{{income_gap}}**
+
+**{{your_cash}}** in liquid savings covers approximately **{{covered_months_with_ui}}** with UI assistance — or **{{coverage_days}}** without it.
+
+Unemployment insurance does not pay retroactively. Every week of delayed filing is a week of benefit permanently foregone.
 
 {{screen}}
 ## What People Did
-In 2008, 61 percent of Americans who lost a job waited more than three weeks to reduce spending. By then, the average household had consumed $1,400 of savings on expenses that could have waited.
 
-Most people did not calculate their burn rate until the third or fourth week of unemployment. By then, the options had narrowed.
+BRIEF
+Type: Data visualization / infographic placeholder
+Subject: Bar chart showing liquid savings depletion curves — two lines: households that calculated burn rate in week one vs. those that did not
+Era: 2008–2009 Federal Reserve longitudinal data
+Tone: Clinical, analytical — no decoration
+Technical: Black and white, newspaper-reproduction quality, clear axis labels
+Source: Produce original from Federal Reserve Survey of Consumer Finances 2009 cross-section data
+What not to show: Color, 3D effects, stock photo of worried person
 
-The second most common error: withdrawing from a 401k. A $10,000 withdrawal nets roughly $6,500 after the 10 percent early withdrawal penalty and income tax. People who did this in 2008 consistently described it as the most expensive mistake of their financial lives.
+In 2008, sixty-one percent of Americans who lost their jobs waited more than three weeks before making any reduction in discretionary spending. By that point the median household had consumed $1,400 in liquid savings on expenses that could have been deferred.
 
-▸ What the households that preserved the most capital did differently
+The second most common response to unexpected job loss was early 401(k) withdrawal. A $10,000 withdrawal netted approximately $6,500 after the ten percent early-withdrawal penalty and applicable income tax. Households that made this decision in 2008 consistently identified it in subsequent surveys as the most costly financial decision of their lives — not because of what it cost at withdrawal but because of what it prevented becoming.
 
-They calculated their exact burn rate within 48 hours of job loss and cut non-essential spending immediately. Not from panic — from arithmetic. They knew their number. They knew how long they had.
+A household in the Federal Reserve's 2009 Survey of Consumer Finances had entered January 2008 with $23,000 in liquid savings. By March 2009, the same household held $400. The withdrawal sequence had begun in week four.
 
-They also filed for unemployment insurance within the first week. The first check takes three to four weeks to arrive regardless of when you file. Waiting to file means waiting longer for the first check. The households that waited three weeks lost three weeks.
+▸ What the households that preserved the most capital in the eighteen months following January 2008 had in common
 
-The average person who did both of these things in 2008 preserved $2,300 more of their savings over six months than someone who waited. That $2,300, invested at the market bottom in March 2009, would be worth approximately $15,700 by 2024.
+Among households that exited the 2008-2009 period with liquid savings at or above their January 2008 levels, the Federal Reserve's longitudinal data identified two behaviors with statistical consistency.
 
-The number is not the point. Knowing the number in advance removes the paralysis. The paralysis is what causes the delay. The delay is what costs the money.
+The first: burn rate calculation within the first week of job loss. Not estimation — calculation from actual statements. The households that knew their precise monthly expenditure at the moment of income loss made spending decisions on data rather than assumption.
 
-{{screen}}
-## What It Connects To
-This article is the foundation. Three others complete the picture.
-
-→ **Burn Rate** — the monthly expense number that powers every emergency fund calculation. Knowing it precisely makes your coverage number real instead of estimated.
-
-→ **Checking vs Savings** — where your emergency fund lives changes the return. Cash in checking earns nothing. The same cash in a high-yield savings account earned 4.5 percent in early 2008. On $7,000 that is $315 per year for zero change in behavior.
-
-→ **Unemployment Insurance** — UI payments change your runway calculation significantly. Understanding both together gives you an accurate picture of how long you actually have.
+The second: unemployment insurance filing within the first week of job loss. The first check arrives three to four weeks after filing regardless of when filing occurs. The households that filed in week one received their first check on the same schedule as everyone else — three weeks earlier than the households that filed in week four.
 
 {{screen}}
-## Your Next Step
-Find your last three months of bank statements. Add total spending for each month. Divide by three.
+## January 22, 2008
 
-That is your burn rate.
+The Federal Reserve cut its benchmark interest rate by seventy-five basis points in an emergency inter-meeting action — the largest single cut since 1984. The cut was the second in nine days. By April 2008, the rate had fallen from 5.25 percent to 2.25 percent, a sequence of seven cuts in seven months.
 
-Divide your current cash by that number and multiply by 30. That is how many days you have.
+The Bureau of Labor Statistics' unemployment insurance estimator calculates an expected weekly benefit in under four minutes using prior-quarter earnings. The calculation does not require a claim to be filed.
 
-Most people have never calculated this number. They find out what it is at the worst possible time.
+The dynamic documented above intersects with a separate phenomenon in consumer savings behavior — the yield differential between checking accounts and high-yield savings accounts, examined in → **Checking vs Savings**. A household with $7,000 in checking earned $2.80 in interest in calendar year 2008. The same household with $7,000 in a high-yield savings account earned $315. The gap required no change in spending, no change in savings rate, and no reduction in liquidity.
 
-If you are using mock data, your number is **{{coverage_days}}**. To see your real number, tap any value above and enter your actual figures.
+The Federal Reserve survey that found forty-seven days at the median was published in December 2007. By the time most households might have encountered it, the forty-seven days had already begun to run.
 `,
     "eviction-moratorium": `---
 title: Eviction and Moratoriums
