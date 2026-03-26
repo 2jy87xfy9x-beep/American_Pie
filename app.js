@@ -195,8 +195,9 @@
     ]
   };
 
-  var ERA_TICKER_SPEED = { 1:"calm", 2:"calm", 3:"crisis", 4:"elevated", 5:"calm", 6:"calm", 7:"crisis", 8:"elevated", 9:"calm" };
-  var TICKER_DURATIONS = { calm: 60, elevated: 40, crisis: 22 };
+  // V2 ticker states: calm=80s, elevated=45s, crisis=20s, chaotic=glitch, still=stopped
+  var ERA_TICKER_SPEED = { 1:"calm", 2:"elevated", 3:"elevated", 4:"chaotic", 5:"chaotic", 6:"elevated", 7:"still", 8:"elevated", 9:"calm" };
+  var TICKER_DURATIONS = { calm: 80, elevated: 45, crisis: 20, chaotic: 12 };
   var glitchTimer = null;
 
   var ERA_AUDIO_ROWS = [
@@ -856,15 +857,14 @@
   }
 
   function updateAudioToggleDom() {
-    var wrap = $("audio-toggle-wrap");
-    var span = $("audio-toggle");
-    if (!wrap || !span) return;
-    if (!state.audio.unlocked) {
-      wrap.hidden = true;
-      return;
-    }
-    wrap.hidden = false;
-    span.classList.toggle("off", !state.audio.enabled);
+    var label = $("audio-label");
+    var enabled = state.audio.unlocked && state.audio.enabled;
+    // Update all audio toggle buttons
+    ["audio-toggle", "audio-toggle-np", "audio-toggle-ticker"].forEach(function(id) {
+      var btn = $(id);
+      if (btn) btn.classList.toggle("audio-on", enabled);
+    });
+    if (label) label.textContent = state.audio.unlocked ? (state.audio.enabled ? "on" : "off") : "off";
     var ph = $("audio-config-panel-holder");
     if (ph && !state.audio.configOpen) ph.innerHTML = "";
   }
@@ -929,6 +929,16 @@
 
   function wireAudioToggleChrome() {
     var span = $("audio-toggle");
+    // Also wire simpler click-only toggles for np masthead and ticker
+    ["audio-toggle-np", "audio-toggle-ticker"].forEach(function(id) {
+      var btn = $(id);
+      if (btn) btn.addEventListener("click", function() {
+        if (!state.audio.unlocked) return;
+        state.audio.enabled = !state.audio.enabled;
+        persistAudioEnabled();
+        updateAudioToggleDom();
+      });
+    });
     if (!span) return;
     var startPress = function () {
       audioLongPressArmed = false;
@@ -1545,23 +1555,50 @@
     return html;
   }
 
+  function renderBriefBlock(text) {
+    // Extract lines starting with BRIEF through the end of that block
+    return text.replace(/^(BRIEF\n[\s\S]*?)(?=\n\n|\n##)/gm, function(match) {
+      var lines = match.split('\n');
+      var body = lines.slice(1).join('\n').trim();
+      return '\x00BRIEF\x00' + body + '\x00ENDB\x00';
+    });
+  }
+
   function renderSectionHtml(rawText, vars, editableKeys) {
     var map = buildReplaceMap(vars);
-    // Replace {{var}} with \x00PHn\x00 placeholders first so bold markers
-    // like **{{coverage_days}} days** survive the markdown pass intact.
+
+    // Pre-process BRIEF blocks into placeholder tokens before markdown parsing
+    var briefs = [];
+    var withBriefs = rawText.replace(/^BRIEF\n([\s\S]*?)(?=\n\n|\n##)/gm, function(_, body) {
+      var html = '<div class="image-brief"><div class="image-brief-label">Brief</div><div class="image-brief-body">' +
+        body.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;') +
+        '</div></div>';
+      briefs.push(html);
+      return '\x00BRIEF' + (briefs.length - 1) + '\x00';
+    });
+
+    // V2: editable variables use inline <input> with underline affordance
     var placeholders = [];
-    var withPH = rawText.replace(/\{\{(\w+)\}\}/g, function (_, key) {
+    var withPH = withBriefs.replace(/\{\{(\w+)\}\}/g, function (_, key) {
       var display = map[key] != null ? map[key] : "—";
       var canEdit = editableKeys.indexOf(key) !== -1;
-      var span = canEdit
-        ? '<button type="button" class="var-inline" data-var="' + key + '">' + display + "</button>"
-        : '<span class="var-wrap" data-var="' + key + '">' + display + "</span>";
+      var span;
+      if (canEdit) {
+        var rawVal = getRawValue(key, vars);
+        var inputVal = rawVal != null ? String(rawVal) : "";
+        span = '<input type="text" class="var-field" data-var="' + key + '" value="' + inputVal.replace(/"/g, "&quot;") + '" title="' + key.replace(/_/g, " ") + '" size="' + Math.max(4, inputVal.length + 1) + '">';
+      } else {
+        span = '<span class="var-calc" data-var="' + key + '">' + display + "</span>";
+      }
       placeholders.push(span);
       return "\x00PH" + (placeholders.length - 1) + "\x00";
     });
     var html = mdInlineToHtml(withPH);
     html = html.replace(/\x00PH(\d+)\x00/g, function (_, idx) {
       return placeholders[parseInt(idx, 10)];
+    });
+    html = html.replace(/\x00BRIEF(\d+)\x00/g, function (_, idx) {
+      return briefs[parseInt(idx, 10)];
     });
     return html;
   }
@@ -1681,25 +1718,43 @@
   }
 
   function updateDateline() {
-    var el = $("dateline-text");
-    if (!el) return;
-    var d = new Date();
+    var dateLabel = "";
+    var era = state.mode === "2008" ? state.currentEra : 9;
     if (state.mode === "2008") {
       var evs = getEraEvents(state.currentEra);
       if (evs.length) {
         var idx = Math.min(state.currentEventIndex, evs.length - 1);
-        el.textContent = String(evs[idx].date || "").toUpperCase();
-        return;
+        dateLabel = String(evs[idx].date || "January 2008");
+      } else {
+        dateLabel = "January 2008";
+      }
+    } else {
+      dateLabel = new Date().toLocaleDateString(undefined, { year: "numeric", month: "long" });
+    }
+    // V2: update newspaper masthead
+    var npSubhead = $("np-subhead");
+    var npDate = $("np-date");
+    var npEdition = $("np-edition");
+    var encEraLabel = $("enc-era-label");
+    if (npSubhead) npSubhead.textContent = dateLabel;
+    if (npDate) npDate.textContent = dateLabel.toUpperCase();
+    if (npEdition) npEdition.textContent = "No. " + state.currentEra + " · Era " + state.currentEra + " of 9";
+    if (encEraLabel) encEraLabel.textContent = "Era " + state.currentEra + " of 9 · " + dateLabel;
+
+    // Update newspaper banner for crisis eras
+    var npBanner = $("np-banner");
+    if (npBanner) {
+      if (era === 4) {
+        npBanner.textContent = "LEHMAN BROTHERS COLLAPSES. $639 BILLION. LARGEST BANKRUPTCY IN AMERICAN HISTORY.";
+        npBanner.style.display = "";
+      } else if (era === 5) {
+        npBanner.textContent = "CONGRESS PASSES $700 BILLION EMERGENCY RESCUE — TARP SIGNED INTO LAW";
+        npBanner.style.display = "";
+      } else {
+        npBanner.textContent = "";
+        npBanner.style.display = "none";
       }
     }
-    el.textContent = d
-      .toLocaleDateString(undefined, {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-      .toUpperCase();
   }
 
   function updatePressure() {
@@ -1754,20 +1809,44 @@
 
   function renderTicker() {
     var track = $("ticker-track");
-    if (!track) return;
+    var bar = $("ticker-bar");
+    if (!track || !bar) return;
     var era = state.mode === "2008" ? state.currentEra : 9;
     var content = ERA_TICKER_CONTENT[era] || ERA_TICKER_CONTENT[1];
+    var speed = ERA_TICKER_SPEED[era] || "calm";
+
+    // V2: 5 ticker states
+    bar.classList.remove("ticker-still", "ticker-chaotic");
+
+    if (speed === "still") {
+      // Era 7 — market bottom: ticker stops
+      track.innerHTML = content.map(function(text) {
+        return '<span class="ticker-item">' + text.replace(/</g, "&lt;") + "</span>";
+      }).join("");
+      track.style.animationDuration = "999999s";
+      bar.classList.add("ticker-still");
+      clearGlitchCycle();
+      return;
+    }
+
     var html = content.concat(content).map(function(text) {
       return '<span class="ticker-item">' + text.replace(/</g, "&lt;") + "</span>";
     }).join("");
     track.innerHTML = html;
-    var speed = ERA_TICKER_SPEED[era] || "calm";
-    var dur = TICKER_DURATIONS[speed] || 60;
-    track.style.animationDuration = dur + "s";
-    if (speed === "crisis") {
+
+    if (speed === "chaotic") {
+      // Era 4-5: fast + glitch effects
+      track.style.animationDuration = (TICKER_DURATIONS.chaotic || 12) + "s";
+      bar.classList.add("ticker-chaotic");
       startGlitchCycle();
     } else {
-      clearGlitchCycle();
+      var dur = TICKER_DURATIONS[speed] || 60;
+      track.style.animationDuration = dur + "s";
+      if (speed === "crisis") {
+        startGlitchCycle();
+      } else {
+        clearGlitchCycle();
+      }
     }
   }
 
@@ -1827,10 +1906,11 @@
   }
 
   function renderSeeAlso() {
-    var block = $("margin-see-also");
+    // V2: See Also goes in sidebar
+    var block = $("sidebar-see-also");
     if (!block) return;
     var era = state.currentEra;
-    var list = $("see-also-list");
+    var list = $("sidebar-see-also-list");
     if (!list) return;
     list.innerHTML = "";
     var entries = getSeeAlsoEntriesForEra(era);
@@ -1839,11 +1919,11 @@
     var seen = loadSeeAlsoSeen();
     entries.forEach(function(entry) {
       var div = document.createElement("div");
-      div.className = "see-also-entry";
+      div.className = "sidebar-see-also-item";
       div.setAttribute("data-entry-id", String(entry.id));
       var html = "";
-      if (entry.date) html += '<span class="see-also-date">' + entry.date + "</span>";
-      html += '<a href="#" class="see-also-link">' + entry.link.replace(/</g, "&lt;") + "</a>";
+      if (entry.date) html += '<div class="sidebar-see-also-date">' + entry.date + "</div>";
+      html += '<a href="#" class="sidebar-see-also-link">' + entry.link.replace(/</g, "&lt;") + "</a>";
       if (entry.detail) {
         var detailHtml = entry.detail.replace(/</g, "&lt;").replace(/\n/g, "<br>");
         var secIdx = detailHtml.indexOf("<br>▸ ");
@@ -1853,18 +1933,18 @@
           primaryHtml = detailHtml.slice(0, secIdx);
           secondaryHtml = detailHtml.slice(secIdx + 5);
         }
-        html += '<div class="see-also-detail hidden" id="see-also-detail-' + entry.id + '">';
-        html += '<pre class="see-also-detail-text">' + primaryHtml + "</pre>";
+        html += '<div class="see-also-detail" id="see-also-detail-' + entry.id + '">';
+        html += '<pre class="see-also-detail-text" style="font-size:10px;white-space:pre-wrap;margin:0">' + primaryHtml + "</pre>";
         if (secondaryHtml) {
-          html += '<a href="#" class="see-also-secondary-link" data-entry-id="' + entry.id + '">▸ ' + secondaryHtml.split("<br>")[0] + "</a>";
-          html += '<div class="see-also-secondary-detail hidden" id="see-also-sec-' + entry.id + '"><pre class="see-also-detail-text">' + secondaryHtml.split("<br>").slice(1).join("<br>") + "</pre></div>";
+          html += '<a href="#" class="see-also-secondary-link" data-entry-id="' + entry.id + '" style="font-size:10px;color:var(--link)">▸ ' + secondaryHtml.split("<br>")[0] + "</a>";
+          html += '<div class="see-also-secondary-detail hidden" id="see-also-sec-' + entry.id + '"><pre style="font-size:10px;white-space:pre-wrap;margin:0">' + secondaryHtml.split("<br>").slice(1).join("<br>") + "</pre></div>";
         }
         html += "</div>";
       } else {
-        html += '<div class="see-also-detail hidden" id="see-also-detail-' + entry.id + '"></div>';
+        html += '<div class="see-also-detail" id="see-also-detail-' + entry.id + '"></div>';
       }
       div.innerHTML = html;
-      var link = div.querySelector(".see-also-link");
+      var link = div.querySelector(".sidebar-see-also-link");
       link.addEventListener("click", function(e) {
         e.preventDefault();
         toggleSeeAlso(entry.id, entry.era, entry.detail);
@@ -1884,14 +1964,14 @@
 
   function toggleSeeAlso(id, era, detail) {
     var detailEl = $("see-also-detail-" + id);
-    var isExpanded = detailEl && !detailEl.classList.contains("hidden");
-    document.querySelectorAll(".see-also-detail").forEach(function(d) { d.classList.add("hidden"); });
+    var isExpanded = detailEl && detailEl.classList.contains("open");
+    document.querySelectorAll(".see-also-detail").forEach(function(d) { d.classList.remove("open"); });
     document.querySelectorAll(".see-also-secondary-detail").forEach(function(d) { d.classList.add("hidden"); });
-    document.querySelectorAll(".see-also-link").forEach(function(a) { a.classList.remove("see-also-active"); });
+    document.querySelectorAll(".sidebar-see-also-link").forEach(function(a) { a.style.fontWeight = ""; });
     if (!isExpanded && detailEl && era >= 2 && detail) {
-      detailEl.classList.remove("hidden");
-      var link = document.querySelector('[data-entry-id="' + id + '"] .see-also-link');
-      if (link) link.classList.add("see-also-active");
+      detailEl.classList.add("open");
+      var link = document.querySelector('[data-entry-id="' + id + '"] .sidebar-see-also-link');
+      if (link) link.style.fontWeight = "700";
       var seen = loadSeeAlsoSeen();
       if (!seen[id]) {
         seen[id] = true;
@@ -2009,9 +2089,77 @@
         openArticle(slug);
       };
     }
+
+    // V2: also populate newspaper home grid
+    renderNpHome(slug, title);
+
     updateDateline();
     renderTicker();
     updatePressure();
+  }
+
+  function renderNpHome(featSlug, featTitle) {
+    // Newspaper featured
+    var npLink = $("np-featured-link");
+    var npMore = $("np-featured-read-more");
+    var npDek = $("np-featured-dek");
+    if (npLink) {
+      npLink.textContent = featTitle || "";
+      npLink.onclick = function(e) { e.preventDefault(); openArticle(featSlug || "emergency-fund"); };
+    }
+    if (npMore) {
+      npMore.onclick = function(e) { e.preventDefault(); openArticle(featSlug || "emergency-fund"); };
+    }
+
+    // Newspaper news list
+    var npNews = $("np-news-list");
+    if (npNews) {
+      npNews.innerHTML = "";
+      var evs2 = state.mode === "2008" ? getHomeNewsEvents() : (state.events.length ? state.events.slice(0, 5) : fallbackNews());
+      evs2.slice(0, 5).forEach(function(e, i) {
+        var li = document.createElement("li");
+        var a = document.createElement("a");
+        a.href = "#";
+        a.textContent = e.headline || e.ticker_text || "Event";
+        a.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          if (e.article) openArticle(e.article);
+        });
+        li.appendChild(a);
+        npNews.appendChild(li);
+      });
+    }
+
+    // Newspaper DYK
+    var npDyk = $("np-dyk-list");
+    if (npDyk) {
+      npDyk.innerHTML = "";
+      var hooks = state.didYouKnow.length ? state.didYouKnow.slice(0, 3) : fallbackDyk().slice(0, 3);
+      var map2 = buildReplaceMap(state.variables);
+      hooks.forEach(function(h) {
+        var li = document.createElement("li");
+        var text = h.text || h.hook || "";
+        text = text.replace(/\{\{(\w+)\}\}/g, function(_, k) { return map2[k] != null ? map2[k] : "—"; });
+        li.textContent = text;
+        npDyk.appendChild(li);
+      });
+    }
+
+    // Newspaper on-this-day
+    var npOtd = $("np-on-this-day");
+    var npOtdNews = $("np-on-this-day-news");
+    var pool2 = state.didYouKnow.filter(function(x) { return x.on_this_day; });
+    if (!pool2.length) pool2 = [{ on_this_day: "March 14, 2008", text: fallbackOnThisDay() }];
+    var idx2 = Number(sessionStorage.getItem(LS_ON_THIS_DAY) || "0");
+    var pick2 = pool2[idx2 % pool2.length];
+    if (npOtd) npOtd.textContent = pick2.text || pick2.body || "";
+    if (npOtdNews) npOtdNews.textContent = pick2.text || pick2.body || "";
+
+    // Newspaper worksheet links
+    var npWsSim = $("np-worksheet-sim");
+    var npWsReal = $("np-worksheet-real");
+    if (npWsSim) npWsSim.onclick = function(e) { e.preventDefault(); openWorksheet("simulation-research"); };
+    if (npWsReal) npWsReal.onclick = function(e) { e.preventDefault(); openWorksheet("real-life-snapshot"); };
   }
 
   function fallbackNews() {
@@ -2039,10 +2187,15 @@
 
   function setMode(mode) {
     state.mode = mode;
-    var b2008 = $("mode-2008");
-    var bp = $("mode-present");
-    if (b2008) b2008.setAttribute("aria-pressed", mode === "2008" ? "true" : "false");
-    if (bp) bp.setAttribute("aria-pressed", mode === "present" ? "true" : "false");
+    // Sync all mode buttons (sidebar + np masthead)
+    ["mode-2008", "mode-2008-np"].forEach(function(id) {
+      var el = $(id);
+      if (el) el.setAttribute("aria-pressed", mode === "2008" ? "true" : "false");
+    });
+    ["mode-present", "mode-present-np"].forEach(function(id) {
+      var el = $(id);
+      if (el) el.setAttribute("aria-pressed", mode === "present" ? "true" : "false");
+    });
     loadSimulationBundle();
     if (state.audio.graphReady) {
       if (state.mode === "present") applyPresentBaselineAudio(5000);
@@ -2058,44 +2211,49 @@
   }
 
   function showView(name) {
-    ["view-home", "view-article", "view-ghost", "view-clarity", "view-stub", "view-final"].forEach(
-      function (id) {
-        var el = $(id);
-        if (!el) return;
-        el.classList.toggle("hidden", id !== "view-" + name && !(id === "view-stub" && name === "stub"));
-      }
-    );
-    if (name !== "stub") {
-      var stub = $("view-stub");
-      if (stub) stub.classList.add("hidden");
+    // Hide all views
+    ["view-home", "view-article", "view-ghost", "view-clarity", "view-stub", "view-final"].forEach(function (id) {
+      var el = $(id);
+      if (el) el.classList.add("hidden");
+    });
+
+    // Show target with fade
+    var targetId = name === "stub" ? "view-stub" : "view-" + name;
+    var target = $(targetId);
+    if (target) {
+      target.classList.remove("hidden");
+      target.classList.add("view-fade-in");
+      setTimeout(function() { if (target) target.classList.remove("view-fade-in"); }, 160);
     }
-    if (name === "stub") {
-      var st = $("view-stub");
-      if (st) st.classList.remove("hidden");
+
+    // Switch sidebar context: nav links vs article TOC
+    var sNav = $("sidebar-nav");
+    var sToc = $("sidebar-article-toc");
+    var sSA = $("sidebar-see-also");
+    if (name === "article") {
+      if (sNav) sNav.classList.add("hidden");
+      if (sToc) sToc.classList.remove("hidden");
+    } else {
+      if (sNav) sNav.classList.remove("hidden");
+      if (sToc) sToc.classList.add("hidden");
+      if (sSA) sSA.classList.add("hidden");
     }
+
     document.body.classList.toggle("view-article-active", name === "article");
     document.body.classList.toggle("view-home-active", name === "home");
   }
 
   function revealNavIfNeeded() {
-    if (localStorage.getItem(LS_FIRST_DONE) === "1") {
-      document.body.classList.add("nav-visible");
-    }
+    // V2: sidebar always visible — no progressive reveal needed
+    document.body.classList.add("nav-visible");
   }
 
   function openArticle(slug) {
     touchAudioLastInteraction();
     document.body.classList.remove("view-worksheet");
-    var margin = $("article-margin");
-    if (margin) margin.classList.remove("hidden");
-    var ind0 = $("section-indicator");
-    if (ind0) ind0.classList.remove("hidden");
-    var next0 = $("article-next");
-    if (next0) next0.classList.remove("hidden");
     state.currentArticle = slug;
     state.currentSection = 0;
     state.revealOpen = false;
-    state.marginEditOpen = false;
     hideMarginEditor();
     var key = articleDataKey(slug);
     var md = data.articles[key];
@@ -2106,10 +2264,29 @@
     var parsed = parseFrontmatter(md);
     state.meta = parsed.meta;
     state.sections = splitScreens(parsed.body);
-    renderArticle();
-    showView("article");
-    updateDateline();
-    updateNavClarity();
+
+    var wasArticle = $("view-article") && !$("view-article").classList.contains("hidden");
+    var col = $("main-column");
+
+    function doRender() {
+      renderArticle();
+      showView("article");
+      updateDateline();
+      updateNavClarity();
+    }
+
+    if (wasArticle && col) {
+      // Horizontal slide between articles
+      col.classList.add("slide-left-out");
+      setTimeout(function() {
+        col.classList.remove("slide-left-out");
+        doRender();
+        col.classList.add("slide-left-in");
+        setTimeout(function() { col.classList.remove("slide-left-in"); }, 230);
+      }, 220);
+    } else {
+      doRender();
+    }
   }
 
   function renderArticle() {
@@ -2134,16 +2311,18 @@
         " · Concepts: " +
         (Array.isArray(state.meta.concepts) ? state.meta.concepts.length : 0);
     }
-    var toc = $("margin-toc");
+    // V2: TOC goes in sidebar
+    var toc = $("sidebar-toc");
     if (toc) {
       toc.innerHTML = "";
       state.sections.forEach(function (s, i) {
         var li = document.createElement("li");
-        li.textContent = i + 1 + " · " + s.title;
+        li.textContent = (i + 1) + " · " + s.title;
+        li.setAttribute("data-section-idx", String(i));
         li.addEventListener("click", function () {
           state.currentSection = i;
           state.revealOpen = false;
-          renderArticleSection();
+          renderArticleSectionWithAnimation();
         });
         toc.appendChild(li);
       });
@@ -2161,6 +2340,13 @@
     var sec = state.sections[state.currentSection];
     if (!sec) return;
     if (ind) ind.textContent = "Section " + (state.currentSection + 1) + " of " + state.sections.length;
+    // Update active TOC item in sidebar
+    var toc = $("sidebar-toc");
+    if (toc) {
+      toc.querySelectorAll("li").forEach(function(li, i) {
+        li.classList.toggle("toc-active", i === state.currentSection);
+      });
+    }
     if (state.currentArticle === "federal-reserve") {
       if (state.currentSection >= 1) localStorage.setItem(LS_SAW_TICKER_ILLU, "1");
       if (state.currentSection >= 2) localStorage.setItem(LS_SAW_GAUGE_ILLU, "1");
@@ -2218,6 +2404,19 @@
     }
   }
 
+  function renderArticleSectionWithAnimation() {
+    // V2: downward canvas slide when advancing within an article
+    var wrap = $("article-canvas-wrap");
+    if (!wrap) { renderArticleSection(); return; }
+    wrap.classList.add("slide-down-out");
+    setTimeout(function() {
+      wrap.classList.remove("slide-down-out");
+      renderArticleSection();
+      wrap.classList.add("slide-down-in");
+      setTimeout(function() { wrap.classList.remove("slide-down-in"); }, 260);
+    }, 200);
+  }
+
   function advanceSection() {
     touchAudioLastInteraction();
     var slug = state.currentArticle;
@@ -2234,7 +2433,7 @@
     if (state.currentSection < state.sections.length - 1) {
       state.currentSection += 1;
       state.revealOpen = false;
-      renderArticleSection();
+      renderArticleSectionWithAnimation();
     } else {
       markArticleComplete();
       if (state.simulationEnded) return;
@@ -2286,25 +2485,37 @@
   }
 
   function updateNavClarity() {
-    var n = $("nav-clarity-num");
-    if (n) n.textContent = String(clarityScoreTotal());
+    var score = clarityScoreTotal();
+    // V2: sidebar clarity badge
+    var badge = $("sidebar-clarity-badge");
+    if (badge) badge.textContent = score > 0 ? "[" + score + "]" : "";
   }
 
   function wireVarButtons(keys) {
     var body = $("article-body");
     if (!body) return;
-    body.querySelectorAll(".var-inline").forEach(function (btn) {
-      btn.addEventListener("click", function (ev) {
-        ev.preventDefault();
-        ev.stopPropagation();
-        openMarginEditor(btn.getAttribute("data-var"), keys);
+    // V2: inline input fields — blur or Enter to save
+    body.querySelectorAll(".var-field").forEach(function (inp) {
+      inp.addEventListener("click", function (e) { e.stopPropagation(); });
+      inp.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); inp.blur(); }
+        if (e.key === "Escape") { inp.blur(); }
+      });
+      inp.addEventListener("blur", function () {
+        var raw = inp.value.replace(/[$,\s]/g, "");
+        var v = parseFloat(raw);
+        if (!isNaN(v)) {
+          persistVariable(inp.getAttribute("data-var"), v);
+          renderArticleSection();
+          buildSourceViewContent();
+          renderHome();
+        }
       });
     });
   }
 
   function hideMarginEditor() {
-    var ed = $("margin-editor");
-    if (ed) ed.classList.add("hidden");
+    // V2: no margin editor — inline editing only
     state.marginEditOpen = false;
   }
 
@@ -2579,8 +2790,6 @@
     if (next) next.classList.add("hidden");
     var rev = $("reveal-toggle");
     if (rev) rev.classList.add("hidden");
-    var margin = $("article-margin");
-    if (margin) margin.classList.add("hidden");
     var title = $("article-title");
     if (title) title.textContent = slug.replace(/-/g, " ");
     var meta = $("article-meta");
@@ -2590,94 +2799,95 @@
   }
 
   function bindChrome() {
-    var acc = document.querySelector(".article-content-col");
-    if (acc) {
-      acc.addEventListener("click", function () {
-        hideMarginEditor();
-      });
-    }
+    // Theme buttons — wire all .theme-link buttons across sidebar and ticker
     document.querySelectorAll(".theme-link").forEach(function (btn) {
       btn.addEventListener("click", function () {
         document.body.classList.remove("theme-encyclopedia", "theme-newspaper");
         document.body.classList.add("theme-" + btn.getAttribute("data-theme"));
+        renderTicker();
+        updateDateline();
       });
     });
-    var b2008 = $("mode-2008");
-    var bp = $("mode-present");
-    if (b2008) b2008.addEventListener("click", function () {
-      setMode("2008");
-    });
-    if (bp) bp.addEventListener("click", function () {
-      setMode("present");
-    });
+
+    // Mode buttons — main sidebar + newspaper masthead
+    function bindMode(id, mode) {
+      var el = $(id);
+      if (el) el.addEventListener("click", function() { setMode(mode); });
+    }
+    bindMode("mode-2008", "2008");
+    bindMode("mode-present", "present");
+    bindMode("mode-2008-np", "2008");
+    bindMode("mode-present-np", "present");
+
+    // Sidebar nav links
+    var snavHome = $("snav-home");
+    var snavSituation = $("snav-situation");
+    var snavSimulation = $("snav-simulation");
+    var snavLearn = $("snav-learn");
+    var snavClarity = $("snav-clarity");
+    var sidebarLogo = document.querySelector(".sidebar-logo");
+    if (sidebarLogo) sidebarLogo.addEventListener("click", function(e) { e.preventDefault(); goHome(); });
+    if (snavHome) snavHome.addEventListener("click", function(e) { e.preventDefault(); goHome(); });
+    if (snavSituation) snavSituation.addEventListener("click", function(e) { e.preventDefault(); openStub("My Situation", "emergency-fund"); });
+    if (snavSimulation) snavSimulation.addEventListener("click", function(e) { e.preventDefault(); openStub("Simulation", "emergency-fund"); });
+    if (snavLearn) snavLearn.addEventListener("click", function(e) { e.preventDefault(); openArticle("emergency-fund"); });
+    if (snavClarity) snavClarity.addEventListener("click", function(e) { e.preventDefault(); openClarityView(); });
+
+    // Breadcrumb home links
     document.querySelectorAll('.crumb[data-crumb="home"]').forEach(function (a) {
-      a.addEventListener("click", function (e) {
-        e.preventDefault();
-        goHome();
-      });
+      a.addEventListener("click", function (e) { e.preventDefault(); goHome(); });
     });
-    var st = $("source-toggle");
+
+    // Source view — sidebar + article toolbar + ticker
     var so = $("source-overlay");
     var sc = $("source-close");
-    if (st && so) {
-      st.addEventListener("click", function (e) {
-        e.preventDefault();
-        buildSourceViewContent();
-        so.hidden = false;
-      });
+    function openSource(e) { e.preventDefault(); buildSourceViewContent(); if (so) so.hidden = false; }
+    var stSidebar = $("source-toggle");
+    var stArticle = $("source-toggle-article");
+    var stTicker = $("source-toggle-ticker");
+    if (stSidebar) stSidebar.addEventListener("click", openSource);
+    if (stArticle) stArticle.addEventListener("click", openSource);
+    if (stTicker) stTicker.addEventListener("click", openSource);
+    if (sc && so) sc.addEventListener("click", function () { so.hidden = true; });
+
+    // Clarity ticker button
+    var clarityTicker = $("clarity-ticker-btn");
+    if (clarityTicker) clarityTicker.addEventListener("click", function() { openClarityView(); });
+
+    // Worksheet links (sidebar + enc home + np home)
+    function bindWorksheet(id, slug) {
+      var el = $(id);
+      if (el) el.addEventListener("click", function(e) { e.preventDefault(); openWorksheet(slug); });
     }
-    if (sc && so) {
-      sc.addEventListener("click", function () {
-        so.hidden = true;
-      });
-    }
-    document.querySelectorAll(".nav-item").forEach(function (a) {
-      a.addEventListener("click", function (e) {
-        e.preventDefault();
-        var r = a.getAttribute("data-route");
-        if (r === "home") goHome();
-        else if (r === "clarity") openClarityView();
-        else if (r === "learn") openArticle("emergency-fund");
-        else openStub(r === "simulation" ? "Simulation" : "My Situation", "emergency-fund");
-      });
-    });
+    bindWorksheet("worksheet-simulation-research", "simulation-research");
+    bindWorksheet("worksheet-simulation-research-enc", "simulation-research");
+    bindWorksheet("worksheet-real-life-snapshot", "real-life-snapshot");
+
+    // Featured article link (enc home)
+    var featLink = $("featured-article-link");
+    var featMore = $("featured-read-more");
+    if (featLink) featLink.addEventListener("click", function(e) { e.preventDefault(); openArticle("emergency-fund"); });
+    if (featMore) featMore.addEventListener("click", function(e) { e.preventDefault(); openArticle("emergency-fund"); });
+
+    // Simulation overlays
     var sr = $("sim-reset");
     var sp = $("sim-to-present");
     var fr = $("final-start-over");
     var fp = $("final-switch-present");
     if (sr) sr.addEventListener("click", simulationReset);
     if (fr) fr.addEventListener("click", simulationReset);
-    if (sp) {
-      sp.addEventListener("click", function () {
-        $("simulation-complete-overlay").hidden = true;
-        setMode("present");
+    if (sp) sp.addEventListener("click", function() { if ($("simulation-complete-overlay")) $("simulation-complete-overlay").hidden = true; setMode("present"); });
+    if (fp) fp.addEventListener("click", function() { setMode("present"); goHome(); });
+
+    // Ticker middle zone — click to pause
+    var tickerMid = $("ticker-zone-middle");
+    if (tickerMid) {
+      tickerMid.addEventListener("click", function() {
+        var track = $("ticker-track");
+        if (track) track.classList.toggle("ticker-paused");
       });
     }
-    if (fp) {
-      fp.addEventListener("click", function () {
-        setMode("present");
-        goHome();
-      });
-    }
-    var ws1 = $("worksheet-simulation-research");
-    var ws2 = $("worksheet-real-life-snapshot");
-    if (ws1) {
-      ws1.addEventListener("click", function (e) {
-        e.preventDefault();
-        openWorksheet("simulation-research");
-      });
-    }
-    if (ws2) {
-      ws2.addEventListener("click", function (e) {
-        e.preventDefault();
-        openWorksheet("real-life-snapshot");
-      });
-    }
-    if (window.matchMedia) {
-      window.matchMedia("(max-width: 900px)").addEventListener("change", function () {
-        revealNavIfNeeded();
-      });
-    }
+
     wireAudioToggleChrome();
   }
 
