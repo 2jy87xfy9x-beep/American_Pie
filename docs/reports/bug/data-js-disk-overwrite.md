@@ -53,3 +53,16 @@ Restart the computer and reload both the local file and GitHub Pages to determin
 ## Resolution
 
 Pending restart. Will update status to **Fixed** or **Investigating** after reboot confirms behavior.
+
+---
+
+## Update — 2026-03-26 (Post-fix verification)
+
+- Attempted application-level fix in `app.js` to read featured home title dynamically from `data.js` frontmatter instead of using a hardcoded fallback title.
+- Result: issue persists; browser output still does not reflect expected content changes during user verification.
+- Interpretation: this remains consistent with a disk-level overwrite or stale-write process outside normal app render logic.
+- Scope note: dynamic title plumbing may still be valid code-wise, but it does not address the underlying data visibility failure observed in practice.
+
+### Current Status
+
+Still **Open** and **Investigating**. Primary hypothesis remains external overwrite/stale sync process (iCloud/editor/background process), not a simple frontend binding bug.
