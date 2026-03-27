@@ -578,59 +578,64 @@ You would remember the nausea of catching a falling knife with **{{your_cash}}**
 Pick a tiny recurring buy amount — **$25**/week — schedule it indifferent to headlines for eight weeks, log fills in a notes file without judging performance — train muscle, not oracle skills.
 `,
     "checking-vs-savings": `---
-title: Checking vs Savings
+title: Checking Accounts Pay Almost Nothing While Savers Debate Where Idle Cash Should Sit
 era: 1
 date: January 2008
-category: Banking
-sections: 6
-concepts: ["checking", "savings", "apy"]
-related: ["emergency-fund", "compound-interest", "federal-reserve"]
+category: Savings
+voice: British Press
+ticker_state: calm
+sections: 5
+concepts: ["checking", "savings", "yield", "opportunity-cost"]
+related: ["emergency-fund", "federal-reserve", "idle-cash-inflation"]
 ---
-## What It Is
+## The Quiet Arithmetic
 
-Checking accounts exist to clear transactions quickly. Savings accounts exist to park money you do not intend to spend this week. The difference is not philosophy — it is interest credited, transfer limits, and fraud protections.
+[PLACEHOLDER — Hook movement. Final content: British Press voice — wry, precise, slightly detached. Opens on the yield differential between checking and savings accounts in January 2008. The number is small per dollar but the aggregate over a year is not. No drama. The tone is the tone of someone noting an obvious thing that most people have not noticed.]
 
-In early 2008, high-yield online savings still offered meaningful spreads over zero-APR checking while remaining FDIC-insured for eligible deposits. Leaving emergency cash in checking was a slow leak dressed as convenience.
+[TEST: Ticker state is calm — article renders with Era 1 gate active. Section navigator shows 1/5. BRIEF block renders at 38% float right with monospace font and bordered frame.]
 
-## Your Number
+BRIEF
+Type: Documentary photograph
+Subject: A bank statement printed on thermal paper — checking account, four figures, interest line reads $0.04 for the month. Statement dated January 2008.
+Era: January 2008
+Tone: Dry irony — the plainness of the number is the point
+Technical: Flat lay, overhead, neutral light. No people.
+Source: Generic bank statement — any major US retail bank 2007–2008
+What not to show: Faces, credit card statements, dramatic underlining or annotation
 
-Cash you're carrying in the simulation: **{{your_cash}}**.
+## How the Yield Gap Works
 
-If even half of that sat in a competitive savings bucket instead of a non-interest checking pile, the annual dollars were real — tap **{{high_yield_savings_rate}}** once you know what your bank actually pays today.
+[PLACEHOLDER — Mechanics movement. Final content: Explain the mechanics of yield differential between demand deposit accounts (checking) and money market savings accounts in plain British Press register. What the Fed funds rate does to savings yields. Why banks do not pass rate increases to checking accounts. Not instructional — documentary.]
 
-## The Math
+[TEST: Section advance animation fires. Canvas slides — no page-level scroll. Variables render if present.]
 
-Simple annual interest (not compounding intrayear, close enough for napkin):
+## The Numbers in January 2008
 
-Interest ≈ **{{your_cash}}** × (**{{high_yield_savings_rate}}** ÷ 100).
+[PLACEHOLDER — Scale movement. Final content: Specific numbers. The average checking account yield in January 2008. The average money market yield. The differential on a four-figure balance over twelve months. The Federal Reserve had cut rates twice by this point — include that context. Variables: {{your_cash}} and {{your_monthly_expenses}} appear here to ground the arithmetic in the reader's situation.]
 
-If checking still earned 0% while savings earned **{{high_yield_savings_rate}}**, the opportunity cost for the full **{{your_cash}}** for one year was that entire interest amount — not catastrophic, but also not “nothing,” especially while **{{your_monthly_expenses}}** already ate most of each paycheck.
+[TEST: {{your_cash}} resolves to user value or default. {{your_monthly_expenses}} resolves. No broken variable syntax visible.]
 
-## What People Did
+## What Households Did
 
-**What most people did**
+[PLACEHOLDER — What People Did movement. Final content: Behavior data — what most households with checking accounts containing three to six months of expenses did versus what the households that moved idle cash to savings accounts did. The $315 figure (the approximate annual yield differential on a $5,000 balance at 2007 rates) should appear. No instruction — documentation of what happened.]
 
-They kept everything in checking “so it’s ready.” They mentally labeled the same dollars “savings” without moving them to an instrument that paid for the restraint.
+▸ What the households that moved idle cash earned on the same balance
 
-**What financially stable people did**
+[PLACEHOLDER — Reveal content. Final content: The specific dollar difference. Same balance, same year, one decision. No judgment — arithmetic.]
 
-They kept one month of burn in checking, swept the rest to savings, and set up one recurring transfer on payday before restaurants and retailers could bid for the surplus.
+[TEST: Reveal toggle fires on ▸ click. Content expands without layout shift. Reveal state persists on back-navigation.]
 
-▸ If you had known this before 2008
+## What It Established
 
-You would have felt silly for about six minutes while linking accounts — then watched **{{your_cash}}** earn instead of advertise zero APY on a glossy debit card mailer. The shame of not optimizing sooner is quieter than the shame of bleeding **{{your_monthly_expenses}}** with no cushion.
+[PLACEHOLDER — Residue movement. Final content: What this moment established about the relationship between idle cash and opportunity cost. Connect to the Federal Reserve rate decisions happening simultaneously. British Press register — the tone of someone noting that this was a small and obvious thing that most people got wrong.]
 
-## What It Connects To
+[TEST: Concept links render correctly. See Also sidebar populates with related articles. Era gate functions — article accessible at Era 1.]
 
-→ **Emergency fund** — the bucket should live where it earns and stays boring.
+→ **Emergency Fund** — the amount that belongs in savings before the yield question matters
 
-→ **Compound interest** — tiny spreads become structural once the years stack.
+→ **Federal Reserve** — the rate decisions that set the yield environment in January 2008
 
-→ **Fed funds rate** — savings APYs crawl in the same direction as policy over time.
-
-## Your Next Step
-
-Log into your bank. Add one external high-yield savings account if you do not already have one. Move **$500** today as a test transfer, update **{{your_cash}}** splits in variables if you track buckets separately, and verify the APY printout matches **{{high_yield_savings_rate}}** within one tenth of a percent.
+→ **Idle Cash and Inflation** — the same question, six eras later, with different numbers
 `,
     "cobra-insurance": `---
 title: COBRA Insurance
@@ -985,6 +990,8 @@ The survey measured it as a ratio — liquid savings to monthly expenditure. The
 
 The agency published the survey findings in December 2007 without a press release. The first Federal Reserve emergency rate cut was five weeks away.
 
+[TEST: BRIEF block renders at 38% float right. Ticker state is calm — text barely moves. Era gate: visible at Era 1. Section navigator shows 1/5.]
+
 {{screen}}
 ## The Calculation
 
@@ -997,6 +1004,8 @@ Monthly expenditure: **{{your_monthly_expenses}}**
 Liquid coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}} days**
 
 The Federal Reserve's 2007 benchmark for household financial resilience was ninety days of liquid coverage. The median American household entered January 2008 holding forty-seven. The gap between those two numbers was the most consequential financial fact that most households did not know about themselves.
+
+[TEST: Variables resolve — {{coverage_days}} and {{your_cash}} display user values or defaults. Section advance animation fires on click.]
 
 {{screen}}
 ## The Runway
@@ -1012,6 +1021,8 @@ Income gap per month: **{{income_gap}}**
 **{{your_cash}}** in liquid savings covers approximately **{{covered_months_with_ui}}** with UI assistance — or **{{coverage_days}}** without it.
 
 Unemployment insurance does not pay retroactively. Every week of delayed filing is a week of benefit permanently foregone.
+
+[TEST: Variable {{your_monthly_expenses}} resolves. No scroll on article canvas — content fits viewport or canvas scrolls internally only.]
 
 {{screen}}
 ## What People Did
@@ -1039,6 +1050,8 @@ The first: burn rate calculation within the first week of job loss. Not estimati
 
 The second: unemployment insurance filing within the first week of job loss. The first check arrives three to four weeks after filing regardless of when filing occurs. The households that filed in week one received their first check on the same schedule as everyone else — three weeks earlier than the households that filed in week four.
 
+[TEST: Reveal toggle fires on ▸ click. Reveal content expands below without page jump. BRIEF block 2 renders (if present).]
+
 {{screen}}
 ## January 22, 2008
 
@@ -1049,6 +1062,8 @@ The Bureau of Labor Statistics' unemployment insurance estimator calculates an e
 The dynamic documented above intersects with a separate phenomenon in consumer savings behavior — the yield differential between checking accounts and high-yield savings accounts, examined in → **Checking vs Savings**. A household with $7,000 in checking earned $2.80 in interest in calendar year 2008. The same household with $7,000 in a high-yield savings account earned $315. The gap required no change in spending, no change in savings rate, and no reduction in liquidity.
 
 The Federal Reserve survey that found forty-seven days at the median was published in December 2007. By the time most households might have encountered it, the forty-seven days had already begun to run.
+
+[TEST: Concept links → are styled correctly. See Also sidebar populates. Era gate closes article to Era 2+ users correctly.]
 `,
     "eviction-moratorium": `---
 title: Eviction and Moratoriums
@@ -1157,65 +1172,64 @@ You’d admit bragging about travel points while carrying **{{your_credit_card_d
 Open card statement, locate **APR purchase / cash advance** lines — screenshot — set calendar review every **FOMC** statement date.
 `,
     "federal-reserve": `---
-title: Federal Reserve
+title: Federal Reserve Cuts Interest Rates Again as Credit Stress Builds
 era: 1
-date: March 2008
-category: Policy
-sections: 6
-concepts: ["federal-reserve", "interest-rates", "policy"]
-related: ["bear-stearns", "mortgage-backed-securities", "fed-funds-rate"]
+date: January 2008
+category: Monetary Policy
+voice: Institutional Document
+ticker_state: calm
+sections: 5
+concepts: ["federal-reserve", "fed-funds-rate", "monetary-policy", "interest-rates"]
+related: ["checking-vs-savings", "burn-rate", "bear-stearns"]
 ---
-## What It Is
+## Statement of the Federal Open Market Committee
 
-The Federal Reserve System is the United States central bank. Its dual mandate — maximum employment and stable prices — sounds abstract until you notice the same decisions in your savings rate, your adjustable loan coupons, and the mood of the job market you are trying to enter or keep.
+[PLACEHOLDER — Hook movement. Final content: Institutional Document voice — official register, no commentary. Opens on the January 22, 2008 emergency inter-meeting rate cut. 75 basis points. The language is the language of an official statement. The gap between what the statement says and what the reader now knows is the entire emotional content of this section.]
 
-In plain language, the Fed moves short-term interest rates and uses its balance sheet as a pressure valve when credit markets freeze. You do not vote for it. You still live downstream.
+[TEST: Ticker state calm. BRIEF block renders. Era 1 gate active. Section 1/5 in navigator.]
 
-## Your Number
+BRIEF
+Type: Institutional document reproduction
+Subject: Facsimile of Federal Open Market Committee statement header — official letterhead, date January 22, 2008, first paragraph only. No handwriting, no annotation.
+Era: January 2008
+Tone: Bureaucratic calm over institutional panic — the tone of the document is neutral; the reader supplies the dread
+Technical: High-contrast scan reproduction quality. Black and white.
+Source: Federal Reserve public record — freely available
+What not to show: Highlighting, margin notes, dramatic framing
 
-Financial headlines quote a policy rate. In this app you track **{{fed_funds_rate}}** as the clean benchmark you compare to what you actually earn on cash and what you actually pay on variable debt.
+## The Mechanism of Rate Decisions
 
-Before the live ticker ever scrolls on its own, this is what it looks like — five ghost tracks, same colors, no motion, no countdown, just the layout your eye will learn to skim:
+[PLACEHOLDER — Mechanics movement. Final content: How the Fed funds rate is set, what the FOMC votes on, what the transmission mechanism is from Fed funds rate to consumer savings rates and loan rates. Institutional Document voice — dry, precise, no metaphor. The mechanics are documented, not explained.]
 
-[[STATIC_TICKER]]
+[TEST: Section 2/5 in navigator. Section advance animation functions. No scroll bleed.]
 
-Tap **{{fed_funds_rate}}** if you want to align the mock printout with the number you are watching on the Fed site.
+## The January 2008 Sequence
 
-## The Math
+[PLACEHOLDER — Scale movement. Final content: The specific sequence — the January 22 emergency cut (75bp) and the January 30 scheduled cut (50bp). The Fed funds rate moved from 4.25% to 3.0% in eight days. Variables: {{your_cash}} context for what a 125bp rate cut does to savings yields on a specific balance. The specific signal embedded in calling an emergency inter-meeting action.]
 
-When the Fed **cuts**, banks do not automatically slash your credit card APR the same week. When it **hikes**, your high-yield savings rate often lags the move. The math that still matters is directional: if the policy rate is falling while your cash still earns nothing, you are subsidizing someone else float. If the policy rate is rising and your debt is floating, the monthly minimum can climb without a new purchase.
+[TEST: Variables resolve. {{your_cash}} and {{your_monthly_expenses}} visible with correct values.]
 
-The gradient bar below is only ink on the page for now — cool on the left, hot on the right, marker parked where editors placed it for March 2008 calm. Later, the same shape will carry your simulation stress score and you will not get a tutorial about when it started caring.
+## What the Markets Read Into the Cuts
 
-[[STATIC_GAUGE]]
+[PLACEHOLDER — What People Did movement. Final content: Institutional account of how credit markets, equity markets, and household savers responded to the January cuts. The emergency cut signaled something the official statement did not say. Document what market participants read into it. The reveal separates what most people concluded from what the households and institutions that acted correctly on the signal did.]
 
-Spread between **{{fed_funds_rate}}** and typical high-yield offers in 2008 was not trivial once balances grew — on large cash piles the gap was a dinner check every month you ignored it.
+▸ What the rate sequence signaled that the statement did not say
 
-## What People Did
+[PLACEHOLDER — Reveal content. Final content: The specific inference available in the data — two emergency cuts in eight days had not happened since 1984. The households that treated this as a signal rather than noise.]
 
-**What most people did**
+[TEST: Reveal toggle. Expand animation. State persistence on re-render.]
 
-They heard “the Fed cut rates” on the radio and treated it like weather for investors somewhere else. Checking balances sat at zero yield. Variable-rate debt quietly adjusted without a certified letter that said “your life just got cheaper or more expensive.”
+## What the Record Shows
 
-**What financially stable people did**
+[PLACEHOLDER — Residue movement. Final content: The January 2008 rate decision as a leading indicator. Seven more cuts would follow across 2008. What the record shows about the relationship between the January cuts and what followed. Institutional Document voice — the tone of a historical review, not a warning.]
 
-They wrote two numbers on one scrap of paper: the Fed’s target and the APY their bank paid. If the spread offended them, they moved cash or disputed the product. They also looked at whether their job security matched the direction of policy — cuts in early 2008 were not a random goodwill gesture.
+[TEST: Concept links render. See Also sidebar. Era gate functions correctly.]
 
-▸ If you had known this before 2008
+→ **Bear Stearns** — the institutional collapse that followed the rate signal by seven weeks
 
-You would have noticed that the first people who treated **{{fed_funds_rate}}** as *their* benchmark stopped explaining away idle cash as “temporary.” The embarrassment of moving savings once is smaller than the embarrassment of explaining, years later, that you never did because it felt like a chore.
+→ **Checking vs Savings** — what the rate cuts did to household savings yields in real time
 
-## What It Connects To
-
-→ **Bear Stearns** — why broker balance sheets and Fed backstops suddenly shared a headline.
-
-→ **Mortgage-backed securities** — the paper that turned rate cuts into survival drama instead of relief.
-
-→ **Fed funds and your life** — how the same policy number touches savings, APYs, and debt service once you stop treating it as background noise.
-
-## Your Next Step
-
-Open [federalreserve.gov](https://www.federalreserve.gov) in a new tab, navigate to **Monetary Policy → Federal Open Market Committee**, and write the current target range next to **{{fed_funds_rate}}** in your variables file. If the numbers disagree, yours is wrong — update it before you read another article.
+→ **Burn Rate** — the coverage days calculation that the rate environment made more urgent
 `,
     "gig-economy-taxes": `---
 title: Gig Economy Taxes
