@@ -578,64 +578,59 @@ You would remember the nausea of catching a falling knife with **{{your_cash}}**
 Pick a tiny recurring buy amount — **$25**/week — schedule it indifferent to headlines for eight weeks, log fills in a notes file without judging performance — train muscle, not oracle skills.
 `,
     "checking-vs-savings": `---
-title: Checking Accounts Pay Almost Nothing While Savers Debate Where Idle Cash Should Sit
+title: Checking vs Savings
 era: 1
 date: January 2008
-category: Savings
-voice: British Press
-ticker_state: calm
-sections: 5
-concepts: ["checking", "savings", "yield", "opportunity-cost"]
-related: ["emergency-fund", "federal-reserve", "idle-cash-inflation"]
+category: Banking
+sections: 6
+concepts: ["checking", "savings", "apy"]
+related: ["emergency-fund", "compound-interest", "federal-reserve"]
 ---
-## The Quiet Arithmetic
+## What It Is
 
-[PLACEHOLDER — Hook movement. Final content: British Press voice — wry, precise, slightly detached. Opens on the yield differential between checking and savings accounts in January 2008. The number is small per dollar but the aggregate over a year is not. No drama. The tone is the tone of someone noting an obvious thing that most people have not noticed.]
+Checking accounts exist to clear transactions quickly. Savings accounts exist to park money you do not intend to spend this week. The difference is not philosophy — it is interest credited, transfer limits, and fraud protections.
 
-[TEST: Ticker state is calm — article renders with Era 1 gate active. Section navigator shows 1/5. BRIEF block renders at 38% float right with monospace font and bordered frame.]
+In early 2008, high-yield online savings still offered meaningful spreads over zero-APR checking while remaining FDIC-insured for eligible deposits. Leaving emergency cash in checking was a slow leak dressed as convenience.
 
-BRIEF
-Type: Documentary photograph
-Subject: A bank statement printed on thermal paper — checking account, four figures, interest line reads $0.04 for the month. Statement dated January 2008.
-Era: January 2008
-Tone: Dry irony — the plainness of the number is the point
-Technical: Flat lay, overhead, neutral light. No people.
-Source: Generic bank statement — any major US retail bank 2007–2008
-What not to show: Faces, credit card statements, dramatic underlining or annotation
+## Your Number
 
-## How the Yield Gap Works
+Cash you're carrying in the simulation: **{{your_cash}}**.
 
-[PLACEHOLDER — Mechanics movement. Final content: Explain the mechanics of yield differential between demand deposit accounts (checking) and money market savings accounts in plain British Press register. What the Fed funds rate does to savings yields. Why banks do not pass rate increases to checking accounts. Not instructional — documentary.]
+If even half of that sat in a competitive savings bucket instead of a non-interest checking pile, the annual dollars were real — tap **{{high_yield_savings_rate}}** once you know what your bank actually pays today.
 
-[TEST: Section advance animation fires. Canvas slides — no page-level scroll. Variables render if present.]
+## The Math
 
-## The Numbers in January 2008
+Simple annual interest (not compounding intrayear, close enough for napkin):
 
-[PLACEHOLDER — Scale movement. Final content: Specific numbers. The average checking account yield in January 2008. The average money market yield. The differential on a four-figure balance over twelve months. The Federal Reserve had cut rates twice by this point — include that context. Variables: {{your_cash}} and {{your_monthly_expenses}} appear here to ground the arithmetic in the reader's situation.]
+Interest ≈ **{{your_cash}}** × (**{{high_yield_savings_rate}}** ÷ 100).
 
-[TEST: {{your_cash}} resolves to user value or default. {{your_monthly_expenses}} resolves. No broken variable syntax visible.]
+If checking still earned 0% while savings earned **{{high_yield_savings_rate}}**, the opportunity cost for the full **{{your_cash}}** for one year was that entire interest amount — not catastrophic, but also not “nothing,” especially while **{{your_monthly_expenses}}** already ate most of each paycheck.
 
-## What Households Did
+## What People Did
 
-[PLACEHOLDER — What People Did movement. Final content: Behavior data — what most households with checking accounts containing three to six months of expenses did versus what the households that moved idle cash to savings accounts did. The $315 figure (the approximate annual yield differential on a $5,000 balance at 2007 rates) should appear. No instruction — documentation of what happened.]
+**What most people did**
 
-▸ What the households that moved idle cash earned on the same balance
+They kept everything in checking “so it’s ready.” They mentally labeled the same dollars “savings” without moving them to an instrument that paid for the restraint.
 
-[PLACEHOLDER — Reveal content. Final content: The specific dollar difference. Same balance, same year, one decision. No judgment — arithmetic.]
+**What financially stable people did**
 
-[TEST: Reveal toggle fires on ▸ click. Content expands without layout shift. Reveal state persists on back-navigation.]
+They kept one month of burn in checking, swept the rest to savings, and set up one recurring transfer on payday before restaurants and retailers could bid for the surplus.
 
-## What It Established
+▸ If you had known this before 2008
 
-[PLACEHOLDER — Residue movement. Final content: What this moment established about the relationship between idle cash and opportunity cost. Connect to the Federal Reserve rate decisions happening simultaneously. British Press register — the tone of someone noting that this was a small and obvious thing that most people got wrong.]
+You would have felt silly for about six minutes while linking accounts — then watched **{{your_cash}}** earn instead of advertise zero APY on a glossy debit card mailer. The shame of not optimizing sooner is quieter than the shame of bleeding **{{your_monthly_expenses}}** with no cushion.
 
-[TEST: Concept links render correctly. See Also sidebar populates with related articles. Era gate functions — article accessible at Era 1.]
+## What It Connects To
 
-→ **Emergency Fund** — the amount that belongs in savings before the yield question matters
+→ **Emergency fund** — the bucket should live where it earns and stays boring.
 
-→ **Federal Reserve** — the rate decisions that set the yield environment in January 2008
+→ **Compound interest** — tiny spreads become structural once the years stack.
 
-→ **Idle Cash and Inflation** — the same question, six eras later, with different numbers
+→ **Fed funds rate** — savings APYs crawl in the same direction as policy over time.
+
+## Your Next Step
+
+Log into your bank. Add one external high-yield savings account if you do not already have one. Move **$500** today as a test transfer, update **{{your_cash}}** splits in variables if you track buckets separately, and verify the APY printout matches **{{high_yield_savings_rate}}** within one tenth of a percent.
 `,
     "cobra-insurance": `---
 title: COBRA Insurance
@@ -962,108 +957,90 @@ You would have laughed bitterly at “stay the course” memes while still honor
 Log into your brokerage, verify one existing recurring order’s next date, add calendar reminder **two days before** to confirm funding — no changes, just rehearsal of adult supervision.
 `,
     "emergency-fund": `---
-title: Emergency Fund Levels Below 30 Days for Half of US Households
+title: Emergency Fund
 era: 1
-date: January 2008
+date: March 2008
 category: Banking
-sections: 5
-voice: WSJ Analysis
-publication: The Wall Street Journal
-ticker_state: calm
+sections: 6
 concepts: ["emergency-fund", "burn-rate", "coverage-days"]
 related: ["burn-rate", "checking-vs-savings", "unemployment-insurance"]
 ---
-## The Survey
+## What It Is
+By late 2007, the median American household had $6,800 in liquid savings. Most did not know what that number meant in practice. It meant 47 days.
 
-BRIEF
-Type: Documentary photograph
-Subject: A kitchen table covered with bank statements, checkbook registers, a yellow notepad with handwritten calculations — no faces visible
-Era: Late 2007, suburban American household
-Tone: Quiet dread; the stillness before awareness
-Technical: Shallow depth of field, warm tungsten interior light, slightly underexposed
-Source: Wire archive, AP or Reuters lifestyle assignment; alternatively, commission original
-What not to show: Computers, cell phones, poverty signifiers, dramatic emotion
+An emergency fund is not savings toward a goal. It is the number of days you can survive without income before you start making decisions you cannot undo. Forty-seven days is not a cushion. It is a countdown.
 
-By late 2007, the Federal Reserve's Survey of Consumer Finances had produced a number that did not appear on any front page: fifty-eight percent of American households could not cover ninety days of expenses from liquid savings alone.
+Your estimated coverage: **{{coverage_days}}**
 
-The survey measured it as a ratio — liquid savings to monthly expenditure. The median household ratio, calculated from the Federal Reserve's own figures, produced forty-seven days.
-
-The agency published the survey findings in December 2007 without a press release. The first Federal Reserve emergency rate cut was five weeks away.
-
-[TEST: BRIEF block renders at 38% float right. Ticker state is calm — text barely moves. Era gate: visible at Era 1. Section navigator shows 1/5.]
+The 90-day threshold is not arbitrary. The reason involves two numbers that almost no one knew before they needed them.
 
 {{screen}}
-## The Calculation
+## Your Number
+Two numbers determine how long you can survive a job loss. One is how much cash you have. The other is how much you spend each month.
 
-The ratio requires two numbers. Liquid savings: what is held in checking, savings, and money market accounts. Monthly expenditure: what leaves those accounts in a representative month.
+Monthly expenses: **{{your_monthly_expenses}}**
 
-Current liquid savings: **{{your_cash}}**
+Current cash: **{{your_cash}}**
 
-Monthly expenditure: **{{your_monthly_expenses}}**
+Coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}}**
 
-Liquid coverage: {{your_cash}} ÷ {{your_monthly_expenses}} × 30 = **{{coverage_days}} days**
+Financial advisors treat anything under 30 days as a critical gap — not because catastrophe is certain, but because under 30 days you are one bad week away from choices you cannot take back.
 
-The Federal Reserve's 2007 benchmark for household financial resilience was ninety days of liquid coverage. The median American household entered January 2008 holding forty-seven. The gap between those two numbers was the most consequential financial fact that most households did not know about themselves.
-
-[TEST: Variables resolve — {{coverage_days}} and {{your_cash}} display user values or defaults. Section advance animation fires on click.]
+The standard target is 90 to 180 days. Most households in early 2008 had neither. Most did not know it.
 
 {{screen}}
-## The Runway
+## The Math
+The average job search in 2008 took five months for someone with marketable skills in a normal economy. In a recession, seven to nine months.
 
-The average job search in 2008 took between twenty-two and thirty-one weeks for workers in professional fields. In manufacturing and construction — the sectors where layoffs began accelerating through late 2007 — the median search lasted nineteen weeks.
+Unemployment insurance, if filed immediately, replaces approximately 40 to 50 percent of prior income. The gap between what UI pays and what you actually spend must come from somewhere.
 
-Unemployment insurance, filed within the first week of job loss, replaces approximately forty to fifty percent of prior income. The gap between what UI covers and what monthly expenditure actually requires must come from liquid savings.
+At **{{your_monthly_expenses}}** per month with unemployment covering 45 percent:
 
-At **{{your_monthly_expenses}}** in monthly expenditure with unemployment covering forty-five percent:
+Monthly gap: {{your_monthly_expenses}} × 0.55 = approximately **{{income_gap}}**
 
-Income gap per month: **{{income_gap}}**
+At that gap rate, **{{your_cash}}** covers approximately **{{covered_months_with_ui}}** with UI, or **{{coverage_days}}** without it.
 
-**{{your_cash}}** in liquid savings covers approximately **{{covered_months_with_ui}}** with UI assistance — or **{{coverage_days}}** without it.
-
-Unemployment insurance does not pay retroactively. Every week of delayed filing is a week of benefit permanently foregone.
-
-[TEST: Variable {{your_monthly_expenses}} resolves. No scroll on article canvas — content fits viewport or canvas scrolls internally only.]
+That is your runway. Every week of delayed filing is coverage permanently lost — UI does not pay retroactively.
 
 {{screen}}
 ## What People Did
+In 2008, 61 percent of Americans who lost a job waited more than three weeks to reduce spending. By then, the average household had consumed $1,400 of savings on expenses that could have waited.
 
-BRIEF
-Type: Data visualization / infographic placeholder
-Subject: Bar chart showing liquid savings depletion curves — two lines: households that calculated burn rate in week one vs. those that did not
-Era: 2008–2009 Federal Reserve longitudinal data
-Tone: Clinical, analytical — no decoration
-Technical: Black and white, newspaper-reproduction quality, clear axis labels
-Source: Produce original from Federal Reserve Survey of Consumer Finances 2009 cross-section data
-What not to show: Color, 3D effects, stock photo of worried person
+Most people did not calculate their burn rate until the third or fourth week of unemployment. By then, the options had narrowed.
 
-In 2008, sixty-one percent of Americans who lost their jobs waited more than three weeks before making any reduction in discretionary spending. By that point the median household had consumed $1,400 in liquid savings on expenses that could have been deferred.
+The second most common error: withdrawing from a 401k. A $10,000 withdrawal nets roughly $6,500 after the 10 percent early withdrawal penalty and income tax. People who did this in 2008 consistently described it as the most expensive mistake of their financial lives.
 
-The second most common response to unexpected job loss was early 401(k) withdrawal. A $10,000 withdrawal netted approximately $6,500 after the ten percent early-withdrawal penalty and applicable income tax. Households that made this decision in 2008 consistently identified it in subsequent surveys as the most costly financial decision of their lives — not because of what it cost at withdrawal but because of what it prevented becoming.
+▸ What the households that preserved the most capital did differently
 
-A household in the Federal Reserve's 2009 Survey of Consumer Finances had entered January 2008 with $23,000 in liquid savings. By March 2009, the same household held $400. The withdrawal sequence had begun in week four.
+They calculated their exact burn rate within 48 hours of job loss and cut non-essential spending immediately. Not from panic — from arithmetic. They knew their number. They knew how long they had.
 
-▸ What the households that preserved the most capital in the eighteen months following January 2008 had in common
+They also filed for unemployment insurance within the first week. The first check takes three to four weeks to arrive regardless of when you file. Waiting to file means waiting longer for the first check. The households that waited three weeks lost three weeks.
 
-Among households that exited the 2008-2009 period with liquid savings at or above their January 2008 levels, the Federal Reserve's longitudinal data identified two behaviors with statistical consistency.
+The average person who did both of these things in 2008 preserved $2,300 more of their savings over six months than someone who waited. That $2,300, invested at the market bottom in March 2009, would be worth approximately $15,700 by 2024.
 
-The first: burn rate calculation within the first week of job loss. Not estimation — calculation from actual statements. The households that knew their precise monthly expenditure at the moment of income loss made spending decisions on data rather than assumption.
-
-The second: unemployment insurance filing within the first week of job loss. The first check arrives three to four weeks after filing regardless of when filing occurs. The households that filed in week one received their first check on the same schedule as everyone else — three weeks earlier than the households that filed in week four.
-
-[TEST: Reveal toggle fires on ▸ click. Reveal content expands below without page jump. BRIEF block 2 renders (if present).]
+The number is not the point. Knowing the number in advance removes the paralysis. The paralysis is what causes the delay. The delay is what costs the money.
 
 {{screen}}
-## January 22, 2008
+## What It Connects To
+This article is the foundation. Three others complete the picture.
 
-The Federal Reserve cut its benchmark interest rate by seventy-five basis points in an emergency inter-meeting action — the largest single cut since 1984. The cut was the second in nine days. By April 2008, the rate had fallen from 5.25 percent to 2.25 percent, a sequence of seven cuts in seven months.
+→ **Burn Rate** — the monthly expense number that powers every emergency fund calculation. Knowing it precisely makes your coverage number real instead of estimated.
 
-The Bureau of Labor Statistics' unemployment insurance estimator calculates an expected weekly benefit in under four minutes using prior-quarter earnings. The calculation does not require a claim to be filed.
+→ **Checking vs Savings** — where your emergency fund lives changes the return. Cash in checking earns nothing. The same cash in a high-yield savings account earned 4.5 percent in early 2008. On $7,000 that is $315 per year for zero change in behavior.
 
-The dynamic documented above intersects with a separate phenomenon in consumer savings behavior — the yield differential between checking accounts and high-yield savings accounts, examined in → **Checking vs Savings**. A household with $7,000 in checking earned $2.80 in interest in calendar year 2008. The same household with $7,000 in a high-yield savings account earned $315. The gap required no change in spending, no change in savings rate, and no reduction in liquidity.
+→ **Unemployment Insurance** — UI payments change your runway calculation significantly. Understanding both together gives you an accurate picture of how long you actually have.
 
-The Federal Reserve survey that found forty-seven days at the median was published in December 2007. By the time most households might have encountered it, the forty-seven days had already begun to run.
+{{screen}}
+## Your Next Step
+Find your last three months of bank statements. Add total spending for each month. Divide by three.
 
-[TEST: Concept links → are styled correctly. See Also sidebar populates. Era gate closes article to Era 2+ users correctly.]
+That is your burn rate.
+
+Divide your current cash by that number and multiply by 30. That is how many days you have.
+
+Most people have never calculated this number. They find out what it is at the worst possible time.
+
+If you are using mock data, your number is **{{coverage_days}}**. To see your real number, tap any value above and enter your actual figures.
 `,
     "eviction-moratorium": `---
 title: Eviction and Moratoriums
@@ -1172,64 +1149,65 @@ You’d admit bragging about travel points while carrying **{{your_credit_card_d
 Open card statement, locate **APR purchase / cash advance** lines — screenshot — set calendar review every **FOMC** statement date.
 `,
     "federal-reserve": `---
-title: Federal Reserve Cuts Interest Rates Again as Credit Stress Builds
+title: Federal Reserve
 era: 1
-date: January 2008
-category: Monetary Policy
-voice: Institutional Document
-ticker_state: calm
-sections: 5
-concepts: ["federal-reserve", "fed-funds-rate", "monetary-policy", "interest-rates"]
-related: ["checking-vs-savings", "burn-rate", "bear-stearns"]
+date: March 2008
+category: Policy
+sections: 6
+concepts: ["federal-reserve", "interest-rates", "policy"]
+related: ["bear-stearns", "mortgage-backed-securities", "fed-funds-rate"]
 ---
-## Statement of the Federal Open Market Committee
+## What It Is
 
-[PLACEHOLDER — Hook movement. Final content: Institutional Document voice — official register, no commentary. Opens on the January 22, 2008 emergency inter-meeting rate cut. 75 basis points. The language is the language of an official statement. The gap between what the statement says and what the reader now knows is the entire emotional content of this section.]
+The Federal Reserve System is the United States central bank. Its dual mandate — maximum employment and stable prices — sounds abstract until you notice the same decisions in your savings rate, your adjustable loan coupons, and the mood of the job market you are trying to enter or keep.
 
-[TEST: Ticker state calm. BRIEF block renders. Era 1 gate active. Section 1/5 in navigator.]
+In plain language, the Fed moves short-term interest rates and uses its balance sheet as a pressure valve when credit markets freeze. You do not vote for it. You still live downstream.
 
-BRIEF
-Type: Institutional document reproduction
-Subject: Facsimile of Federal Open Market Committee statement header — official letterhead, date January 22, 2008, first paragraph only. No handwriting, no annotation.
-Era: January 2008
-Tone: Bureaucratic calm over institutional panic — the tone of the document is neutral; the reader supplies the dread
-Technical: High-contrast scan reproduction quality. Black and white.
-Source: Federal Reserve public record — freely available
-What not to show: Highlighting, margin notes, dramatic framing
+## Your Number
 
-## The Mechanism of Rate Decisions
+Financial headlines quote a policy rate. In this app you track **{{fed_funds_rate}}** as the clean benchmark you compare to what you actually earn on cash and what you actually pay on variable debt.
 
-[PLACEHOLDER — Mechanics movement. Final content: How the Fed funds rate is set, what the FOMC votes on, what the transmission mechanism is from Fed funds rate to consumer savings rates and loan rates. Institutional Document voice — dry, precise, no metaphor. The mechanics are documented, not explained.]
+Before the live ticker ever scrolls on its own, this is what it looks like — five ghost tracks, same colors, no motion, no countdown, just the layout your eye will learn to skim:
 
-[TEST: Section 2/5 in navigator. Section advance animation functions. No scroll bleed.]
+[[STATIC_TICKER]]
 
-## The January 2008 Sequence
+Tap **{{fed_funds_rate}}** if you want to align the mock printout with the number you are watching on the Fed site.
 
-[PLACEHOLDER — Scale movement. Final content: The specific sequence — the January 22 emergency cut (75bp) and the January 30 scheduled cut (50bp). The Fed funds rate moved from 4.25% to 3.0% in eight days. Variables: {{your_cash}} context for what a 125bp rate cut does to savings yields on a specific balance. The specific signal embedded in calling an emergency inter-meeting action.]
+## The Math
 
-[TEST: Variables resolve. {{your_cash}} and {{your_monthly_expenses}} visible with correct values.]
+When the Fed **cuts**, banks do not automatically slash your credit card APR the same week. When it **hikes**, your high-yield savings rate often lags the move. The math that still matters is directional: if the policy rate is falling while your cash still earns nothing, you are subsidizing someone else float. If the policy rate is rising and your debt is floating, the monthly minimum can climb without a new purchase.
 
-## What the Markets Read Into the Cuts
+The gradient bar below is only ink on the page for now — cool on the left, hot on the right, marker parked where editors placed it for March 2008 calm. Later, the same shape will carry your simulation stress score and you will not get a tutorial about when it started caring.
 
-[PLACEHOLDER — What People Did movement. Final content: Institutional account of how credit markets, equity markets, and household savers responded to the January cuts. The emergency cut signaled something the official statement did not say. Document what market participants read into it. The reveal separates what most people concluded from what the households and institutions that acted correctly on the signal did.]
+[[STATIC_GAUGE]]
 
-▸ What the rate sequence signaled that the statement did not say
+Spread between **{{fed_funds_rate}}** and typical high-yield offers in 2008 was not trivial once balances grew — on large cash piles the gap was a dinner check every month you ignored it.
 
-[PLACEHOLDER — Reveal content. Final content: The specific inference available in the data — two emergency cuts in eight days had not happened since 1984. The households that treated this as a signal rather than noise.]
+## What People Did
 
-[TEST: Reveal toggle. Expand animation. State persistence on re-render.]
+**What most people did**
 
-## What the Record Shows
+They heard “the Fed cut rates” on the radio and treated it like weather for investors somewhere else. Checking balances sat at zero yield. Variable-rate debt quietly adjusted without a certified letter that said “your life just got cheaper or more expensive.”
 
-[PLACEHOLDER — Residue movement. Final content: The January 2008 rate decision as a leading indicator. Seven more cuts would follow across 2008. What the record shows about the relationship between the January cuts and what followed. Institutional Document voice — the tone of a historical review, not a warning.]
+**What financially stable people did**
 
-[TEST: Concept links render. See Also sidebar. Era gate functions correctly.]
+They wrote two numbers on one scrap of paper: the Fed’s target and the APY their bank paid. If the spread offended them, they moved cash or disputed the product. They also looked at whether their job security matched the direction of policy — cuts in early 2008 were not a random goodwill gesture.
 
-→ **Bear Stearns** — the institutional collapse that followed the rate signal by seven weeks
+▸ If you had known this before 2008
 
-→ **Checking vs Savings** — what the rate cuts did to household savings yields in real time
+You would have noticed that the first people who treated **{{fed_funds_rate}}** as *their* benchmark stopped explaining away idle cash as “temporary.” The embarrassment of moving savings once is smaller than the embarrassment of explaining, years later, that you never did because it felt like a chore.
 
-→ **Burn Rate** — the coverage days calculation that the rate environment made more urgent
+## What It Connects To
+
+→ **Bear Stearns** — why broker balance sheets and Fed backstops suddenly shared a headline.
+
+→ **Mortgage-backed securities** — the paper that turned rate cuts into survival drama instead of relief.
+
+→ **Fed funds and your life** — how the same policy number touches savings, APYs, and debt service once you stop treating it as background noise.
+
+## Your Next Step
+
+Open [federalreserve.gov](https://www.federalreserve.gov) in a new tab, navigate to **Monetary Policy → Federal Open Market Committee**, and write the current target range next to **{{fed_funds_rate}}** in your variables file. If the numbers disagree, yours is wrong — update it before you read another article.
 `,
     "gig-economy-taxes": `---
 title: Gig Economy Taxes

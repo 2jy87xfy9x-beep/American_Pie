@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newcastle Journal — Side-by-Side Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+/* ============================================================
+   COMPARISON SHELL
+   Two 50/50 panels, full viewport height, no scroll.
+   ============================================================ */
+html,body{
+  width:100%;height:100%;
+  overflow:hidden;
+  background:#111;
+  display:flex;
+  flex-direction:row;
+}
+
+/* Left panel — reference photograph */
+#compare_left{
+  width:50vw;height:100vh;
+  flex-shrink:0;
+  background:#0e0e0e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+#compare_ref_img{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  width:auto;height:auto;
+  object-fit:contain;
+}
+
+/* 1px vertical divider */
+#compare_divider{
+  width:1px;
+  background:#444;
+  flex-shrink:0;
+  height:100vh;
+  z-index:999;
+}
+
+/* Right panel — HTML demo */
+#compare_right{
+  width:50vw;height:100vh;
+  flex-shrink:0;
+  background:#1c1610;
+  overflow:hidden;
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+}
+
+/* ============================================================
+   CHROMATIC ABERRATION WRAPPER (identical to main demo)
+   ============================================================ */
+#nj_chroma_wrap{
+  position:relative;
+  display:inline-block;
+  transform-origin:top left;
+  flex-shrink:0;
+}
+#nj_chroma_wrap::after{
+  content:'';
+  position:absolute;inset:0;
+  pointer-events:none;
+  z-index:600;
+  background:
+    linear-gradient(270deg,
+      rgba(188,50,12,0.32) 0%,
+      rgba(188,50,12,0.10) 4%,
+      transparent 11%),
+    linear-gradient(0deg,
+      rgba(185,48,10,0.30) 0%,
+      rgba(185,48,10,0.08) 3%,
+      transparent 9%),
+    linear-gradient(90deg,
+      rgba(28,55,195,0.07) 0%,
+      transparent 6%),
+    linear-gradient(180deg,
+      rgba(155,38,8,0.11) 0%,
+      transparent 6%),
+    radial-gradient(ellipse 28% 24% at 100% 100%,
+      rgba(205,62,18,0.32) 0%, transparent 100%),
+    radial-gradient(ellipse 20% 18% at 100% 0%,
+      rgba(190,52,12,0.22) 0%, transparent 100%),
+    radial-gradient(ellipse 14% 16% at 0% 100%,
+      rgba(165,42,10,0.16) 0%, transparent 100%),
+    radial-gradient(ellipse 92% 88% at 50% 48%,
+      transparent 46%, rgba(88,18,4,0.22) 100%);
+}
+
+/* ============================================================
+   NEWSPRINT COLOUR PALETTE
+   ============================================================ */
+:root{
+  --ink:       #160d04;
+  --ink-body:  #271508;
+  --paper:       #d5ccb2;
+  --paper-lt:    #ddd6bc;
+  --paper-dk:    #c8bfa2;
+  --paper-ill:   #e3dcc6;
+  --paper-photo: #b9b094;
+  --paper-ad:    #cdc49e;
+  --paper-callout:#d8d0b6;
+  --rule-outer:  3.5px solid #160d04;
+  --rule-heavy:  2.5px solid #160d04;
+  --rule-medium: 1.5px solid #160d04;
+  --rule-std:    1px   solid #160d04;
+  --rule-thin:   0.5px solid #261408;
+  --rule-hair:   0.35px solid #301a0c;
+}
+
+/* ============================================================
+   NEWSPAPER SHELL
+   ============================================================ */
+#nj_newspaper{
+  width:1220px;
+  border:var(--rule-outer);
+  color:var(--ink);
+  font-family:'IM Fell English',Georgia,serif;
+  position:relative;
+  overflow:hidden;
+  filter:sepia(0.22) contrast(1.20) brightness(0.87) saturate(0.72);
+  background-color:#c8bfa0;
+  background-image:
+    linear-gradient(90deg,
+      rgba(72,28,5,0.13) 0%, transparent 8%,
+      transparent 92%, rgba(72,28,5,0.15) 100%),
+    linear-gradient(180deg,
+      rgba(62,22,4,0.08) 0%, transparent 6%,
+      transparent 94%, rgba(62,22,4,0.12) 100%),
+    radial-gradient(ellipse 65% 52% at 50% 44%,
+      rgba(255,248,218,0.11) 0%, transparent 100%),
+    repeating-linear-gradient(180deg,
+      transparent       0px, transparent       1.4px,
+      rgba(0,0,0,0.008) 1.4px, rgba(0,0,0,0.008) 1.9px,
+      transparent       1.9px, transparent       3.2px),
+    repeating-linear-gradient(173deg,
+      transparent              0px, transparent              11px,
+      rgba(155,115,55,0.016) 11px, rgba(155,115,55,0.016) 12px),
+    repeating-linear-gradient(87deg,
+      transparent        0px, transparent        28px,
+      rgba(0,0,0,0.005) 28px, rgba(0,0,0,0.005) 29px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.80'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+}
+#nj_newspaper::before{
+  content:'';
+  position:absolute;inset:0;pointer-events:none;z-index:400;
+  background:
+    linear-gradient(90deg,  transparent 91%, rgba(150,38,8,0.10) 100%),
+    linear-gradient(180deg, transparent 92%, rgba(140,35,7,0.09) 100%),
+    radial-gradient(ellipse 100% 100% at 50% 50%,
+      transparent 52%, rgba(75,14,2,0.14) 100%);
+}
+
+/* ============================================================
+   HEADER ROW  (ads + nameplate all in one flex row)
+   ============================================================ */
+#nj_header_row{
+  display:flex;align-items:stretch;
+  border-bottom:var(--rule-heavy);
+}
+#nj_ad_austin{
+  width:110px;flex-shrink:0;border-right:var(--rule-std);
+  padding:3px 5px;display:flex;flex-direction:column;gap:2px;
+  background:var(--paper-ad);
+}
+.nad-line1{
+  font-family:'Libre Baskerville',serif;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;
+  text-align:center;border-bottom:var(--rule-hair);padding-bottom:2px;
+}
+.nad-line2{
+  font-family:'Libre Baskerville',serif;font-size:8.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;text-align:center;
+}
+.nad-body{
+  font-family:'IM Fell English',serif;font-size:7.5px;
+  line-height:1.3;text-align:center;color:var(--ink-body);
+}
+#nj_ad_center{flex:1;}
+#nj_ad_6am{
+  width:68px;flex-shrink:0;
+  border-left:var(--rule-std);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--paper-ad);gap:0;
+}
+#nj_6am_num{
+  font-family:'Playfair Display',serif;font-size:40px;font-weight:900;
+  line-height:1;text-shadow:0.3px 0.3px 0 rgba(22,13,4,0.22);
+}
+#nj_6am_label{
+  font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;
+  letter-spacing:.05em;line-height:1;
+}
+#nj_ad_fenwick{
+  width:162px;flex-shrink:0;border-left:var(--rule-std);
+  padding:3px 6px;display:flex;flex-direction:column;gap:1px;
+  background:var(--paper-ad);
+}
+.fad-title{
+  font-family:'Libre Baskerville',serif;font-size:9px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.10em;
+  text-align:center;border-bottom:var(--rule-hair);padding-bottom:2px;
+}
+.fad-body{
+  font-family:'IM Fell English',serif;font-size:7.5px;
+  line-height:1.36;text-align:center;flex:1;color:var(--ink-body);
+}
+.fad-co{
+  font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.18em;
+  text-align:center;border-top:var(--rule-hair);padding-top:2px;
+}
+.fad-sub{
+  font-family:'IM Fell English',serif;font-size:7px;
+  text-align:center;font-style:italic;
+}
+
+/* ============================================================
+   NAMEPLATE
+   ============================================================ */
+#nj_nameplate{background:var(--paper-lt);flex:1;min-width:0;}
+#nj_rule_np_top{
+  border-top:2.8px solid var(--ink);border-bottom:0.7px solid var(--ink);
+  height:6px;margin:3px 0 0;
+}
+#nj_nameplate_inner{
+  display:flex;align-items:center;justify-content:center;
+  padding:1px 14px 0;gap:6px;
+}
+.nj_np_word{
+  font-family:'UnifrakturMaguntia',cursive;
+  font-size:76px;color:var(--ink);line-height:.90;letter-spacing:.01em;
+  text-shadow:
+    0.5px 0.3px 0   rgba(22,13,4,0.22),
+    -0.5px 0    0   rgba(195,50,10,0.24),
+     0.5px 0    0   rgba(14,28,165,0.08),
+     0     0    1px rgba(22,13,4,0.06);
+}
+#nj_rule_np_bottom{
+  border-top:2.8px solid var(--ink);border-bottom:0.7px solid var(--ink);
+  height:5px;margin:0;
+}
+#nj_northmail_row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1px 12px 2px;border-bottom:var(--rule-hair);
+  background:var(--paper-lt);
+}
+#nj_northmail{
+  font-family:'Playfair Display',serif;font-size:20px;font-style:italic;
+  color:var(--ink);letter-spacing:.04em;text-align:center;flex:1;
+}
+#nj_nameplate_crest{width:56px;height:70px;flex-shrink:0;margin-top:-2px;}
+
+/* ============================================================
+   DATELINE / KICKER / HEADLINE
+   ============================================================ */
+#nj_dateline{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:2px 10px;border-bottom:var(--rule-medium);border-top:var(--rule-hair);
+  font-family:'Libre Baskerville',serif;font-size:8.5px;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--ink);
+  background:var(--paper);
+}
+#nj_dateline_northmail{
+  font-family:'Playfair Display',serif;font-size:16px;
+  font-style:italic;text-transform:none;letter-spacing:.03em;
+}
+#nj_kicker{
+  border-top:var(--rule-medium);border-bottom:var(--rule-medium);
+  padding:3px 10px;text-align:center;
+  font-family:'Playfair Display',serif;font-size:18px;
+  font-weight:700;font-style:italic;color:var(--ink);
+  letter-spacing:.005em;background:var(--paper);
+}
+#nj_headline_area{
+  border-bottom:var(--rule-medium);background:var(--paper-lt);
+  position:relative;padding:4px 162px 3px 8px;
+}
+#nj_main_headline{
+  font-family:'Playfair Display',serif;font-size:70px;font-weight:900;
+  line-height:.90;color:var(--ink);text-transform:uppercase;
+  letter-spacing:.01em;display:block;text-align:center;
+  text-shadow:
+     0.5px 0px  0 rgba(22,13,4,0.22),
+     0px  0.4px 0 rgba(22,13,4,0.18),
+    -0.5px 0    0 rgba(198,52,10,0.22),
+     0.5px 0    0 rgba(12,24,162,0.08);
+}
+#nj_main_deck{
+  font-family:'Playfair Display',serif;font-size:30px;
+  font-style:italic;font-weight:400;color:var(--ink);
+  line-height:1.1;display:block;text-align:center;margin-top:3px;
+}
+#nj_box_4page{
+  position:absolute;top:0;right:0;bottom:0;width:156px;
+  border-left:var(--rule-medium);padding:8px;text-align:center;
+  background:var(--paper);display:flex;flex-direction:column;
+  justify-content:center;gap:2px;
+}
+#nj_4page_num{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;line-height:1;text-transform:uppercase;}
+#nj_4page_label{
+  font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;line-height:1.25;
+}
+#nj_4page_sub{font-family:'IM Fell English',serif;font-size:11px;font-style:italic;margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* ============================================================
+   BODY GRID
+   ============================================================ */
+#nj_body_grid{
+  display:grid;
+  grid-template-columns:132px 310px 280px 258px 231px;
+  min-height:520px;
+}
+#nj_body_grid > * + *{border-left:var(--rule-thin);}
+
+/* ============================================================
+   PHOTOGRAPH BLOCK
+   ============================================================ */
+.nj_photo_block{
+  margin:5px 0 4px;background:var(--paper-lt);
+  border:var(--rule-std);padding:3px;
+}
+.nj_photo_image{
+  background:var(--paper-photo);border:var(--rule-hair);
+  overflow:hidden;position:relative;
+}
+.nj_photo_image::before{
+  content:'';position:absolute;inset:0;z-index:3;
+  background-image:radial-gradient(circle, rgba(0,0,0,0.64) 0.55px, transparent 0.55px);
+  background-size:1.90px 1.90px;opacity:0.42;mix-blend-mode:multiply;
+}
+.nj_photo_image::after{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:radial-gradient(
+    ellipse 52% 60% at 50% 34%,
+    rgba(18,10,2,0.62) 0%, rgba(18,10,2,0.26) 45%,
+    rgba(245,235,210,0.15) 100%);
+}
+.nj_photo_svgwrap{position:relative;z-index:0;display:block;width:100%;}
+.nj_photo_caption_zone{
+  border-top:var(--rule-hair);margin-top:2px;padding:2px 3px 1px;
+  background:var(--paper-lt);
+}
+.nj_photo_caption_name{
+  font-family:'Libre Baskerville',serif;font-size:7px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;display:block;color:var(--ink);
+}
+.nj_photo_caption_text{
+  font-family:'IM Fell English',serif;font-size:7px;font-style:italic;
+  display:block;color:var(--ink);line-height:1.3;
+}
+
+/* ============================================================
+   COL 1 — COMMENTARY
+   ============================================================ */
+#nj_col_commentary{padding:5px 5px 6px;background:var(--paper-dk);}
+#nj_commentary_hdr{
+  display:inline-block;border:1.5px solid var(--ink);
+  outline:0.5px solid var(--ink);outline-offset:2px;
+  padding:1px 6px;margin-bottom:4px;
+}
+.nj_commentary_label{
+  font-family:'Libre Baskerville',serif;font-size:8px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.16em;
+}
+#nj_commentary_headline{
+  font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+  line-height:1.05;margin-bottom:4px;
+}
+.nj_cbody{
+  font-family:'IM Fell English',serif;font-size:8.5px;
+  line-height:1.36;color:var(--ink-body);text-align:justify;
+}
+.nj_cbody p{margin-bottom:3px;}
+.nj_dropcap::first-letter{
+  font-family:'Playfair Display',serif;font-size:3.0em;font-weight:700;
+  float:left;line-height:.72;margin-right:2px;margin-top:4px;color:var(--ink);
+}
+.nj_commentary_sub{
+  font-family:'Playfair Display',serif;font-size:13px;font-weight:700;
+  color:var(--ink);margin:4px 0 3px;
+}
+
+/* ============================================================
+   COL 2 — MAIN STORY
+   ============================================================ */
+#nj_col_mainstory{padding:5px 8px 6px;background:var(--paper);}
+.nj_story_subhead{
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.02em;line-height:1.0;
+  color:var(--ink);margin-bottom:4px;
+}
+.nj_allcaps_lead{
+  font-family:'Libre Baskerville',serif;font-size:8.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.04em;
+  line-height:1.42;color:var(--ink);margin-bottom:4px;
+}
+.nj_sbody{
+  font-family:'IM Fell English',serif;font-size:9.5px;
+  line-height:1.40;color:var(--ink-body);text-align:justify;
+}
+.nj_sbody p{margin-bottom:3px;}
+.nj_story_italic_sub{
+  font-family:'Playfair Display',serif;font-size:12px;
+  font-style:italic;font-weight:400;color:var(--ink);margin:4px 0 3px;
+}
+.nj_sbody_sm{
+  font-family:'IM Fell English',serif;font-size:8.5px;
+  line-height:1.38;color:var(--ink-body);text-align:justify;
+}
+.nj_sbody_sm p{margin-bottom:3px;}
+#nj_callout{
+  border-top:var(--rule-medium);border-bottom:var(--rule-medium);
+  padding:5px 10px;text-align:center;margin:5px 0;
+  background:var(--paper-callout);
+}
+#nj_callout_text{
+  font-family:'Playfair Display',serif;font-size:25px;font-weight:900;
+  text-transform:uppercase;line-height:1.0;letter-spacing:.01em;
+  color:var(--ink);text-shadow:0.4px 0 0 rgba(22,13,4,0.18);
+}
+
+/* ============================================================
+   COL 3 — ILLUSTRATION
+   ============================================================ */
+#nj_col_illustration{display:flex;flex-direction:column;background:var(--paper-ill);}
+#nj_illus_header{
+  border:var(--rule-heavy);
+  padding:4px 6px;text-align:center;background:var(--paper-lt);flex-shrink:0;
+}
+#nj_illus_title{
+  font-family:'Libre Baskerville',serif;font-size:13.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;
+  text-shadow:0.3px 0 0 rgba(22,13,4,0.14);
+}
+#nj_illus_body{flex:1;position:relative;overflow:hidden;padding:6px 5px;}
+#nj_illus_placeholder{
+  position:absolute;inset:6px 5px;background:var(--paper-photo);
+  border:var(--rule-std);overflow:hidden;
+}
+#nj_illus_placeholder::before{
+  content:'';position:absolute;inset:0;z-index:4;
+  background-image:radial-gradient(circle, rgba(0,0,0,0.58) 0.52px, transparent 0.52px);
+  background-size:1.88px 1.88px;opacity:0.36;mix-blend-mode:multiply;
+}
+#nj_illus_placeholder::after{
+  content:'';position:absolute;inset:0;z-index:3;
+  background:
+    radial-gradient(ellipse 22% 14% at 50% 10%,
+      rgba(240,232,210,0.50) 0%, transparent 100%),
+    radial-gradient(ellipse 46% 38% at 50% 30%,
+      rgba(210,200,175,0.38) 0%, transparent 100%),
+    radial-gradient(ellipse 70% 55% at 50% 62%,
+      rgba(190,178,152,0.30) 0%, transparent 100%),
+    linear-gradient(90deg,
+      rgba(18,10,2,0.38) 0%, rgba(18,10,2,0.18) 14%, transparent 25%),
+    linear-gradient(270deg,
+      rgba(18,10,2,0.38) 0%, rgba(18,10,2,0.18) 14%, transparent 25%),
+    linear-gradient(0deg,
+      rgba(18,10,2,0.50) 0%, rgba(18,10,2,0.18) 18%, transparent 35%),
+    radial-gradient(ellipse 88% 88% at 50% 50%,
+      transparent 38%, rgba(18,10,2,0.32) 100%);
+}
+
+/* ============================================================
+   COL 4 — BREAKING
+   ============================================================ */
+#nj_col_breaking{padding:5px 6px 6px;background:var(--paper-dk);}
+.nj_break_hl{
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
+  line-height:1.05;color:var(--ink);margin-bottom:4px;
+}
+.nj_break_sub{
+  font-family:'Playfair Display',serif;font-size:11px;font-weight:700;
+  font-style:italic;text-transform:uppercase;letter-spacing:.03em;
+  margin:4px 0 2px;color:var(--ink);
+}
+
+/* ============================================================
+   COL 5 — FAR RIGHT
+   ============================================================ */
+#nj_col_farright{padding:5px 6px 6px;background:var(--paper);}
+
+/* ============================================================
+   SHARED SMALL BODY
+   ============================================================ */
+.nj_body_sm{
+  font-family:'IM Fell English',serif;font-size:8.5px;
+  line-height:1.37;color:var(--ink-body);text-align:justify;
+}
+.nj_body_sm p{margin-bottom:3px;}
+
+/* 1950s newspaper paragraph indent — every paragraph after the first */
+.nj_cbody p+p,
+.nj_sbody p+p,
+.nj_sbody_sm p+p,
+.nj_body_sm p+p{text-indent:1em;}
+.nj_body_sm p.nj_dropcap::first-letter{
+  font-family:'Playfair Display',serif;font-size:3.0em;font-weight:700;
+  float:left;line-height:.72;margin-right:2px;margin-top:4px;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LEFT PANEL — Reference screenshot
+     ============================================================ -->
+<div id="compare_left">
+  <img id="compare_ref_img"
+       src="file:///C:/dev-media-temp/screenshots/ui_keep/Screenshot 2026-03-26 102806.png"
+       alt="Reference: Newcastle Journal — June 2 1953">
+</div>
+
+<!-- Divider -->
+<div id="compare_divider"></div>
+
+<!-- ============================================================
+     RIGHT PANEL — HTML demo
+     ============================================================ -->
+<div id="compare_right">
+
+  <div id="nj_chroma_wrap">
+  <div id="nj_newspaper">
+
+  <div id="nj_header_row">
+    <div id="nj_ad_austin">
+      <div class="nad-line1">Austin</div>
+      <div class="nad-line2">Northern Distributors</div>
+      <div class="nad-line2">Murray &amp; Charleton</div>
+      <div class="nad-body">College Ave, Barras Bridge, Newcastle<br>All Editions Supplied to the Trade</div>
+    </div>
+    <div id="nj_nameplate">
+    <div id="nj_rule_np_top"></div>
+    <div id="nj_nameplate_inner">
+      <div class="nj_np_word" id="nj_nameplate_word1">Newcastle</div>
+      <svg id="nj_nameplate_crest" viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
+        <path d="M28 1 L53 9 L53 38 Q53 56 28 68 Q3 56 3 38 L3 9 Z" fill="none" stroke="#160d04" stroke-width="2"/>
+        <path d="M28 5 L49 12 L49 37 Q49 53 28 64 Q7 53 7 37 L7 12 Z" fill="none" stroke="#160d04" stroke-width=".7"/>
+        <rect x="7" y="12" width="42" height="12" fill="#160d04" opacity=".14"/>
+        <line x1="28" y1="24" x2="28" y2="64" stroke="#160d04" stroke-width=".6"/>
+        <line x1="7"  y1="42" x2="49" y2="42" stroke="#160d04" stroke-width=".6"/>
+        <line x1="7"  y1="24" x2="28" y2="42" stroke="#160d04" stroke-width=".35" opacity=".6"/>
+        <line x1="11" y1="24" x2="28" y2="38" stroke="#160d04" stroke-width=".25" opacity=".5"/>
+        <line x1="16" y1="24" x2="28" y2="34" stroke="#160d04" stroke-width=".25" opacity=".45"/>
+        <line x1="21" y1="24" x2="28" y2="29" stroke="#160d04" stroke-width=".20" opacity=".40"/>
+        <text x="38" y="37" text-anchor="middle" font-family="serif" font-size="10" fill="#160d04">✦</text>
+        <ellipse cx="17" cy="51" rx="7" ry="4" fill="#160d04" opacity=".22"/>
+        <ellipse cx="14" cy="47" rx="4" ry="5" fill="#160d04" opacity=".22"/>
+        <line x1="38" y1="43" x2="38" y2="62" stroke="#160d04" stroke-width="1"/>
+        <path d="M34 49 Q38 45 42 49" fill="none" stroke="#160d04" stroke-width="1"/>
+        <path d="M35 54 Q38 51 41 54" fill="none" stroke="#160d04" stroke-width=".7"/>
+        <circle cx="38" cy="62" r="1.8" fill="#160d04"/>
+        <path d="M20 1 L20 6 L23 3.5 L26 7 L28 3 L30 7 L33 3.5 L36 6 L36 1" fill="none" stroke="#160d04" stroke-width="1"/>
+        <line x1="20" y1="6" x2="36" y2="6" stroke="#160d04" stroke-width="1"/>
+        <text x="17" y="22" text-anchor="middle" font-family="serif" font-size="7" fill="#160d04">✦</text>
+        <text x="38" y="22" text-anchor="middle" font-family="serif" font-size="7" fill="#160d04">✦</text>
+      </svg>
+      <div class="nj_np_word" id="nj_nameplate_word2">Journal</div>
+    </div>
+    <div id="nj_northmail_row"><div id="nj_northmail">North Mail</div></div>
+    <div id="nj_rule_np_bottom"></div>
+    </div><!-- /nameplate -->
+    <div id="nj_ad_6am">
+      <div id="nj_6am_num">6</div>
+      <div id="nj_6am_label">AM</div>
+    </div>
+    <div id="nj_ad_fenwick">
+      <div class="fad-title">Coronation Pictures</div>
+      <div class="fad-body">See display Coronation photo enlargements by "Manchester Guardian" early tomorrow morning Fenwick window</div>
+      <div class="fad-co">Fenwick</div>
+      <div class="fad-sub">Open all day Wednesday</div>
+    </div>
+  </div><!-- /header_row -->
+
+  <div id="nj_dateline">
+    <span id="nj_dateline_issue">No. 33,336</span>
+    <span id="nj_dateline_date">Tuesday June 2 1953</span>
+    <span id="nj_dateline_northmail">North Mail</span>
+    <span id="nj_dateline_kemsley">A Kemsley Newspaper</span>
+    <span id="nj_dateline_price">2d</span>
+  </div>
+
+  <div id="nj_kicker">Britain on top of the world on this Elizabeth II day</div>
+
+  <div id="nj_headline_area">
+    <div id="nj_main_headline">Everest is Conquered</div>
+    <div id="nj_main_deck">Queen awakened to hear of climbers' triumph</div>
+    <div id="nj_box_4page">
+      <div id="nj_4page_num">4-Page</div>
+      <div id="nj_4page_label">TV and<br>Radio<br>Guide</div>
+      <div id="nj_4page_sub">Inside</div>
+    </div>
+  </div>
+
+  <div id="nj_body_grid">
+
+    <div id="nj_col_commentary">
+      <div id="nj_commentary_hdr"><div class="nj_commentary_label">Commentary</div></div>
+      <div id="nj_commentary_headline">Queen of all hearts</div>
+      <div class="nj_cbody" id="nj_cbody_1">
+        <p class="nj_dropcap">THIS is a great day. Once more we British make plain to the world that we hold firmly to our way of life.</p>
+        <p>And, most appropriately, last night brought great news to back the claim that our way usually takes us, in the end, to the top.</p>
+        <p>At the third attempt, the sixth British expedition, under Col. John Hunt, has conquered Everest. It is the happiest of omens.</p>
+        <p>Skill, tenacity, courage, and great endurance have overcome the legendary powerful defences of the mightiest mountain on earth.</p>
+      </div>
+      <div class="nj_photo_block" id="nj_photo_hillary">
+        <div class="nj_photo_image" id="nj_photo_hillary_img">
+          <svg class="nj_photo_svgwrap" viewBox="0 0 116 112" xmlns="http://www.w3.org/2000/svg" height="70">
+            <rect width="116" height="112" fill="#9e9888"/>
+            <rect x="0" y="0" width="116" height="42" fill="#d0c8b4" opacity=".48"/>
+            <path d="M16 62 Q34 50 58 54 Q82 50 100 62 L104 112 L12 112Z" fill="#18120a" opacity=".50"/>
+            <ellipse cx="58" cy="37" rx="20" ry="24" fill="#18120a" opacity=".46"/>
+            <ellipse cx="58" cy="33" rx="11" ry="13" fill="#d0c8b4" opacity=".22"/>
+          </svg>
+        </div>
+        <div class="nj_photo_caption_zone" id="nj_photo_hillary_cap">
+          <span class="nj_photo_caption_name">Mr. E. P. Hillary</span>
+          <span class="nj_photo_caption_text">He reached the summit.</span>
+        </div>
+      </div>
+      <div class="nj_commentary_sub" id="nj_commentary_subhead">Right instinct</div>
+      <div class="nj_cbody" id="nj_cbody_2">
+        <p>THE significance of Everest may be clearer to the mass of our people than is the symbol of the Coronation ceremony.</p>
+        <p>But they know instinctively that the underlying concern is always for them; for their welfare, their protection, their rights and liberties.</p>
+        <p>They know, too, something which baffles other peoples; that the Crown has gained in influence far more than it has been surrendered in direct power.</p>
+        <p>Yet, ordinarily, they make no parade whatever of their patriotic devotion.</p>
+      </div>
+      <div class="nj_photo_block" id="nj_photo_tenzing">
+        <div class="nj_photo_image" id="nj_photo_tenzing_img">
+          <svg class="nj_photo_svgwrap" viewBox="0 0 116 96" xmlns="http://www.w3.org/2000/svg" height="65">
+            <rect width="116" height="96" fill="#9a9285"/>
+            <rect x="0" y="0" width="116" height="34" fill="#c8c0aa" opacity=".46"/>
+            <path d="M18 56 Q36 44 58 48 Q80 44 98 56 L102 96 L14 96Z" fill="#18120a" opacity=".48"/>
+            <ellipse cx="58" cy="32" rx="19" ry="22" fill="#18120a" opacity=".44"/>
+            <ellipse cx="58" cy="28" rx="10" ry="11" fill="#c8c0aa" opacity=".20"/>
+          </svg>
+        </div>
+        <div class="nj_photo_caption_zone" id="nj_photo_tenzing_cap">
+          <span class="nj_photo_caption_name">Tenzing Bhutia</span>
+          <span class="nj_photo_caption_text">The Sherpa porter.</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="nj_col_mainstory">
+      <div class="nj_story_subhead" id="nj_subhead_summit">2 Reach Summit on<br>11th EXPEDITION</div>
+      <div class="nj_allcaps_lead" id="nj_allcaps_lead">The Queen was wakened at Buckingham Palace late last night to be told that the British Expedition has conquered Mount Everest.</div>
+      <div class="nj_sbody" id="nj_sbody_1">
+        <p>This great news, on the eve of the Coronation, reached London last night in a message to "The Times" from Col. John Hunt in charge of the expedition.</p>
+        <p>The climb was made on Friday and Col. Hunt has reported that "all is well."</p>
+        <p>The successful assault was made by Mr. E.P. Hillary, a New Zealander, and the Sherpa porter named Tensing Bhutia.</p>
+        <p>This great feat of the new Elizabethans flashed round the world adding still further joy to the heightening Coronation fever.</p>
+        <p>Mr. Hillary, aged 34, is a beekeeper in New Zealand. His climbing experience was gained in the Southern Alps in the South Island, a range that has attracted mountaineers from all over the world because of the difficulty of the climbs.</p>
+      </div>
+      <div id="nj_callout">
+        <div id="nj_callout_text">1a.m. AND<br>Royal<br>Route<br>Barriers<br>Are Closed</div>
+      </div>
+      <div class="nj_sbody_sm" id="nj_sbody_crowd">
+        <p>Crowd barriers were closed hours before schedule early this morning as tens of thousands of sightseers camped along the Coronation route.</p>
+        <p>Fifty thousand people jammed in Trafalgar Square last night in a tremendous impromptu celebration of the twin glories of the summit conquest and the Coronation.</p>
+      </div>
+      <div class="nj_story_italic_sub" id="nj_subhead_newroute">New route</div>
+      <div class="nj_sbody_sm" id="nj_sbody_newroute">
+        <p>He was an originator of winter ski mountaineering in New Zealand. During the war he served in the Royal New Zealand Air Force.</p>
+        <p>He had experience in the Himalayas two years ago, when he was a member of the expedition which, led by Eric Shipton, was a foray into the Western Cwm.</p>
+        <p>This discovery opened up a new route for attack, and it has been followed by other expeditions. It was by this route that the two men achieved their success, and it has been achieved this time by the pioneering work done by Sir John Hunt and Sherpa porters of mountaineering experience.</p>
+        <p>Fifty thousand people jammed in Trafalgar Square and along The Mall last night celebrating the twin triumphs of the Coronation and Everest.</p>
+      </div>
+    </div>
+
+    <div id="nj_col_illustration">
+      <div id="nj_illus_header"><div id="nj_illus_title">Coronation Gown</div></div>
+      <div id="nj_illus_body">
+        <div id="nj_illus_placeholder"></div>
+      </div>
+    </div>
+
+    <div id="nj_col_breaking">
+      <div class="nj_break_hl" id="nj_breaking_hl_girl">Girl, 16,<br>Stabbed,<br>Friend<br>Missing</div>
+      <div class="nj_body_sm" id="nj_body_girl">
+        <p class="nj_dropcap">AN attractive girl of 16, found dead in the Thames at Richmond yesterday, was murdered and her body flung in the river near Teddington Lock on Sunday night, police decided after a post-mortem examination last night.</p>
+        <p>There was a gash on her forehead, but death was due to three stab wounds in the back. Blood-stains were found on the grassy and wooded verge of the river towpath near the lock a mile and a half away.</p>
+        <p>The dead girl was identified by her mother as Barbara Songhurst, of Princess Road, Teddington. She was an assistant at a chemist's shop.</p>
+        <p>On Sunday, she went out with a friend, Christine Reed (16), of Roy Crescent, Richmond Hill. Christine has not yet been reported as missing.</p>
+        <p>Police later feared that they had a double murder to contend with. Another cycle has been found.</p>
+      </div>
+      <div class="nj_break_sub" id="nj_break_sub_cycling">Went Cycling</div>
+      <div class="nj_body_sm" id="nj_body_cycling">
+        <p>The dead girl was identified by her mother as Barbara Songhurst. On Sunday she went cycling with Christine Reed. They were last seen near Twickenham.</p>
+      </div>
+      <div class="nj_break_sub" id="nj_break_sub_duke">Duke will watch</div>
+      <div class="nj_body_sm" id="nj_body_duke_col4">
+        <p>The Duke of Edinburgh will attend the Coronation ceremony. He has been deeply involved in the preparations for the great occasion.</p>
+      </div>
+    </div>
+
+    <div id="nj_col_farright">
+      <div class="nj_body_sm" id="nj_farright_body_1">
+        <p>Duke will watch the Coronation from a seat in the Abbey, as a special guest of the Queen. He is expected to arrive from New Zealand before the ceremony.</p>
+        <p>Mr. Hillary will be flown back to Britain immediately to take part in Coronation celebrations. He will be knighted by the Queen.</p>
+        <p>The achievement comes on the eve of the greatest ceremony in the history of the monarchy. The timing could not have been more perfectly contrived to demonstrate the vigour and enterprise of the new Elizabethan age.</p>
+        <p>Col. Hunt, who led the expedition, is a soldier of wide experience. He has served in many theatres and brings to mountain climbing the same qualities of leadership and endurance that distinguish the finest of British soldiers.</p>
+        <p>The Sherpa porters of Mount Everest have at last been given their due recognition. Without their endurance and skill, no British expedition could have reached even the lower slopes.</p>
+      </div>
+    </div>
+
+  </div><!-- /BODY GRID -->
+
+  </div><!-- /NEWSPAPER -->
+  </div><!-- /CHROMA WRAP -->
+
+</div><!-- /RIGHT PANEL -->
+
+
+<script>
+/* ============================================================
+   FIT RIGHT PANEL
+   Scales the newspaper to fill the right 50% of the viewport.
+   ============================================================ */
+var NP_W = 1220;
+
+function fitPanel() {
+  var wrap = document.getElementById('nj_chroma_wrap');
+  var np   = document.getElementById('nj_newspaper');
+
+  /* Reset to measure natural height */
+  wrap.style.transform = 'none';
+  np.style.width       = NP_W + 'px';
+
+  var nh     = np.offsetHeight;
+  var panelW = window.innerWidth * 0.5;   /* right panel = 50vw */
+  var panelH = window.innerHeight;
+  var s      = Math.min(panelW / NP_W, panelH / nh);
+
+  wrap.style.transformOrigin = 'top left';
+  wrap.style.transform       = 'scale(' + s + ')';
+}
+
+window.addEventListener('load',   fitPanel);
+window.addEventListener('resize', fitPanel);
+</script>
+
+</body>
+</html>

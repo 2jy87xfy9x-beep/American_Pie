@@ -1,0 +1,650 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, sans-serif); }
+  
+  .era-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; cursor: pointer;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    user-select: none;
+  }
+  .era-header:hover { background: var(--color-background-secondary); }
+  
+  .era-label {
+    font-size: 11px; font-weight: 500; letter-spacing: .04em;
+    padding: 2px 7px; border-radius: 4px; flex-shrink: 0;
+  }
+  .era-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .era-temp { font-size: 11px; color: var(--color-text-secondary); }
+  .era-chevron { font-size: 11px; color: var(--color-text-tertiary); transition: transform .15s; }
+  .era-chevron.open { transform: rotate(90deg); }
+  
+  .era-body { display: none; }
+  .era-body.open { display: block; }
+  
+  .era-meta {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; padding: 12px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    background: var(--color-background-secondary);
+  }
+  .meta-block { }
+  .meta-label { font-size: 10px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .meta-val { font-size: 12px; color: var(--color-text-primary); line-height: 1.4; }
+  
+  .articles-section { padding: 8px 14px 12px; }
+  .section-title { font-size: 10px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; margin-top: 10px; }
+  
+  .article-row {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px; margin-bottom: 6px;
+    cursor: pointer; overflow: hidden;
+  }
+  .article-row:hover { border-color: var(--color-border-secondary); }
+  
+  .article-header {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 9px 10px;
+  }
+  .article-voice-tag {
+    font-size: 10px; padding: 1px 6px; border-radius: 3px;
+    font-weight: 500; flex-shrink: 0; margin-top: 1px;
+    letter-spacing: .02em;
+  }
+  .article-title { font-size: 12px; color: var(--color-text-primary); line-height: 1.4; flex: 1; }
+  .article-expand { font-size: 10px; color: var(--color-text-tertiary); flex-shrink: 0; transition: transform .15s; }
+  .article-expand.open { transform: rotate(90deg); }
+  
+  .article-detail {
+    display: none;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    padding: 10px;
+    background: var(--color-background-secondary);
+  }
+  .article-detail.open { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  
+  .detail-block { }
+  .detail-label { font-size: 10px; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .detail-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+  .detail-pill {
+    display: inline-block; font-size: 10px; padding: 1px 6px;
+    border-radius: 3px; margin: 2px 2px 2px 0;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    color: var(--color-text-secondary);
+  }
+  
+  .ui-block { 
+    margin: 0 14px 12px;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px; overflow: hidden;
+  }
+  .ui-block-header { 
+    padding: 7px 10px; font-size: 10px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: .06em;
+    background: var(--color-background-secondary);
+    color: var(--color-text-tertiary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .ui-block-body { padding: 10px; }
+  .ui-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; font-size: 12px; line-height: 1.5; color: var(--color-text-secondary); }
+  .ui-row:last-child { margin-bottom: 0; }
+  .ui-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  
+  .ticker-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; font-size: 11px;
+    background: var(--color-background-secondary);
+    border-top: 0.5px solid var(--color-border-tertiary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 8px;
+  }
+  .ticker-label { font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: .05em; flex-shrink: 0; }
+  .ticker-dots { display: flex; gap: 3px; align-items: center; }
+  .ticker-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .ticker-desc { font-size: 11px; color: var(--color-text-secondary); }
+  
+  .lever-chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px 14px 4px; }
+  .lever-chip { 
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    border: 0.5px solid var(--color-border-secondary);
+    color: var(--color-text-secondary); cursor: pointer;
+    transition: background .1s;
+  }
+  .lever-chip:hover { background: var(--color-background-secondary); }
+  
+  .filter-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 14px; border-bottom: 0.5px solid var(--color-border-tertiary);
+    flex-wrap: wrap;
+  }
+  .filter-label { font-size: 11px; color: var(--color-text-tertiary); }
+  .filter-btn {
+    font-size: 11px; padding: 3px 9px; border-radius: 5px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent; cursor: pointer; color: var(--color-text-secondary);
+  }
+  .filter-btn.active {
+    background: var(--color-background-info);
+    border-color: var(--color-border-info);
+    color: var(--color-text-info);
+  }
+  
+  .top-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 14px 8px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .top-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+  .top-count { font-size: 11px; color: var(--color-text-tertiary); }
+  
+  .no-match { padding: 20px 14px; text-align: center; font-size: 13px; color: var(--color-text-tertiary); }
+</style>
+
+<div class="top-bar">
+  <div class="top-title">American Pie — simulation map</div>
+  <div class="top-count" id="count-label">9 eras · 15 articles</div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Filter by lever:</span>
+  <button class="filter-btn active" data-lever="all" onclick="filterLever('all', this)">All</button>
+  <button class="filter-btn" data-lever="irony" onclick="filterLever('irony', this)">Dramatic irony</button>
+  <button class="filter-btn" data-lever="allegiance" onclick="filterLever('allegiance', this)">Allegiance</button>
+  <button class="filter-btn" data-lever="complicity" onclick="filterLever('complicity', this)">Complicity</button>
+  <button class="filter-btn" data-lever="horror" onclick="filterLever('horror', this)">Slow horror</button>
+  <button class="filter-btn" data-lever="stakes" onclick="filterLever('stakes', this)">Personal stakes</button>
+</div>
+
+<div id="era-list"></div>
+
+<script>
+const VOICES = {
+  'AP': { label: 'AP wire', bg: '#E6F1FB', text: '#0C447C' },
+  'WSJ': { label: 'WSJ', bg: '#EAF3DE', text: '#27500A' },
+  'LOCAL': { label: 'Local paper', bg: '#FAEEDA', text: '#633806' },
+  'BRIT': { label: 'British press', bg: '#EEEDFE', text: '#3C3489' },
+  'GOV': { label: 'Gov. document', bg: '#F1EFE8', text: '#444441' },
+  'LONGFORM': { label: 'Long-form', bg: '#FAECE7', text: '#712B13' },
+};
+
+const TICKER_STATES = {
+  calm: { dots: ['#9FE1CB','#D3D1C7','#D3D1C7','#D3D1C7'], desc: 'Barely moving — almost a caption line. Text drifts at 80s/cycle.' },
+  elevated: { dots: ['#FAC775','#FAC775','#D3D1C7','#D3D1C7'], desc: 'Walking pace, 45s/cycle. Visible movement, no urgency.' },
+  crisis: { dots: ['#F09595','#F09595','#FAC775','#D3D1C7'], desc: 'Fast, 20s/cycle. Legible but accumulating. Pressure visible.' },
+  chaotic: { dots: ['#E24B4A','#E24B4A','#E24B4A','#FAC775'], desc: 'Non-linear. Items repeat mid-sentence. System overload.' },
+  still: { dots: ['#85B7EB','#B5D4F4','#D3D1C7','#D3D1C7'], desc: 'Stopped completely. Stays frozen until screen 3 advances.' },
+};
+
+const ERAS = [
+  {
+    id: 1, date: 'Jan 2008', name: 'The surface',
+    temp: 'False calm', ticker: 'calm',
+    leverKey: ['irony'],
+    leverNames: 'Dramatic irony (ambient)',
+    entering: 'Mild curiosity. The hook has worked.',
+    leaving: 'First unease — something is building. Can\'t name it yet.',
+    variables: 'coverage_days introduced (not yet personal)',
+    decisions: 'The Calculation — made quietly, no drama',
+    ui: [
+      { dot: '#9FE1CB', text: 'Ticker barely drifts. Feels like a caption strip. 80s/cycle.' },
+      { dot: '#9FE1CB', text: 'Home: encyclopedia layout, featured article is dry Fed data — not front page.' },
+      { dot: '#9FE1CB', text: 'See Also entries begin appearing but contain no dates yet.' },
+      { dot: '#9FE1CB', text: 'Variable fields show mock data: 100 days coverage, $7,000 cash.' },
+      { dot: '#D3D1C7', text: 'Controls hidden until hover. No affordance announced. Simulation year toggle present but unemphasised.' },
+    ],
+    articles: [
+      {
+        num: 1, title: 'Emergency Fund Levels Below 30 Days for Half of US Households',
+        voice: 'GOV', screens: 6,
+        emotion: 'Quiet unease — a number the reader has never calculated for themselves.',
+        lesson: 'Coverage days calculation. The gap between estimated and actual runway.',
+        lever: ['irony', 'stakes'],
+        reveal: 'Households that maintained 90+ day coverage vs. the median 47 days — what differed in their balance sheets.',
+        ghost: 'Archetype 0 appears as a Fed survey statistical outlier. Archetype 2 is the median.',
+        ui_note: 'First variable field appears on screen 2. mock coverage_days is 100 — technically adequate, not comfortable.',
+      },
+      {
+        num: 2, title: 'Burn Rate: The Number Most American Households Have Never Calculated',
+        voice: 'WSJ', screens: 5,
+        emotion: 'The cost of approximation. Mild self-implication.',
+        lesson: 'Monthly expense precision. How a 10% error compounds over 18 years.',
+        lever: ['irony', 'stakes'],
+        reveal: 'Households that tracked burn rate monthly vs. those that estimated — divergence over 12 months.',
+        ghost: 'Archetype 3 (overreacher) appears as a WSJ source who approximated upward.',
+        ui_note: 'burn_rate field editable on screen 2. Reader may enter real number here first.',
+      },
+      {
+        num: 3, title: 'The Savings Account Next Door: A Yield Differential Most Americans Ignored',
+        voice: 'BRIT', screens: 5,
+        emotion: 'Specific regret of inaction that required no money, no insight — just a phone call.',
+        lesson: 'Yield differential. $315/year vs $2.80/year. Opportunity cost of inaction.',
+        lever: ['irony', 'horror'],
+        reveal: '$315 vs $2.80 side by side. Same cash. Same month. One phone call separated them.',
+        ghost: 'Archetype 1 (steady) made the call. Archetype 2 (unaware) didn\'t know the account existed.',
+        ui_note: 'The $315 vs $2.80 comparison is the first reveal block the reader encounters.',
+      },
+      {
+        num: 4, title: 'Unemployment Insurance: What the Safety Net Pays and When It Pays It',
+        voice: 'LOCAL', screens: 6,
+        emotion: 'The machinery of the safety net — and the timing gap that erodes it.',
+        lesson: 'Filing date mechanics. The four-week processing delay. $1,260 in benefits lost per week of delay.',
+        lever: ['irony', 'horror'],
+        reveal: 'Sandra filed week 4. The household that filed day 1 received $1,260 more.',
+        ghost: 'Archetype 1 filed day 1. The Sandra figure is Archetype 2 — The Delay decision personified.',
+        ui_note: 'Local newspaper voice — the highest human register. Used sparingly. Sandra is never called a case study.',
+      },
+    ]
+  },
+  {
+    id: 2, date: 'Mar 2008', name: 'The first crack',
+    temp: 'Speed of collapse', ticker: 'elevated',
+    leverKey: ['irony', 'allegiance'],
+    leverNames: 'Dramatic irony + allegiance beginning',
+    entering: 'Engaged. Starting to track vehicles without realising it.',
+    leaving: 'First genuine investment in an outcome. The reader has a preference.',
+    variables: 'fed_funds_rate — the invisible villain arrives',
+    decisions: 'The Move — one phone call, nineteen minutes',
+    ui: [
+      { dot: '#FAC775', text: 'Ticker wakes up — walking pace, 45s/cycle. Not startling but no longer still.' },
+      { dot: '#FAC775', text: 'See Also entries gain dates. The reader begins building a mental model of vehicles.' },
+      { dot: '#9FE1CB', text: 'Fed rate table appears as an image brief (data chart voice): rates and dates listed flat.' },
+      { dot: '#D3D1C7', text: 'No new interactive elements introduced — only existing variables from Era 1 shown in new context.' },
+    ],
+    articles: [
+      {
+        num: 5, title: 'Bear Stearns Acquired by JPMorgan Chase for $2 a Share',
+        voice: 'AP', screens: 7,
+        emotion: 'The speed of institutional collapse. Something untouchable fell in a weekend.',
+        lesson: 'Liquidity risk. Counterparty exposure. What a bank run looks like from outside.',
+        lever: ['irony', 'allegiance'],
+        reveal: 'What the two households with 90+ day coverage did the same weekend vs. the two with under 30.',
+        ghost: 'Archetype 1 appears — dual-income Cleveland household, filed UI day 1, reduced spending week 1.',
+        ui_note: 'AP wire voice opens mid-fact. "$236 million, or $2 a share" is the first sentence. No context-setting.',
+      },
+      {
+        num: 6, title: 'The Federal Reserve\'s Benchmark Rate: Seven Cuts in Seven Months',
+        voice: 'GOV', screens: 6,
+        emotion: 'The invisible villain has no face. Anger at a mechanism, not a person.',
+        lesson: 'Fed funds rate effect on savings yields. What seven emergency cuts signal vs what the public heard.',
+        lever: ['irony', 'horror'],
+        reveal: '$315 vs $2.80 reappears — same cash, the rate table explains the gap now.',
+        ghost: 'Archetype 2 (unaware) is the median savings yield column in the rate table.',
+        ui_note: 'Rate table is presented as a genuine government document. Seven rows. Seven dates. The pattern is the editorial.',
+      },
+      {
+        num: 7, title: 'The Dollar of Mortgage Payment: How Securitisation Distributed Risk',
+        voice: 'WSJ', screens: 6,
+        emotion: 'The machinery underneath. Understanding it makes the coming collapse worse.',
+        lesson: 'Securitisation. Why ordinary people held MBS without knowing it.',
+        lever: ['irony'],
+        reveal: 'One dollar of mortgage payment traced through the chain — originator to servicer to SPV to CDO tranche.',
+        ghost: 'None in this article. The chain itself is the character.',
+        ui_note: 'The dollar trace is a screen-4 reveal block. No interactive elements. The chain diagram lives in an image brief.',
+      },
+    ]
+  },
+  {
+    id: 3, date: 'Jun 2008', name: 'The quiet summer',
+    temp: 'False recovery', ticker: 'elevated',
+    leverKey: ['irony', 'allegiance', 'complicity'],
+    leverNames: 'Dramatic irony + allegiance building + complicity first appears',
+    entering: 'Dread with edge. The reader knows Lehman is coming.',
+    leaving: 'Emotionally full. Triumph and horror and complicity in one era.',
+    variables: 'leverage — arrives quietly in a See Also entry',
+    decisions: 'The Delay + The Add — both present, both devastating differently',
+    ui: [
+      { dot: '#FAC775', text: 'Ticker steady, purposeful. 45s/cycle. Not urgent but awake.' },
+      { dot: '#FAC775', text: 'See Also: five vehicles react to the same event for first time. All stamped Sept 15 2008.' },
+      { dot: '#F09595', text: 'Exhibit 14 in See Also margin — Archetype 3\'s leveraged position. One line: $142k → $11k.' },
+      { dot: '#D3D1C7', text: 'Variable editor: leverage field appears for the first time in an article. Not yet interactive.' },
+    ],
+    articles: [
+      {
+        num: 8, title: 'US Housing Market: Peak to Trough, 2006–2008',
+        voice: 'BRIT', screens: 6,
+        emotion: 'The lag between data and public knowledge. Dread of something that has already happened.',
+        lesson: 'Leading vs lagging indicators. The July 2006 peak introduced before 2008 consequences.',
+        lever: ['irony', 'allegiance'],
+        reveal: 'Households that sold Q3 2006 vs those that held through Q4 2008 — same property, different exit.',
+        ghost: 'Archetype 0 (early mover) sold Q3 2006. One line in the See Also margin. No celebration.',
+        ui_note: 'British press voice — the alienation effect. America described from outside produces specific reader disorientation.',
+      },
+      {
+        num: 9, title: 'Foreclosure Filings by State: Q2 2008',
+        voice: 'LOCAL', screens: 5,
+        emotion: 'The geographic distribution of the coming collapse. Real counties, real names.',
+        lesson: 'Foreclosure mechanics. The specific zip codes. The sectors first affected.',
+        lever: ['irony', 'horror'],
+        reveal: 'Counties with 90-day liquid holdings vs those without — foreclosure rate differential.',
+        ghost: 'Archetype 2 appears as the county-level median. Archetype 3 appears in a footnote.',
+        ui_note: 'Second use of local newspaper voice. Keeps the register high. No financial concepts named explicitly.',
+      },
+    ]
+  },
+  {
+    id: 4, date: 'Sept 2008', name: 'The floor disappears',
+    temp: 'Vertigo', ticker: 'chaotic',
+    leverKey: ['irony', 'complicity', 'horror'],
+    leverNames: 'Dramatic irony at maximum + slow horror + complicity',
+    entering: 'The weight of what the reader knows.',
+    leaving: 'Emotional exhaustion — watched something important happen, understood it, could not change it.',
+    variables: 'time — starts to reveal itself. The Buy made here defines the next 15 years.',
+    decisions: 'The Buy — terrifying and correct simultaneously',
+    ui: [
+      { dot: '#E24B4A', text: 'Ticker chaotic: fast, items stutter, repeat, cut mid-word. System overload aesthetic.' },
+      { dot: '#E24B4A', text: 'Newspaper theme: banner headline fills full width. "LEHMAN BROTHERS COLLAPSES. $639 BILLION."' },
+      { dot: '#F09595', text: 'Five See Also entries all date-stamped Sept 15 — simultaneous reactions visible for the first time.' },
+      { dot: '#FAC775', text: 'Archetype 3 See Also entry expands to show Exhibit 14: $142k → $11k. One line. No comment.' },
+    ],
+    articles: [
+      {
+        num: 10, title: 'Lehman Brothers Holdings Inc. Files for Chapter 11 Bankruptcy Protection',
+        voice: 'AP', screens: 4,
+        emotion: 'The largest bankruptcy in US history written with bureaucratic calm. The gap between tone and scale IS the emotion.',
+        lesson: 'Systemic risk. What Chapter 11 means for 26,000 employees and counterparties.',
+        lever: ['irony', 'horror'],
+        reveal: 'Five household reactions on Sept 15 — what each vehicle\'s balance sheet looked like by close of market.',
+        ghost: 'All five archetypes appear simultaneously — their first multi-appearance in one article.',
+        ui_note: 'Written smaller than the reader expects. "Lehman Brothers Holdings filed for Chapter 11 at 1:45 AM." One sentence. Then consequences.',
+      },
+    ]
+  },
+  {
+    id: 5, date: 'Oct–Nov 2008', name: 'The machinery of rescue',
+    temp: 'Surreal scale', ticker: 'chaotic',
+    leverKey: ['irony', 'horror', 'stakes'],
+    leverNames: 'Slow horror + surreal scale + personal stakes escalating',
+    entering: 'Cognitive gap: trillion-dollar numbers vs reader\'s thousands.',
+    leaving: 'FDIC limit understood. Rescue machinery visible, imperfect, ongoing.',
+    variables: 'compound_debt begins accumulating for vehicles carrying balances',
+    decisions: 'No single heroic decision — the machinery of absence',
+    ui: [
+      { dot: '#E24B4A', text: 'Ticker still chaotic. Items continue stuttering. Not recovered.' },
+      { dot: '#FAC775', text: 'FDIC $250k limit appears in DID YOU KNOW strip — first time reader sees their own cash in this context.' },
+      { dot: '#D3D1C7', text: 'My Situation panel: if reader has entered cash > $250k, a quiet indicator appears (no alarm, just a note).' },
+    ],
+    articles: [
+      {
+        num: 11, title: 'The Emergency Economic Stabilization Act: Congressional Authorization of $700 Billion',
+        voice: 'GOV', screens: 6,
+        emotion: 'Surreal scale. The government as active participant. $700 billion described in bureaucratic passive voice.',
+        lesson: 'Government intervention mechanics. Moral hazard. What TARP authorised and what it could not.',
+        lever: ['irony', 'horror'],
+        reveal: 'What the rescue preserved vs what it could not reach — specifically, household wealth at the bottom quartile.',
+        ghost: 'Archetype 2 and 3 appear in the Senate testimony data. Not named — they are the statistical cohorts.',
+        ui_note: 'Gov document voice is the flattest register. $700 billion written identically to $70. The flatness is the technique.',
+      },
+      {
+        num: 12, title: 'FDIC Quarterly Banking Profile: Q3 2008 — 171 Problem Institutions',
+        voice: 'GOV', screens: 5,
+        emotion: '171 institutions. $115.6 billion. The number that was not in the news.',
+        lesson: 'Deposit insurance limits. Problem institution classification. The $250k threshold.',
+        lever: ['irony', 'stakes'],
+        reveal: 'What the $250k limit covered and what was above it — and how many ordinary households had accounts above it without knowing.',
+        ghost: 'Archetype 2 is the statistical median deposit holder. Archetype 0 had accounts structured correctly.',
+        ui_note: 'Reader\'s own cash balance appears in the margin alongside the $250k figure. Silent comparison. No instruction.',
+      },
+    ]
+  },
+  {
+    id: 6, date: 'Dec 2008–Jan 2009', name: 'The long winter',
+    temp: 'Accumulating loss', ticker: 'crisis',
+    leverKey: ['horror', 'allegiance'],
+    leverNames: 'Slow motion horror (fully arrived) + allegiance established',
+    entering: 'Shift from institutional crisis to human crisis.',
+    leaving: 'The 401k math landed. Sandra\'s $1,260 is felt, not explained.',
+    variables: 'opportunity_cost — the ghost is named explicitly here for the first time',
+    decisions: 'The Delay consequences visible. 401k withdrawal decision point.',
+    ui: [
+      { dot: '#F09595', text: 'Ticker slows back down — but different from Era 1 calm. The pace of accumulating loss, not nothing-yet.' },
+      { dot: '#FAC775', text: 'See Also: Archetype 3 filing exhibit expands further — full balance sheet now visible.' },
+      { dot: '#9FE1CB', text: 'Reveal block: $10,000 withdrawal → $6,500 → what $10,000 not withdrawn became by 2013.' },
+    ],
+    articles: [
+      {
+        num: 13, title: 'Early 401(k) Withdrawals During the Financial Crisis: A $10,000 Decision',
+        voice: 'WSJ', screens: 6,
+        emotion: 'The $10,000 that became $6,500 that would have been $29,000. The cost of not knowing.',
+        lesson: 'Early withdrawal penalty + income tax. Opportunity cost. The 2013 recovery value.',
+        lever: ['horror', 'complicity'],
+        reveal: '$10,000 not withdrawn, left in a broad index fund through March 2009 bottom, valued December 2013.',
+        ghost: 'Archetype 2 withdrew. Archetype 1 did not. The gap is the reveal block.',
+        ui_note: 'The three-number sequence ($10k / $6.5k / $29k) is the most emotionally efficient calculation in the simulation.',
+      },
+      {
+        num: 14, title: 'Unemployment Claims Reach 573,000 Weekly: The Human Geography of Job Loss',
+        voice: 'LOCAL', screens: 5,
+        emotion: 'The human cost, measured in weekly claims. The filing-date variable made personal.',
+        lesson: 'Labor market lag. The four-week delay cost in real dollars by sector and geography.',
+        lever: ['horror', 'stakes'],
+        reveal: 'Filing day 1 vs day 23 — $1,260 differential, stretched across the long winter.',
+        ghost: 'Sandra figure (Archetype 2 variant) given her most extended appearance. Still no pity. Just the number.',
+        ui_note: 'Third use of local newspaper voice. The simulation is almost entirely third-person now. Sandra is as close as it gets to first.',
+      },
+    ]
+  },
+  {
+    id: 7, date: 'Feb–Mar 2009', name: 'The bottom',
+    temp: 'Eerie stillness', ticker: 'still',
+    leverKey: ['irony', 'complicity', 'stakes'],
+    leverNames: 'Dramatic irony at peak + complicity + personal stakes',
+    entering: 'The weight of a number the reader knows. S&P 676. Nobody in the story does.',
+    leaving: 'The Buy has happened. The reader watched. They had a feeling about it. That feeling is the lesson.',
+    variables: 'time — now fully active as compound force',
+    decisions: 'The Buy — the most frightening correct decision in the simulation',
+    ui: [
+      { dot: '#85B7EB', text: 'Ticker stops completely. Still on screen through article screens 1–3. Eerie. Not paused — stopped.' },
+      { dot: '#85B7EB', text: 'S&P 500 chart ends at 676. No recovery shown. The chart is the article\'s image on screen 1.' },
+      { dot: '#E24B4A', text: 'Five vehicles all visible in See Also — full comparative balance sheets at this exact moment.' },
+      { dot: '#9FE1CB', text: 'The $1,000 investment decision appears. Then the article ends. No outcome shown until Era 8.' },
+    ],
+    articles: [
+      {
+        num: 15, title: 'The S&P 500 Closes at 676: What March 9, 2009 Looked Like From Inside the Market',
+        voice: 'LONGFORM', screens: 7,
+        emotion: 'The bottom in real time. The most frightening correct decision made by one household. Vicarious terror.',
+        lesson: 'Entry point psychology. What process (not prediction) looks like. The full 5-vehicle comparison at the bottom.',
+        lever: ['irony', 'complicity', 'stakes'],
+        reveal: 'What each of the five vehicles held at close of March 9, 2009. The gap between them. The $1,000 decision on screen 6.',
+        ghost: 'All five archetypes shown in full — most complete ghost track moment in the simulation.',
+        ui_note: 'Long-form feature voice — the most cinematic register. Ticker stopped. The stillness is felt before it\'s noticed.',
+      },
+    ]
+  },
+  {
+    id: 8, date: 'Apr–Dec 2009', name: 'The first breath',
+    temp: 'Cautious, fragile', ticker: 'elevated',
+    leverKey: ['horror', 'stakes', 'allegiance'],
+    leverNames: 'Patience paying off + slow horror divergence + personal stakes',
+    entering: 'Relief. The worst is over.',
+    leaving: 'The compound divergence between vehicles is now visible and irreversible.',
+    variables: 'compound_interest + compound_debt — same force, opposite outcomes',
+    decisions: 'The $1,000 investment outcome revealed. And simultaneously: what compound debt did.',
+    ui: [
+      { dot: '#FAC775', text: 'Ticker resumes at elevated pace — found its rhythm. Present but not urgent.' },
+      { dot: '#9FE1CB', text: 'Era 5 reveal: the $1,000 from March 9 is shown as its 2013 value ($3,200). Then its 2026 value.' },
+      { dot: '#9FE1CB', text: 'Same screen: compound_debt shown for vehicles carrying credit balances. Same force, opposite direction.' },
+      { dot: '#FAC775', text: 'My Situation panel now shows projected 2026 value based on reader\'s entered numbers.' },
+    ],
+    articles: []
+  },
+  {
+    id: 9, date: '2023–2026', name: 'The rearview mirror',
+    temp: 'Clear. Still. Personal.', ticker: 'elevated',
+    leverKey: ['stakes', 'allegiance'],
+    leverNames: 'Personal stakes maximum + allegiance complete',
+    entering: 'Eighteen years of other people\'s decisions.',
+    leaving: 'Not inspired. Not motivated. Clear. The reader is not watching a story — they are rehearsing their own.',
+    variables: 'All variables now in present-tense mode. Reader\'s real numbers throughout.',
+    decisions: 'Vehicle 5\'s admission: "Luck played a role. I know it."',
+    ui: [
+      { dot: '#9FE1CB', text: 'Final comparison screen: five vehicles, same start, eighteen years, five outcomes. Numbers only.' },
+      { dot: '#9FE1CB', text: 'Vehicle 5\'s one-line admission sits below the comparison table. No fanfare.' },
+      { dot: '#FAC775', text: 'Reset screen: "The simulation is complete." Two choices only. [ Start over ] [ Switch to Present ]' },
+      { dot: '#D3D1C7', text: 'No score. No congratulations. No summary. Just the choice and the silence after it.' },
+    ],
+    articles: []
+  },
+];
+
+const LEVER_MAP = {
+  irony: ['irony'],
+  allegiance: ['allegiance'],
+  complicity: ['complicity'],
+  horror: ['horror'],
+  stakes: ['stakes'],
+};
+
+let activeFilter = 'all';
+
+function filterLever(key, btn) {
+  activeFilter = key;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderEras();
+}
+
+function toggleEra(id) {
+  const body = document.getElementById('era-body-' + id);
+  const chev = document.getElementById('era-chev-' + id);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+function toggleArticle(id) {
+  const detail = document.getElementById('art-detail-' + id);
+  const expand = document.getElementById('art-expand-' + id);
+  detail.classList.toggle('open');
+  expand.classList.toggle('open');
+}
+
+function voiceTag(v) {
+  const cfg = VOICES[v] || VOICES['GOV'];
+  return `<span class="article-voice-tag" style="background:${cfg.bg};color:${cfg.text}">${cfg.label}</span>`;
+}
+
+function tickerDots(state) {
+  const cfg = TICKER_STATES[state] || TICKER_STATES['calm'];
+  const dots = cfg.dots.map(c => `<span class="ticker-dot" style="background:${c}"></span>`).join('');
+  return `<div class="ticker-bar">
+    <span class="ticker-label">Ticker</span>
+    <div class="ticker-dots">${dots}</div>
+    <span class="ticker-desc">${cfg.desc}</span>
+  </div>`;
+}
+
+const ERA_COLORS = {
+  1: '#9FE1CB', 2: '#FAC775', 3: '#FAC775',
+  4: '#E24B4A', 5: '#E24B4A', 6: '#F09595',
+  7: '#85B7EB', 8: '#9FE1CB', 9: '#9FE1CB',
+};
+
+function eraMatchesFilter(era) {
+  if (activeFilter === 'all') return true;
+  return era.leverKey.includes(activeFilter) || era.articles.some(a => a.lever.includes(activeFilter));
+}
+
+function renderEras() {
+  const list = document.getElementById('era-list');
+  const filteredEras = ERAS.filter(eraMatchesFilter);
+  let totalArticles = 0;
+  ERAS.forEach(e => totalArticles += e.articles.length);
+  document.getElementById('count-label').textContent = `${filteredEras.length} eras · ${totalArticles} articles`;
+  
+  if (filteredEras.length === 0) {
+    list.innerHTML = '<div class="no-match">No eras match this filter.</div>';
+    return;
+  }
+  
+  list.innerHTML = filteredEras.map(era => {
+    const filteredArts = activeFilter === 'all' ? era.articles : era.articles.filter(a => a.lever.includes(activeFilter));
+    const dot = ERA_COLORS[era.id] || '#D3D1C7';
+
+    const articlesHtml = filteredArts.length === 0 ? '' : `
+      <div class="articles-section">
+        <div class="section-title">Articles (${filteredArts.length})</div>
+        ${filteredArts.map(a => {
+          const artId = `era${era.id}-art${a.num}`;
+          const levers = a.lever.map(l => `<span class="detail-pill">${l}</span>`).join('');
+          return `
+          <div class="article-row" onclick="toggleArticle('${artId}')">
+            <div class="article-header">
+              ${voiceTag(a.voice)}
+              <div class="article-title">${a.title}</div>
+              <div class="article-expand" id="art-expand-${artId}">▶</div>
+            </div>
+            <div class="article-detail" id="art-detail-${artId}">
+              <div class="detail-block">
+                <div class="detail-label">Emotion</div>
+                <div class="detail-text">${a.emotion}</div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Hidden lesson</div>
+                <div class="detail-text">${a.lesson}</div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Reveal block</div>
+                <div class="detail-text">${a.reveal}</div>
+              </div>
+              <div class="detail-block">
+                <div class="detail-label">Ghost tracks</div>
+                <div class="detail-text">${a.ghost}</div>
+              </div>
+              <div class="detail-block" style="grid-column: 1 / -1">
+                <div class="detail-label">UI / production note</div>
+                <div class="detail-text">${a.ui_note}</div>
+              </div>
+              <div class="detail-block" style="grid-column: 1 / -1">
+                <div class="detail-label">Active levers</div>
+                <div>${levers}</div>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    const uiHtml = `
+      <div class="ui-block">
+        <div class="ui-block-header">UI state · what you see</div>
+        <div class="ui-block-body">
+          ${tickerDots(era.ticker)}
+          ${era.ui.map(u => `<div class="ui-row"><div class="ui-dot" style="background:${u.dot}"></div><div>${u.text}</div></div>`).join('')}
+        </div>
+      </div>`;
+
+    return `
+    <div style="${activeFilter !== 'all' && !era.leverKey.includes(activeFilter) ? 'opacity:.55' : ''}">
+      <div class="era-header" onclick="toggleEra(${era.id})">
+        <span class="era-label" style="background:${dot}20;color:${dot === '#D3D1C7' ? '#5F5E5A' : dot.replace('8','4')}">Era ${era.id}</span>
+        <div>
+          <div class="era-name">${era.name} <span style="font-weight:400;color:var(--color-text-tertiary)">— ${era.date}</span></div>
+        </div>
+        <span class="era-temp">${era.temp}</span>
+        <span class="era-chevron" id="era-chev-${era.id}">▶</span>
+      </div>
+      <div class="era-body" id="era-body-${era.id}">
+        <div class="era-meta">
+          <div class="meta-block">
+            <div class="meta-label">Entering feeling</div>
+            <div class="meta-val">${era.entering}</div>
+          </div>
+          <div class="meta-block">
+            <div class="meta-label">Leaving feeling</div>
+            <div class="meta-val">${era.leaving}</div>
+          </div>
+          <div class="meta-block">
+            <div class="meta-label">Key variable · key decision</div>
+            <div class="meta-val">${era.variables}<br><span style="color:var(--color-text-tertiary)">${era.decisions}</span></div>
+          </div>
+        </div>
+        ${uiHtml}
+        ${articlesHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+renderEras();
+</script>

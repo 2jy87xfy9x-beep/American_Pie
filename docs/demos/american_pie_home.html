@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>American Pie — The Free Financial Encyclopedia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Linux+Libertine+O&family=UnifrakturMaguntia&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { min-height: 100vh; overflow-x: hidden; }
+
+/* ============================================================
+   TOOLTIP SYSTEM
+   ============================================================ */
+[data-tip] { position: relative; cursor: default; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  max-width: 280px;
+  white-space: normal;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 9999;
+  font-size: 11px;
+  line-height: 1.4;
+}
+[data-tip]:hover::after { opacity: 1; }
+
+/* ============================================================
+   THEME TOGGLE BUTTON (neutral, always visible)
+   ============================================================ */
+#theme-toggle-btn {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 10000;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 0;
+  text-decoration: underline;
+  opacity: 0.6;
+}
+#theme-toggle-btn:hover { opacity: 1; }
+
+/* ============================================================
+   ============================================================
+   ENCYCLOPEDIA THEME
+   ============================================================
+   ============================================================ */
+body.enc {
+  background: #f8f9fa;
+  color: #202122;
+  font-family: 'Linux Libertine O', 'Georgia', 'Times New Roman', serif;
+}
+body.enc #theme-toggle-btn { color: #0645ad; font-family: Arial, Helvetica, sans-serif; }
+
+/* ENC: outer layout */
+.enc #enc-shell { display: flex; min-height: 100vh; flex-direction: column; }
+.enc #enc-header {
+  border-bottom: 1px solid #a2a9b1;
+  background: #f8f9fa;
+  padding: 0;
+}
+.enc #enc-header-inner {
+  display: flex;
+  align-items: stretch;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.enc #enc-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 12px;
+  border-right: 1px solid #a2a9b1;
+  width: 172px;
+  flex-shrink: 0;
+}
+.enc #enc-logo-svg { width: 50px; height: 50px; flex-shrink: 0; }
+.enc #enc-logo-text { line-height: 1.2; }
+.enc #enc-logo-text .enc-site-name {
+  font-family: 'Linux Libertine O', 'Georgia', serif;
+  font-size: 20px;
+  color: #202122;
+  display: block;
+}
+.enc #enc-logo-text .enc-site-tagline {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  color: #555;
+  display: block;
+  font-style: italic;
+}
+.enc #enc-header-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px 16px;
+}
+.enc #enc-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+.enc #enc-lang-strip {
+  color: #555;
+  font-size: 11px;
+}
+.enc #enc-lang-strip a, .enc #enc-year-tabs a {
+  color: #0645ad;
+  text-decoration: none;
+}
+.enc #enc-lang-strip a:hover, .enc #enc-year-tabs a:hover { text-decoration: underline; }
+.enc #enc-search-area {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.enc #enc-search-input {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border: 1px solid #a2a9b1;
+  padding: 2px 4px;
+  width: 180px;
+  background: #fff;
+}
+.enc #enc-search-btn {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid #a2a9b1;
+  background: #f8f9fa;
+  cursor: pointer;
+}
+.enc #enc-year-tabs {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  color: #555;
+  padding-bottom: 4px;
+}
+.enc #enc-year-tabs span { color: #555; }
+.enc #enc-year-tabs a { color: #0b0080; margin: 0 2px; }
+.enc #enc-year-tabs a.active-year { color: #202122; font-weight: bold; text-decoration: none; cursor: default; }
+.enc #enc-year-tabs a.future-year { color: #0645ad; }
+
+/* ENC: main body */
+.enc #enc-body {
+  display: flex;
+  flex: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ENC: sidebar */
+.enc #enc-sidebar {
+  width: 172px;
+  flex-shrink: 0;
+  border-right: 1px solid #a2a9b1;
+  padding: 8px 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+.enc .enc-sidebar-section {
+  border-bottom: 1px solid #a2a9b1;
+  padding: 6px 8px 8px;
+}
+.enc .enc-sidebar-section:last-child { border-bottom: none; }
+.enc .enc-sidebar-heading {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #555;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.enc .enc-sidebar-section a {
+  display: block;
+  color: #0645ad;
+  text-decoration: none;
+  margin: 2px 0;
+  font-size: 12px;
+}
+.enc .enc-sidebar-section a:hover { text-decoration: underline; }
+.enc .enc-sidebar-section a.visited { color: #0b0080; }
+.enc .enc-sidebar-section a.red-link { color: #ba0000; }
+.enc .enc-sidebar-section a.bold-link { font-weight: bold; color: #202122; cursor: default; text-decoration: none; }
+.enc .enc-sidebar-meta { color: #555; font-size: 11px; margin: 2px 0; }
+.enc .enc-sidebar-section p { font-size: 11px; color: #555; margin: 3px 0; line-height: 1.4; }
+.enc .enc-sidebar-section p a { display: inline; }
+
+/* ENC: content */
+.enc #enc-content {
+  flex: 1;
+  padding: 12px 24px 24px 20px;
+  max-width: 900px;
+}
+.enc #enc-page-title {
+  font-family: 'Linux Libertine O', Georgia, serif;
+  font-size: 28px;
+  font-weight: normal;
+  border-bottom: 1px solid #a2a9b1;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+  color: #202122;
+}
+.enc #enc-page-subtitle {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.enc .enc-attribution {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 12px;
+}
+.enc hr.enc-rule { border: none; border-top: 1px solid #a2a9b1; margin: 8px 0; }
+
+/* ENC: featured article */
+.enc #enc-featured {
+  border: 1px solid #a2a9b1;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  background: #fff;
+}
+.enc #enc-featured-header {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #555;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.enc #enc-featured-header::before {
+  content: "★";
+  color: #f0c040;
+  font-size: 12px;
+}
+.enc #enc-featured-title {
+  font-family: 'Linux Libertine O', Georgia, serif;
+  font-size: 20px;
+  color: #0645ad;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 6px;
+}
+.enc #enc-featured-title:hover { text-decoration: underline; }
+.enc #enc-featured-body {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #202122;
+}
+.enc #enc-featured-body p { margin-bottom: 6px; }
+.enc #enc-featured-readmore {
+  color: #0645ad;
+  font-size: 12px;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.enc #enc-featured-readmore:hover { text-decoration: underline; }
+
+/* ENC: two column below featured */
+.enc #enc-lower { display: flex; gap: 20px; margin-bottom: 16px; }
+.enc #enc-news { flex: 1.2; }
+.enc #enc-dyk { flex: 1; }
+.enc .enc-section-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  border-bottom: 1px solid #a2a9b1;
+  padding-bottom: 3px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #202122;
+}
+.enc .enc-news-item {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.enc .enc-news-item a {
+  color: #0645ad;
+  text-decoration: none;
+}
+.enc .enc-news-item a:hover { text-decoration: underline; }
+.enc .enc-dyk-item {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  padding-left: 10px;
+  border-left: 2px solid #a2a9b1;
+  color: #202122;
+}
+
+/* ENC: simulation snapshot (stats box) */
+.enc #enc-snapshot {
+  border: 1px solid #a2a9b1;
+  padding: 8px 10px;
+  margin-bottom: 16px;
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+.enc #enc-snapshot table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.enc #enc-snapshot td {
+  padding: 2px 4px;
+  border-bottom: 1px solid #eaecf0;
+  font-size: 11px;
+}
+.enc #enc-snapshot td:first-child { color: #555; }
+.enc #enc-snapshot td:last-child { text-align: right; color: #202122; }
+.enc #enc-snapshot .snap-header {
+  background: #eaecf0;
+  font-weight: bold;
+  text-align: center;
+  font-size: 11px;
+  padding: 3px;
+  margin-bottom: 4px;
+}
+
+/* ENC: footer */
+.enc #enc-footer {
+  border-top: 1px solid #a2a9b1;
+  padding: 8px 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  color: #555;
+  background: #f8f9fa;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+.enc #enc-press-coverage { margin-top: 4px; }
+.enc #enc-press-coverage-label {
+  font-weight: bold;
+  margin-bottom: 2px;
+  color: #202122;
+}
+.enc #enc-ticker-enc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+  font-style: italic;
+  color: #555;
+}
+.enc #enc-ticker-enc a {
+  color: #0645ad;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.enc #enc-ticker-enc a:hover { text-decoration: underline; }
+.enc #enc-ticker-enc .sep { color: #a2a9b1; }
+
+/* ============================================================
+   ============================================================
+   NEWSPAPER THEME
+   ============================================================
+   ============================================================ */
+body.news {
+  background-color: #c8c4bb;
+  color: #1a1a1a;
+}
+
+/* Newsprint texture overlay */
+body.news::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.18;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+body.news * { position: relative; z-index: 1; }
+body.news #theme-toggle-btn { color: #1a1a1a; font-family: 'Libre Baskerville', serif; font-size: 10px; }
+
+.news #news-shell { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* NEWS: masthead */
+.news #news-masthead {
+  border-bottom: 3px double #1a1a1a;
+  padding: 0;
+  background: #c8c4bb;
+}
+.news #news-masthead-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+.news #news-topper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1a1a1a;
+  padding: 3px 0;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  color: #1a1a1a;
+}
+.news #news-topper a { color: #1a1a1a; text-decoration: none; }
+.news #news-topper a:hover { text-decoration: underline; }
+.news #news-nameplate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0 4px;
+  gap: 12px;
+}
+.news #news-nameplate {
+  font-family: 'UnifrakturMaguntia', cursive;
+  font-size: clamp(36px, 5vw, 64px);
+  color: #1a1a1a;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+.news #news-masthead-boxes {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+.news .news-mast-box {
+  border: 1px solid #1a1a1a;
+  padding: 4px 10px;
+  text-align: center;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  line-height: 1.3;
+  min-width: 80px;
+}
+.news .news-mast-box + .news-mast-box { border-left: none; }
+.news .news-mast-box .mast-box-title {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid #1a1a1a;
+  margin-bottom: 3px;
+  padding-bottom: 2px;
+  font-weight: bold;
+}
+.news .news-mast-box .mast-box-content { font-size: 11px; font-weight: bold; }
+.news #news-dateline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 2px solid #1a1a1a;
+  padding: 3px 0;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  color: #1a1a1a;
+}
+.news #news-edition-toggle {
+  cursor: pointer;
+  text-decoration: underline;
+  font-style: italic;
+}
+.news #news-edition-toggle:hover { background: rgba(0,0,0,0.05); }
+
+/* NEWS: year tabs as issue references */
+.news #news-year-tabs {
+  border-bottom: 1px solid #1a1a1a;
+  padding: 3px 0;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  align-items: center;
+}
+.news #news-year-tabs .tabs-label {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: 4px;
+  font-size: 9px;
+}
+.news #news-year-tabs a {
+  color: #555;
+  text-decoration: none;
+  font-style: italic;
+}
+.news #news-year-tabs a:hover { text-decoration: underline; }
+.news #news-year-tabs a.active-year {
+  color: #1a1a1a;
+  font-weight: bold;
+  font-style: normal;
+  text-decoration: none;
+  cursor: default;
+}
+.news #news-year-tabs a.future-year { color: #1a1a1a; font-style: normal; }
+.news #news-year-tabs .sep { color: #888; }
+
+/* NEWS: body layout */
+.news #news-body {
+  flex: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  padding: 0 16px;
+}
+
+/* NEWS: left column */
+.news #news-left {
+  width: 180px;
+  flex-shrink: 0;
+  border-right: 1px solid #1a1a1a;
+  padding: 8px 10px 8px 0;
+}
+.news .news-col-heading {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 3px;
+  margin-bottom: 6px;
+  color: #1a1a1a;
+}
+.news .news-commentary-text {
+  font-family: 'IM Fell English', Georgia, serif;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+.news .news-commentary-text p { margin-bottom: 5px; }
+.news .news-col-rule { border: none; border-top: 1px solid #1a1a1a; margin: 8px 0; }
+
+/* NEWS: audio box */
+.news #news-audio-box {
+  border: 1px solid #1a1a1a;
+  padding: 6px;
+  margin-bottom: 8px;
+  font-family: 'Libre Baskerville', serif;
+  cursor: pointer;
+}
+.news #news-audio-box-title {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: bold;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.news #news-audio-graphic {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.news #news-audio-graphic svg { width: 54px; height: 54px; }
+.news #news-audio-lyric {
+  font-size: 10px;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* NEWS: classified notices */
+.news #news-classifieds { margin-top: 8px; }
+.news .news-classified-item {
+  font-family: 'IM Fell English', serif;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #1a1a1a;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px dotted #888;
+}
+.news .news-classified-item:last-child { border-bottom: none; }
+.news .news-classified-heading {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* NEWS: center+right columns */
+.news #news-main {
+  flex: 1;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* NEWS: banner headline */
+.news #news-banner {
+  border-bottom: 2px solid #1a1a1a;
+  padding: 8px 0 6px;
+  margin-bottom: 0;
+  text-align: center;
+}
+.news #news-banner-kicker {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-style: italic;
+  margin-bottom: 4px;
+  color: #1a1a1a;
+}
+.news #news-banner-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 3.5vw, 52px);
+  font-weight: 900;
+  line-height: 1.05;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.news #news-banner-deck {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(13px, 1.4vw, 17px);
+  font-style: italic;
+  font-weight: 400;
+  color: #1a1a1a;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+/* NEWS: two-column story area */
+.news #news-columns {
+  display: flex;
+  gap: 0;
+  flex: 1;
+}
+.news .news-story-col {
+  flex: 1;
+  border-right: 1px solid #1a1a1a;
+  padding: 8px 12px 8px 0;
+}
+.news .news-story-col:last-child { border-right: none; padding-right: 0; padding-left: 12px; }
+.news .news-story-col:first-child { padding-left: 0; }
+.news .news-story-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  color: #1a1a1a;
+}
+.news .news-story-byline {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #555;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #888;
+  padding-bottom: 4px;
+}
+.news .news-story-body {
+  font-family: 'IM Fell English', Georgia, serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #1a1a1a;
+}
+.news .news-story-body p { margin-bottom: 6px; }
+.news .news-story-body p:first-child::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 3em;
+  line-height: 0.8;
+  float: left;
+  margin-right: 3px;
+  margin-top: 4px;
+  font-weight: 700;
+}
+.news .news-continued {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  font-style: italic;
+  color: #555;
+  margin-top: 6px;
+}
+
+/* NEWS: right sidebar box */
+.news #news-right-box {
+  width: 160px;
+  flex-shrink: 0;
+  border-left: 1px solid #1a1a1a;
+  padding: 8px 0 8px 12px;
+}
+.news .news-box {
+  border: 1px solid #1a1a1a;
+  padding: 6px 8px;
+  margin-bottom: 10px;
+  font-family: 'IM Fell English', serif;
+}
+.news .news-box-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: bold;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.news .news-box-body {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #1a1a1a;
+}
+.news .news-box-body p { margin-bottom: 4px; }
+.news .news-snapshot-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  border-bottom: 1px dotted #888;
+  padding: 2px 0;
+}
+.news .news-snapshot-row:last-child { border-bottom: none; }
+.news .news-snapshot-label { color: #555; }
+.news .news-snapshot-val { font-weight: bold; }
+
+/* NEWS: bottom section */
+.news #news-bottom {
+  border-top: 2px solid #1a1a1a;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 16px;
+  display: flex;
+  gap: 0;
+}
+.news #news-classifieds-bottom {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid #1a1a1a;
+  padding: 6px 10px 6px 0;
+}
+.news #news-ticker-bottom {
+  flex: 1;
+  padding: 6px 12px;
+  border-right: 1px solid #1a1a1a;
+}
+.news #news-section-index {
+  width: 180px;
+  flex-shrink: 0;
+  padding: 6px 0 6px 12px;
+}
+.news .news-bottom-heading {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 2px;
+  margin-bottom: 5px;
+}
+.news .news-ticker-items {
+  font-family: 'IM Fell English', serif;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: #1a1a1a;
+}
+.news .news-ticker-item { margin-bottom: 3px; }
+.news .news-ticker-sep { color: #888; margin: 0 4px; }
+.news .news-section-index-item {
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+  color: #1a1a1a;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+.news .news-section-index-item a {
+  color: #1a1a1a;
+  text-decoration: none;
+  font-style: italic;
+}
+.news .news-section-index-item a:hover { text-decoration: underline; }
+.news .news-section-index-item .page-ref {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 9px;
+  color: #555;
+  flex-shrink: 0;
+}
+.news .news-classifieds-col {
+  font-family: 'IM Fell English', serif;
+  font-size: 10px;
+  line-height: 1.35;
+  column-count: 2;
+  column-gap: 8px;
+  column-rule: 1px solid #aaa;
+}
+.news .news-classified-bottom {
+  break-inside: avoid;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px dotted #aaa;
+}
+.news .news-classified-bottom:last-child { border-bottom: none; }
+.news .news-classified-cat {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   THEME VISIBILITY
+   ============================================================ */
+body.enc #news-shell { display: none; }
+body.news #enc-shell { display: none; }
+
+/* ============================================================
+   ENC TOOLTIPS
+   ============================================================ */
+body.enc [data-tip]::after {
+  background: #fff;
+  border: 1px solid #a2a9b1;
+  color: #555;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  padding: 4px 6px;
+  max-width: 240px;
+}
+
+/* ============================================================
+   NEWS TOOLTIPS
+   ============================================================ */
+body.news [data-tip]::after {
+  background: #c8c4bb;
+  border: 1px solid #1a1a1a;
+  color: #1a1a1a;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 10px;
+  font-style: italic;
+  padding: 4px 7px;
+  max-width: 220px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .enc #enc-logo-area { width: 140px; }
+  .enc #enc-sidebar { width: 140px; }
+  .news #news-right-box { width: 130px; }
+}
+@media (max-width: 900px) {
+  .enc #enc-lower { flex-direction: column; }
+  .news #news-columns { flex-direction: column; }
+  .news .news-story-col { border-right: none; border-bottom: 1px solid #1a1a1a; padding: 8px 0; }
+  .news #news-right-box { display: none; }
+  .news #news-bottom { flex-direction: column; }
+  .news #news-classifieds-bottom, .news #news-ticker-bottom { width: 100%; border-right: none; border-bottom: 1px solid #1a1a1a; }
+}
+@media (max-width: 700px) {
+  .enc #enc-sidebar { display: none; }
+  .news #news-left { display: none; }
+  .news #news-banner-headline { font-size: 24px; }
+}
+</style>
+</head>
+<body class="enc" id="body-root">
+
+<!-- THEME TOGGLE -->
+<button id="theme-toggle-btn" onclick="toggleTheme()" data-tip="Switch between the encyclopedia and newspaper presentation of this archive.">Switch theme</button>
+
+<!-- ============================================================
+     ENCYCLOPEDIA SHELL
+     ============================================================ -->
+<div id="enc-shell">
+
+  <!-- HEADER -->
+  <div id="enc-header">
+    <div id="enc-header-inner">
+
+      <!-- Logo -->
+      <div id="enc-logo-area">
+        <div id="enc-logo-svg" data-tip="The archive emblem. In the working simulation this symbol responds to the emotional state of the current era.">
+          <!-- Puzzle globe SVG -->
+          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="25" cy="25" r="23" fill="none" stroke="#a2a9b1" stroke-width="1"/>
+            <ellipse cx="25" cy="25" rx="10" ry="23" fill="none" stroke="#a2a9b1" stroke-width="0.8"/>
+            <line x1="2" y1="25" x2="48" y2="25" stroke="#a2a9b1" stroke-width="0.8"/>
+            <line x1="5" y1="15" x2="45" y2="15" stroke="#a2a9b1" stroke-width="0.8"/>
+            <line x1="5" y1="35" x2="45" y2="35" stroke="#a2a9b1" stroke-width="0.8"/>
+            <!-- puzzle pieces suggested by internal lines -->
+            <path d="M25 2 Q32 8 35 15 Q28 17 25 25 Q22 17 15 15 Q18 8 25 2Z" fill="#c8ccd1" stroke="#a2a9b1" stroke-width="0.5"/>
+            <path d="M35 15 Q42 18 48 25 Q42 28 38 35 Q30 30 25 25 Q28 17 35 15Z" fill="#eaecf0" stroke="#a2a9b1" stroke-width="0.5"/>
+            <path d="M25 25 Q30 30 28 38 Q25 48 25 48 Q22 45 18 38 Q22 32 25 25Z" fill="#c8ccd1" stroke="#a2a9b1" stroke-width="0.5"/>
+            <path d="M25 25 Q22 32 15 35 Q8 28 2 25 Q8 18 15 15 Q22 17 25 25Z" fill="#f8f9fa" stroke="#a2a9b1" stroke-width="0.5"/>
+            <path d="M38 35 Q35 42 28 48 Q25 48 25 48 Q28 38 25 25 Q30 30 38 35Z" fill="#eaecf0" stroke="#a2a9b1" stroke-width="0.5"/>
+            <path d="M15 35 Q12 42 18 48 Q22 45 25 48 Q22 38 25 25 Q22 32 15 35Z" fill="#c8ccd1" stroke="#a2a9b1" stroke-width="0.5"/>
+          </svg>
+        </div>
+        <div id="enc-logo-text">
+          <span class="enc-site-name">American Pie</span>
+          <span class="enc-site-tagline">The Free Financial<br>Encyclopedia</span>
+        </div>
+      </div>
+
+      <!-- Header right -->
+      <div id="enc-header-right">
+        <div id="enc-header-top">
+          <div id="enc-lang-strip" data-tip="In the working simulation these tabs navigate between the years of the archive, each carrying its own emotional state and featured content.">
+            Other languages: <a href="#">German</a> · <a href="#">Español</a> · <a href="#">Français</a> · <a href="#">日本語</a> · <a href="#">Português</a>
+          </div>
+          <div id="enc-search-area">
+            <input id="enc-search-input" type="text" placeholder="Search American Pie">
+            <button id="enc-search-btn">Go</button>
+          </div>
+        </div>
+        <div id="enc-year-tabs" data-tip="Each year of the simulation is a separate edition of this archive. Historical years appear visited. 2026 onward are open.">
+          Archive editions:
+          <a href="#" class="active-year">2008</a> <span>|</span>
+          <a href="#" class="visited">2009</a> <span>|</span>
+          <a href="#" class="visited">2010</a> <span>|</span>
+          <a href="#" class="visited">2011</a> <span>|</span>
+          <a href="#" class="visited">2012</a> <span>|</span>
+          <a href="#" class="visited">2013</a> <span>|</span>
+          <a href="#" class="visited">2014</a> <span>|</span>
+          <a href="#" class="visited">2015</a> <span>|</span>
+          <a href="#" class="visited">2016</a> <span>|</span>
+          <a href="#" class="visited">2017</a> <span>|</span>
+          <a href="#" class="visited">2018</a> <span>|</span>
+          <a href="#" class="visited">2019</a> <span>|</span>
+          <a href="#" class="visited">2020</a> <span>|</span>
+          <a href="#" class="visited">2021</a> <span>|</span>
+          <a href="#" class="visited">2022</a> <span>|</span>
+          <a href="#" class="visited">2023</a> <span>|</span>
+          <a href="#" class="visited">2024</a> <span>|</span>
+          <a href="#" class="visited">2025</a> <span>|</span>
+          <a href="#" class="future-year">2026</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div id="enc-body">
+
+    <!-- SIDEBAR -->
+    <div id="enc-sidebar">
+
+      <div class="enc-sidebar-section">
+        <div class="enc-sidebar-heading">Navigation</div>
+        <a href="#" class="bold-link" data-tip="The archive home. Returns to the featured article and current era overview.">Main Page</a>
+        <a href="#" data-tip="Enter your current financial position. Your numbers travel through the entire simulation as a parallel track.">My Situation</a>
+        <a href="#" class="visited" data-tip="The full 2008–2026 simulation. Each year is a separate edition of this archive.">Simulation</a>
+        <a href="#" class="visited" data-tip="The hidden curriculum. Financial concepts embedded in the archive as reference entries.">Learn</a>
+        <a href="#" data-tip="The final screen. What the simulation leaves you with. Only visible after the archive has been read.">Clarity</a>
+      </div>
+
+      <div class="enc-sidebar-section">
+        <div class="enc-sidebar-heading">Simulation Year</div>
+        <p><strong>[2008]</strong><br>
+        <a href="#" data-tip="Return to present-day mode. Your variables shown against current conditions.">[Present]</a> <span style="color:#555">·</span></p>
+      </div>
+
+      <div class="enc-sidebar-section" id="sidebar_read_in">
+        <div class="enc-sidebar-heading">Read In</div>
+        <a href="#" class="bold-link" data-tip="You are currently reading the encyclopedia edition of this archive.">Encyclopedia</a>
+        <a href="#" onclick="toggleTheme(); return false;" data-tip="Switch to the newspaper edition. Same archive, same year, different register entirely.">Newspaper</a>
+      </div>
+
+      <div class="enc-sidebar-section" id="sidebar_audio">
+        <div class="enc-sidebar-heading">Audio</div>
+        <a href="#" class="enc-sidebar-meta" data-tip="Toggle audio. When active the archive emblem above responds to the tempo and emotional register of the current era's associated recording.">♩ off</a>
+      </div>
+
+      <div class="enc-sidebar-section" id="sidebar_vehicle_status">
+        <div class="enc-sidebar-heading">What Links Here</div>
+        <a href="#" data-tip="Vehicle 1 — This reference position has accumulated entries steadily across all eras. Earliest entries date to January 2008.">Dual-income position, 2008</a>
+        <a href="#" data-tip="Vehicle 2 — The median household reference. Present across all eras. Most entries cluster around 2009–2013.">Median household reference</a>
+        <a href="#" data-tip="Vehicle 3 — This entry is currently a stub. Earlier versions of this page contained significantly more content." style="color:#888;font-size:11px;">Single-income, variable</a>
+        <a href="#" data-tip="Vehicle 4 — Entries associated with leveraged positions and peak-period acquisition. High activity 2006–2008.">Leveraged acquisition, 2006</a>
+        <a href="#" data-tip="Vehicle 5 — Complete entry. Contains a single admission in the final section that no other vehicle entry contains.">Index position, maintained</a>
+        <a href="#" class="red-link" data-tip="Vehicle 6 — This is your position. The entry exists but has not yet been written. It will be written as you move through the simulation.">Reader position, 2026</a>
+      </div>
+
+      <div class="enc-sidebar-section" id="sidebar_tools">
+        <div class="enc-sidebar-heading">Tools</div>
+        <a href="#" data-tip="View the raw data structure underlying this archive entry.">Source view</a>
+        <a href="#" data-tip="Printable calculation worksheets associated with this era's featured articles.">Worksheets</a>
+      </div>
+
+      <div class="enc-sidebar-section" id="sidebar_simulation_snapshot">
+        <div class="snap-header">Simulation Status</div>
+        <table>
+          <tr><td data-tip="Days of liquid savings coverage at current burn rate.">Coverage days</td><td>— </td></tr>
+          <tr><td data-tip="Your position relative to the five historical vehicles at this era.">Vehicle rank</td><td>—</td></tr>
+          <tr><td data-tip="The emotional temperature of the current era as derived from historical record.">Era state</td><td>Calm</td></tr>
+        </table>
+        <p style="margin-top:4px;"><a href="#" data-tip="Enter your financial position to populate this table. Your numbers will travel through the entire simulation.">Enter my situation →</a></p>
+      </div>
+
+    </div>
+    <!-- /SIDEBAR -->
+
+    <!-- CONTENT -->
+    <div id="enc-content">
+
+      <h1 id="enc-page-title">American Pie</h1>
+      <div id="enc-page-subtitle">The Free Financial Encyclopedia</div>
+      <div class="enc-attribution">From American Pie, the free financial encyclopedia. Era 1 of 9 · January 2008</div>
+      <hr class="enc-rule">
+
+      <!-- Featured article -->
+      <div id="enc-featured">
+        <div id="enc-featured-header">FEATURED ARTICLE</div>
+        <a href="#" id="enc-featured-title" data-tip="The article currently featured by the archive's editorial selection for this era. In the working simulation this slot changes as the year progresses and the emotional temperature shifts.">
+          What This Archive Is and Why It Begins in January 2008
+        </a>
+        <div id="enc-featured-body">
+          <p>This archive covers the period January 2008 to the present. It contains articles written in the voices of institutional documents, wire reports, financial press analysis, local newspapers, and long-form features. None of the articles announce what they are teaching. The teaching happens in the gap between what an article describes and what the reader quietly calculates about themselves while reading it.</p>
+          <p>The archive opens in January 2008 because that month carries a specific quality: everything appears stable. The ticker at the bottom of this page is barely moving. The featured article this month is the kind of thing a careful person saves because it seems important but not urgent. By September of this year both of those facts will have changed entirely.</p>
+          <p>In this prototype the articles you encounter describe the simulation itself — what each era does, how the ticker behaves, what the vehicles represent. In the working simulation those same article slots contain journalism. The format is identical. The subject is different.</p>
+        </div>
+        <a href="#" id="enc-featured-readmore" data-tip="Advance into the featured article. The article spans five screens. The ticker behavior you see here continues while you read.">Read more →</a>
+      </div>
+
+      <!-- Lower two columns -->
+      <div id="enc-lower">
+
+        <div id="enc-news">
+          <div class="enc-section-title">In The News — January 2008</div>
+          <div class="enc-news-item" data-tip="In the working simulation these items reflect genuine news from the active era month. In this prototype they describe what the working items will be.">
+            <a href="#">The archive currently shows Era 1 of 9. This slot will contain a headline whose calm register is itself a signal — the kind of item that reads as routine until you know what happens in September.</a>
+          </div>
+          <div class="enc-news-item">
+            <a href="#">A second item appears here. In calm eras the archive carries two or three items. As the simulation advances the count rises. By Era 4 this column contains more items than fit comfortably and they compete for space.</a>
+          </div>
+          <div class="enc-news-item">
+            <a href="#">A third item. Each item in this prototype links to an article that describes what the working article in that slot will do — its voice, its emotional function, and what the ticker is doing while it is being read.</a>
+          </div>
+        </div>
+
+        <div id="enc-dyk">
+          <div class="enc-section-title">Did You Know?</div>
+          <div class="enc-dyk-item" data-tip="In calm eras the Did You Know entries are curious. In later eras they recontextualise something the reader thought they already understood.">
+            In Era 1 the Did You Know entries carry facts that are interesting without being alarming. The register shifts as the simulation advances. By Era 5 these entries contain facts that change what the reader thought they knew about something they read earlier.
+          </div>
+          <div class="enc-dyk-item">
+            The ticker at the bottom of this page is in its synchronized state — it only changes when you click a link. This will not always be true. The first time it changes without a click it will look like a rendering error. It is not a rendering error.
+          </div>
+          <div class="enc-dyk-item">
+            The archive emblem in the upper left responds to audio state and era. In this prototype the audio system is not yet wired. The emblem is static. In the working simulation it spins when audio is active and degrades — permanently — at specific emotional moments across the arc.
+          </div>
+        </div>
+
+      </div>
+      <!-- /lower -->
+
+    </div>
+    <!-- /CONTENT -->
+
+  </div>
+  <!-- /BODY -->
+
+  <!-- FOOTER / TICKER -->
+  <div id="enc-footer">
+    <hr class="enc-rule">
+    <div id="enc-press-coverage">
+      <div id="enc-press-coverage-label" data-tip="This section functions as the archive's ticker. In Era 1 it appears static — a list of citations. As the simulation advances it begins to move. The first time it changes without a click it will appear to be a rendering error. It is not.">Press coverage:</div>
+      <div id="enc-ticker-enc">
+        <a href="#" data-tip="A citation entry. In the working simulation these entries are keyed to the active era and article. They only change when you click a link — until they do not.">The Archive Project, January 2008</a>
+        <span class="sep">·</span>
+        <a href="#" data-tip="Each entry here represents a ticker item for this era. The ticker is synchronized to navigation in Era 1.">On the nature of calm before documented crises</a>
+        <span class="sep">·</span>
+        <a href="#" data-tip="In this prototype the ticker does not animate. In the working simulation it advances through seven behavioral states across the full arc.">Vehicle positions as of market open, January 2008</a>
+        <span class="sep">·</span>
+        <a href="#" data-tip="The ticker's ghost states — where it attempts to show something and fails, or succeeds in showing something it should not know — are not present in this prototype. They are documented in american_pie_v2.md.">Era temperature: calm · Trajectory: stable</a>
+      </div>
+    </div>
+    <hr class="enc-rule">
+    <div style="font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #555; margin-top: 4px;">
+      Content in this archive is for simulation purposes only. · <a href="#" style="color:#0645ad;">About American Pie</a> · <a href="#" style="color:#0645ad;">Design Specification V2</a> · <a href="#" style="color:#0645ad;">Director's Bible</a>
+    </div>
+  </div>
+
+</div>
+<!-- /ENC SHELL -->
+
+
+<!-- ============================================================
+     NEWSPAPER SHELL
+     ============================================================ -->
+<div id="news-shell">
+
+  <!-- MASTHEAD -->
+  <div id="news-masthead">
+    <div id="news-masthead-inner">
+
+      <!-- Topper -->
+      <div id="news-topper">
+        <div>
+          <a href="#" data-tip="The archive's wire attribution for this era. In the working simulation this changes with the emotional register of the active year.">AMERICAN PIE WIRE SERVICE</a>
+          &nbsp;·&nbsp; Covering 2008 — Present
+        </div>
+        <div>
+          <a href="#" data-tip="Navigate between sections of the archive in newspaper register.">Home</a> &nbsp;|&nbsp;
+          <a href="#" data-tip="Enter your financial position. Your numbers travel with you through every era.">My Situation</a> &nbsp;|&nbsp;
+          <a href="#" data-tip="The full simulation — all years, all vehicles, all eras.">Simulation</a> &nbsp;|&nbsp;
+          <a href="#" data-tip="The hidden curriculum embedded in the archive's journalism.">Learn</a> &nbsp;|&nbsp;
+          <a href="#" data-tip="The final screen. Available after the archive has been read.">Clarity</a>
+        </div>
+        <div>209.237.238.158</div>
+      </div>
+
+      <!-- Nameplate row -->
+      <div id="news-nameplate-row">
+        <div id="news-nameplate" data-tip="The archive's masthead in newspaper register. The same archive, the same years, the same vehicles — rendered as a broadsheet edition rather than an encyclopedia entry.">American Pie</div>
+        <div id="news-masthead-boxes">
+          <div class="news-mast-box" data-tip="The simulation is currently in Era 1 of 9. Each era carries a distinct emotional temperature derived from historical record.">
+            <div class="mast-box-title">Era</div>
+            <div class="mast-box-content">1 of 9</div>
+          </div>
+          <div class="news-mast-box" data-tip="In this prototype the audio system is not wired. In the working simulation this box animates when audio is active — the graphic moves with the tempo of the era's associated recording.">
+            <div class="mast-box-title">Audio &amp; Radio</div>
+            <div class="mast-box-content">Off</div>
+          </div>
+          <div class="news-mast-box" data-tip="Switch to the encyclopedia edition of this archive. Same content, different visual register.">
+            <div class="mast-box-title">Edition</div>
+            <div class="mast-box-content" id="news-edition-toggle" onclick="toggleTheme()" style="cursor:pointer;">Encyclopedia<br>Edition ↗</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dateline -->
+      <div id="news-dateline">
+        <div data-tip="The archive's issue reference for this era. In the working simulation the issue number increments with each year.">No. 0001 &nbsp;·&nbsp; January 2008 &nbsp;·&nbsp; Era 1, Surface Calm &nbsp;·&nbsp; One Penny</div>
+        <div data-tip="The wire service attribution for this era. In the working simulation this reflects the emotional anchor of the active year.">American Pie Wire · All editions archived</div>
+      </div>
+
+      <!-- Year tabs -->
+      <div id="news-year-tabs" data-tip="Each year of the simulation appears here as an archived edition reference. Historical years are set lighter. The current year is set in full weight.">
+        <span class="tabs-label">Archive:</span>
+        <a href="#" class="active-year">Jan. 2008</a><span class="sep">·</span>
+        <a href="#">2009</a><span class="sep">·</span>
+        <a href="#">2010</a><span class="sep">·</span>
+        <a href="#">2011</a><span class="sep">·</span>
+        <a href="#">2012</a><span class="sep">·</span>
+        <a href="#">2013</a><span class="sep">·</span>
+        <a href="#">2014</a><span class="sep">·</span>
+        <a href="#">2015</a><span class="sep">·</span>
+        <a href="#">2016</a><span class="sep">·</span>
+        <a href="#">2017</a><span class="sep">·</span>
+        <a href="#">2018</a><span class="sep">·</span>
+        <a href="#">2019</a><span class="sep">·</span>
+        <a href="#">2020</a><span class="sep">·</span>
+        <a href="#">2021</a><span class="sep">·</span>
+        <a href="#">2022</a><span class="sep">·</span>
+        <a href="#">2023</a><span class="sep">·</span>
+        <a href="#">2024</a><span class="sep">·</span>
+        <a href="#">2025</a><span class="sep">·</span>
+        <a href="#" class="future-year">2026 →</a>
+      </div>
+
+    </div>
+  </div>
+  <!-- /MASTHEAD -->
+
+  <!-- BODY -->
+  <div id="news-body">
+
+    <!-- LEFT COLUMN -->
+    <div id="news-left">
+
+      <div class="news-col-heading">Commentary</div>
+
+      <div class="news-commentary-text">
+        <p><strong>What this archive is.</strong> This newspaper edition of the archive covers the same years, the same vehicles, and the same emotional arc as the encyclopedia edition. The register is different. The journalism is the same.</p>
+        <p>The archive opens in January 2008. The broadsheet you are reading now represents that month's edition. The headlines are calm. The ticker at the bottom carries shipping notices. This will not always be true.</p>
+      </div>
+
+      <hr class="news-col-rule">
+
+      <!-- Audio box -->
+      <div id="news-audio-box" data-tip="In the working simulation this box contains an advertisement or listing graphic that animates when audio is active. The graphic moves with the tempo of the era's associated recording. Click to toggle audio. In this prototype audio is not yet wired.">
+        <div id="news-audio-box-title">Tonight's Programme</div>
+        <div id="news-audio-graphic">
+          <!-- Static record graphic -->
+          <svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="27" cy="27" r="25" fill="#2a2a2a" stroke="#1a1a1a" stroke-width="1"/>
+            <circle cx="27" cy="27" r="18" fill="none" stroke="#444" stroke-width="0.5"/>
+            <circle cx="27" cy="27" r="12" fill="none" stroke="#444" stroke-width="0.5"/>
+            <circle cx="27" cy="27" r="6" fill="#444" stroke="#555" stroke-width="0.5"/>
+            <circle cx="27" cy="27" r="2" fill="#888"/>
+            <!-- label area -->
+            <circle cx="27" cy="27" r="8" fill="#c8c4bb" stroke="#888" stroke-width="0.5"/>
+            <text x="27" y="26" text-anchor="middle" font-family="serif" font-size="3.5" fill="#1a1a1a">AMERICAN</text>
+            <text x="27" y="30" text-anchor="middle" font-family="serif" font-size="3.5" fill="#1a1a1a">PIE</text>
+          </svg>
+        </div>
+        <div id="news-audio-lyric" data-tip="In the working simulation this displays the current lyric of the era's associated recording. The lyric is formatted as advertisement copy. It updates as the song progresses.">
+          <em>Audio not yet active<br>in this prototype</em>
+        </div>
+      </div>
+
+      <hr class="news-col-rule">
+
+      <!-- Vehicle classifieds -->
+      <div id="news-classifieds" id="nlc_vehicle_status">
+        <div class="news-col-heading">Notices</div>
+        <div class="news-classified-item" data-tip="Vehicle 1 — This position has maintained consistent entries across all eras. Earliest notices date to January 2008.">
+          <div class="news-classified-heading">Position Maintained</div>
+          Dual-income household. Liquid coverage adequate. All decisions documented from opening month.
+        </div>
+        <div class="news-classified-item" data-tip="Vehicle 2 — The median household reference across the simulation.">
+          <div class="news-classified-heading">Reference Position</div>
+          Median household. Entries present across all eras. Most activity 2009–2013.
+        </div>
+        <div class="news-classified-item" style="color:#666;font-size:10px;" data-tip="Vehicle 3 — This notice will become shorter as the simulation advances. By Era 7 it will not appear in this column.">
+          <div class="news-classified-heading" style="color:#888;">Notice — Single Income</div>
+          Variable position. Entries present but diminishing.
+        </div>
+        <div class="news-classified-item" data-tip="Vehicle 4 — High activity 2006–2008. Associated with leveraged positions acquired near peak.">
+          <div class="news-classified-heading">Leveraged Position</div>
+          Acquisition 2006. Entries concentrated in Eras 1–4.
+        </div>
+        <div class="news-classified-item" data-tip="Vehicle 5 — Complete entry. Contains one admission in the final notice that no other vehicle notice contains.">
+          <div class="news-classified-heading">Index Position</div>
+          Maintained throughout. Final notice contains one line no other vehicle carries.
+        </div>
+        <div class="news-classified-item" style="font-style:italic;color:#555;" data-tip="Vehicle 6 — Your position. This notice is blank until you enter your situation. It will be the only notice whose content is not yet determined.">
+          <div class="news-classified-heading">Reader Position, 2026</div>
+          <em>Notice pending. Enter situation to populate.</em>
+        </div>
+      </div>
+
+    </div>
+    <!-- /LEFT COLUMN -->
+
+    <!-- MAIN -->
+    <div id="news-main">
+
+      <!-- Banner headline -->
+      <div id="news-banner">
+        <div id="news-banner-kicker">American Pie Archive · Era 1 of 9 · January 2008</div>
+        <div id="news-banner-headline" data-tip="The era's banner headline in newspaper register. In the working simulation this is the largest typographic element on the page and its weight increases as the eras advance.">
+          The Archive Opens in the Quiet Season
+        </div>
+        <div id="news-banner-deck">
+          What this newspaper edition is, how it works, and why the ticker at the bottom of this page is barely moving
+        </div>
+      </div>
+
+      <!-- Story columns -->
+      <div id="news-columns">
+
+        <!-- Col 1 -->
+        <div class="news-story-col" id="slot_featured_article">
+          <div class="news-story-byline" data-tip="The publication voice for this era's featured article. In Era 1 the dominant voice is the institutional document — flat, unaware it is being read.">American Pie Wire · January 2008</div>
+          <div class="news-story-body">
+            <p>This is the newspaper edition of the American Pie archive. The same years, the same vehicles, the same emotional arc as the encyclopedia edition — rendered as a broadsheet rather than a reference document. The masthead is the theme toggle. The shipping notices at the bottom are the ticker.</p>
+            <p>The archive is currently in Era 1 of 9. The emotional temperature of January 2008 is calm. The ticker is in its synchronized state — it changes only when you navigate. The left column carries five vehicle notices and a blank sixth notice awaiting your situation.</p>
+            <p>In this prototype each article slot contains text that describes what the working article in that slot will do. The voice is the same. The format is the same. The subject, in the working simulation, is not the simulation itself.</p>
+            <p>The archive emblem in the encyclopedia edition responds to audio state. In the newspaper edition the audio feature occupies the box in the left column labeled Tonight's Programme. In this prototype the audio system is not wired. The record graphic does not spin. In the working simulation it will.</p>
+          </div>
+          <div class="news-continued" data-tip="Navigation into the full article. In the working simulation this advances to screen two of five.">Continued on page 2 →</div>
+        </div>
+
+        <!-- Col 2 -->
+        <div class="news-story-col" id="slot_in_the_news">
+          <div class="news-story-headline" data-tip="A secondary story in this era's edition. In the working simulation this slot contains a headline whose calm register is itself a signal.">In The News This Month</div>
+          <div class="news-story-byline">Archive Desk · January 2008</div>
+          <div class="news-story-body">
+            <p>This column carries three items in Era 1. The count is not fixed. As the simulation advances the count rises. By Era 4 this column contains more items than fit comfortably and they compete for space. The crowding is not a layout decision. It is a production decision made under pressure.</p>
+            <p>Each item in this prototype describes what the working item in that slot will be — its register, its emotional function, the quality of the headline. The working items are not yet written. The slots are defined.</p>
+            <p>The Did You Know box appears in the encyclopedia edition's right column. In the newspaper edition it appears in the right-side box across from this column. In this edition the box describes the simulation's ticker behavior and the archive emblem's degradation schedule.</p>
+          </div>
+          <div class="news-continued" data-tip="Further news items for this era. In the working simulation this advances to a full in-the-news screen.">Continued on page 3 →</div>
+        </div>
+
+      </div>
+      <!-- /story columns -->
+
+    </div>
+    <!-- /MAIN -->
+
+    <!-- RIGHT BOX -->
+    <div id="news-right-box">
+
+      <div class="news-box" id="slot_did_you_know">
+        <div class="news-box-title" data-tip="In Era 1 these entries carry facts that are curious. The register shifts in later eras.">Did You Know?</div>
+        <div class="news-box-body">
+          <p>The ticker in this archive behaves differently across nine eras. In Era 1 it is synchronized to navigation. It changes when you click.</p>
+          <p>The first time it changes without a click will appear to be a rendering error. The reader who files that observation will feel something specific in Era 4 that the reader who ignored it will not.</p>
+          <p>The archive emblem degrades permanently at specific emotional moments. No pieces return.</p>
+        </div>
+      </div>
+
+      <div class="news-box" id="slot_simulation_snapshot">
+        <div class="news-box-title" data-tip="Your position relative to the simulation. Enter your situation to populate these figures.">Your Position</div>
+        <div class="news-box-body">
+          <div class="news-snapshot-row"><span class="news-snapshot-label">Coverage</span><span class="news-snapshot-val">— days</span></div>
+          <div class="news-snapshot-row"><span class="news-snapshot-label">Vehicle rank</span><span class="news-snapshot-val">—</span></div>
+          <div class="news-snapshot-row"><span class="news-snapshot-label">Era state</span><span class="news-snapshot-val">Calm</span></div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /RIGHT BOX -->
+
+  </div>
+  <!-- /BODY -->
+
+  <!-- BOTTOM -->
+  <div id="news-bottom">
+
+    <!-- Classifieds -->
+    <div id="news-classifieds-bottom">
+      <div class="news-bottom-heading" data-tip="In the working simulation the classified notices in calm eras are mundane. In crisis eras they become alarming in aggregate while each individual notice reads as ordinary — positions wanted, premises to let, notices of dissolution.">Classified Notices</div>
+      <div class="news-classifieds-col">
+        <div class="news-classified-bottom"><span class="news-classified-cat">Positions Wanted —</span> Archive researcher, familiar with institutional documents and wire service format, seeks placement in stable archive environment. References available.</div>
+        <div class="news-classified-bottom"><span class="news-classified-cat">Premises to Let —</span> Ground floor office, suitable for small household. Reasonable terms. Enquire within.</div>
+        <div class="news-classified-bottom"><span class="news-classified-cat">Notice —</span> The following positions remain open as of January 2008: all five vehicle trajectories, one reader position. All will be filled by December 2025.</div>
+        <div class="news-classified-bottom"><span class="news-classified-cat">For Sale —</span> Simulation year 2008. Complete. Nine eras. Five vehicles. One ticker. First edition. Apply by clicking any year tab above.</div>
+        <div class="news-classified-bottom"><span class="news-classified-cat">Situations Vacant —</span> Reader position, 2026. Requirements: willingness to enter current financial situation. No experience necessary. Archive provides all context.</div>
+      </div>
+    </div>
+
+    <!-- Ticker -->
+    <div id="news-ticker-bottom">
+      <div class="news-bottom-heading" data-tip="The ticker in newspaper register. In Era 1 this appears as shipping notices — vessel names, departure times, port references. As eras advance it shifts to wire report format. In this prototype it does not animate.">Shipping &amp; Arrivals</div>
+      <div class="news-ticker-items" id="ticker_shipping_notices">
+        <div class="news-ticker-item" data-tip="A ticker item in Era 1 register. In the working simulation these items are synchronized to navigation — they change when you click a link. This synchronized behavior is the default state and will not always hold.">SS <em>Archive</em> — departed port of January 2008 — cargo: featured article, three news items, five vehicle positions — arrived this edition</div>
+        <div class="news-ticker-item">SS <em>Surface Calm</em> — all instruments reading normal — no anomalies reported — ticker synchronized to navigation — era temperature: calm</div>
+        <div class="news-ticker-item" data-tip="In this prototype the ticker does not cycle. In the working simulation it advances through seven behavioral states. The first departure from synchronized behavior will appear to be a malfunction.">SS <em>Patience</em> — outbound — estimated arrival: Era 2 — cargo: first visible crack in surface conditions — ticker state on arrival: elevated</div>
+      </div>
+    </div>
+
+    <!-- Section index -->
+    <div id="news-section-index">
+      <div class="news-bottom-heading" data-tip="Navigation in newspaper register. These continuation references function as section navigation. In the working simulation clicking any of these advances to that section of the archive.">Index</div>
+      <div class="news-section-index-item"><a href="#" data-tip="The archive home. Returns to the era's featured article and home screen.">Main Page</a><span class="page-ref">p.1</span></div>
+      <div class="news-section-index-item"><a href="#" data-tip="Enter your financial position. Your numbers travel with you through the simulation.">My Situation</a><span class="page-ref">p.2</span></div>
+      <div class="news-section-index-item"><a href="#" data-tip="The full simulation. All years, all vehicles, all eras.">Simulation</a><span class="page-ref">p.3</span></div>
+      <div class="news-section-index-item"><a href="#" data-tip="The hidden curriculum. Concepts embedded in the archive as journalism.">Learn</a><span class="page-ref">p.4</span></div>
+      <div class="news-section-index-item"><a href="#" data-tip="The final screen. The simulation leaves you with something. It does not tell you what it is.">Clarity</a><span class="page-ref">p.5</span></div>
+      <div class="news-section-index-item"><a href="#" data-tip="The design specification for this archive. All named elements, all behavioral states, all layer contracts documented.">Spec V2</a><span class="page-ref">ref.</span></div>
+    </div>
+
+  </div>
+  <!-- /BOTTOM -->
+
+</div>
+<!-- /NEWS SHELL -->
+
+<script>
+function toggleTheme() {
+  var body = document.getElementById('body-root');
+  if (body.classList.contains('enc')) {
+    body.classList.remove('enc');
+    body.classList.add('news');
+    document.getElementById('theme-toggle-btn').textContent = 'Switch theme';
+    document.title = 'American Pie — The Morning Edition';
+  } else {
+    body.classList.remove('news');
+    body.classList.add('enc');
+    document.getElementById('theme-toggle-btn').textContent = 'Switch theme';
+    document.title = 'American Pie — The Free Financial Encyclopedia';
+  }
+}
+</script>
+
+</body>
+</html>
