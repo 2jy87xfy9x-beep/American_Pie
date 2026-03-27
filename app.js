@@ -1523,6 +1523,55 @@
     return screens;
   }
 
+  /** Remove BRIEF blocks from a section body (same boundary rule as renderBriefBlock). */
+  function stripBriefBlocks(text) {
+    if (!text) return "";
+    return text.replace(/^BRIEF\n[\s\S]*?(?=\n\n|\n##)/gm, "").trim();
+  }
+
+  /** First line after "Subject:" inside the first BRIEF block, for newspaper home caption. */
+  function extractFirstBriefSubject(body) {
+    if (!body) return "";
+    var m = body.match(/^BRIEF\n([\s\S]*?)(?=\n\n|\n##)/m);
+    if (!m) return "";
+    var sub = m[1].match(/^Subject:\s*(.+)$/m);
+    return sub ? sub[1].trim() : "";
+  }
+
+  /**
+   * Plain-text lede for home featured block: first section, after BRIEF, skip TEST/PLACEHOLDER lines.
+   * Up to two paragraphs; variables substituted from varMap.
+   */
+  function extractFeaturedLede(body, varMap) {
+    var map = varMap || {};
+    var sections = splitSections(body || "");
+    if (!sections.length) return [];
+    var raw = stripBriefBlocks(sections[0].text);
+    raw = raw.replace(/\{\{screen\}\}/gi, "");
+    raw = raw.replace(/^\[TEST:[^\]]*\]\s*$/gm, "");
+    raw = raw.replace(/^\[PLACEHOLDER[^\]]*\]\s*$/gm, "");
+    raw = raw.replace(/\n\n+/g, "\n\n");
+    var paras = raw
+      .split(/\n\n+/)
+      .map(function (p) {
+        return p.trim();
+      })
+      .filter(function (p) {
+        return p.length > 0;
+      });
+    var out = [];
+    for (var i = 0; i < paras.length && out.length < 2; i++) {
+      var line = paras[i].replace(/\n/g, " ");
+      line = line.replace(/\{\{(\w+)\}\}/g, function (_, k) {
+        return map[k] != null ? String(map[k]) : "—";
+      });
+      line = line.replace(/\*\*(.+?)\*\*/g, "$1");
+      line = line.replace(/\*(.+?)\*/g, "$1");
+      if (line) out.push(line);
+    }
+    return out;
+  }
+
   function mdInlineToHtml(text) {
     if (!text) return "";
     var esc = text
@@ -2076,12 +2125,38 @@
       state.mode === "present"
         ? "Getting Started With Your Real Numbers"
         : "Emergency Fund Levels Below 30 Days for Half of US Households";
+    var fallbackLede =
+      state.mode === "present"
+        ? [
+            "This mode is not a game score. It is your financial life with the training wheels disguised as typography.",
+            "Every article you read here uses the same six-section rhythm as the simulation — definition, your number, math, what people did, links, one action — but the variable slots pull from your real data.",
+          ]
+        : [
+            "By late 2007, the Federal Reserve's Survey of Consumer Finances had produced a number that did not appear on any front page: fifty-eight percent of American households could not cover ninety days of expenses from liquid savings alone.",
+            "The agency published the survey findings in December 2007 without a press release. The first Federal Reserve emergency rate cut was five weeks away.",
+          ];
     var title = fallbackTitle;
     var featKey = articleDataKey(slug);
     var featMd = data.articles[featKey] || data.articles[slug];
+    var ledeParas = fallbackLede.slice();
+    var briefSubject = "";
     if (featMd) {
       var parsedFeat = parseFrontmatter(featMd);
       if (parsedFeat.meta && parsedFeat.meta.title) title = parsedFeat.meta.title;
+      var vm = buildReplaceMap(state.variables);
+      ledeParas = extractFeaturedLede(parsedFeat.body, vm);
+      if (!ledeParas.length) ledeParas = fallbackLede.slice();
+      briefSubject = extractFirstBriefSubject(parsedFeat.body);
+    }
+    var fd1 = $("featured-dek-1");
+    var fd2 = $("featured-dek-2");
+    if (fd1) {
+      fd1.textContent = ledeParas[0] || "";
+      fd1.style.display = ledeParas[0] ? "" : "none";
+    }
+    if (fd2) {
+      fd2.textContent = ledeParas[1] || "";
+      fd2.style.display = ledeParas[1] ? "" : "none";
     }
     if (feat) {
       feat.textContent = title;
@@ -2098,24 +2173,39 @@
     }
 
     // V2: also populate newspaper home grid
-    renderNpHome(slug, title);
+    renderNpHome(slug, title, ledeParas, briefSubject);
 
     updateDateline();
     renderTicker();
     updatePressure();
   }
 
-  function renderNpHome(featSlug, featTitle) {
+  function renderNpHome(featSlug, featTitle, ledeParas, briefSubject) {
     // Newspaper featured
     var npLink = $("np-featured-link");
     var npMore = $("np-featured-read-more");
     var npDek = $("np-featured-dek");
+    var npBrief = $("np-featured-brief");
     if (npLink) {
       npLink.textContent = featTitle || "";
       npLink.onclick = function(e) { e.preventDefault(); openArticle(featSlug || "emergency-fund"); };
     }
     if (npMore) {
       npMore.onclick = function(e) { e.preventDefault(); openArticle(featSlug || "emergency-fund"); };
+    }
+    if (npDek) {
+      var dek = "";
+      if (ledeParas && ledeParas.length) {
+        dek = ledeParas[0];
+        if (ledeParas[1]) dek = dek + " " + ledeParas[1];
+      }
+      if (dek.length > 280) dek = dek.slice(0, 277) + "...";
+      npDek.textContent = dek;
+    }
+    if (npBrief) {
+      npBrief.textContent =
+        briefSubject ||
+        "A quiet 2007 suburban street, late afternoon. One For Sale sign at end of block, barely visible. Warm light. Normal.";
     }
 
     // Newspaper news list
